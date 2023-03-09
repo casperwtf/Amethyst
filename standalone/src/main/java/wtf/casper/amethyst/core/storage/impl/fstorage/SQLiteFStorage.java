@@ -250,7 +250,7 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
     @Override
     public CompletableFuture<V> getFirst(String field, Object value, FilterType filterType) {
         return CompletableFuture.supplyAsync(() -> {
-            return this.get(field, value, filterType, SortingType.ASCENDING).join().stream().findFirst().orElse(null);
+            return this.get(field, value, filterType, SortingType.NONE).join().stream().findFirst().orElse(null);
 //            try (final PreparedStatement statement = this.connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " = ?")) {
 //                if (value instanceof UUID) {
 //                    statement.setString(1, value.toString());

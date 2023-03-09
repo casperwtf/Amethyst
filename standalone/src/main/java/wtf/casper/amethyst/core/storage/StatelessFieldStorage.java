@@ -16,7 +16,7 @@ public interface StatelessFieldStorage<K, V> {
      * @return a future that will complete with a collection of all values that match the given field and value.
      */
     default CompletableFuture<Collection<V>> get(final String field, final Object value) {
-        return get(field, value, FilterType.EQUALS, SortingType.ASCENDING);
+        return get(field, value, FilterType.EQUALS, SortingType.NONE);
     }
 
     /**
@@ -33,7 +33,7 @@ public interface StatelessFieldStorage<K, V> {
      * @return a future that will complete with a collection of all values that match the given fields and values.
      */
     default CompletableFuture<Collection<V>> get(Pair<String, Object>... fields) {
-        return get(FilterType.EQUALS, SortingType.ASCENDING, fields);
+        return get(FilterType.EQUALS, SortingType.NONE, fields);
     }
 
     /**
@@ -166,6 +166,7 @@ public interface StatelessFieldStorage<K, V> {
     CompletableFuture<Collection<V>> allValues();
 
     enum SortingType {
+        NONE(Object.class),
         ASCENDING(String.class, Number.class, Boolean.class),
         DESCENDING(String.class, Number.class, Boolean.class);
 
@@ -189,7 +190,7 @@ public interface StatelessFieldStorage<K, V> {
         }
 
         public <V> Collection<V> sort(Collection<V> values, String field) {
-            if (values.isEmpty()) {
+            if (values.isEmpty() || this == NONE) {
                 return values;
             }
             V next = values.iterator().next();

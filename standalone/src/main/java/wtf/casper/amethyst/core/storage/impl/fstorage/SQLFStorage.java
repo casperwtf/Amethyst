@@ -268,7 +268,7 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
 //                e.printStackTrace();
 //            }
 //            return null;
-            return this.get(field, value, filterType, SortingType.ASCENDING).join().stream().findFirst().orElse(null);
+            return this.get(field, value, filterType, SortingType.NONE).join().stream().findFirst().orElse(null);
         });
     }
 
