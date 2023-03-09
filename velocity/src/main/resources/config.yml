@@ -1,0 +1,4 @@
+mq:
+  redis:
+    uri: "redis://localhost:6379"
+    enabled: false

@@ -1,0 +1,23 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+/.idea/
+/bungee/bungee.iml
+/common/common.iml
+/paper/paper.iml
+common/target/
+
+paper/target/
+
+bungee/target/
+
+target/
+
+dependency-reduced-pom.xml
+
+paper/libs/
