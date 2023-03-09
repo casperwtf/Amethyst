@@ -255,14 +255,14 @@
             <artifactId>api</artifactId>
             <version>1.40.4</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/DeluxeCombat-1.40.4.jar</systemPath>
+            <systemPath>${project.basedir}/libs/DeluxeCombat-API.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>net.craftersland.essentials</groupId>
             <artifactId>mysql</artifactId>
             <version>1.25.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/EssentialsMysqlStorage-1.25.0.jar</systemPath>
+            <systemPath>${project.basedir}/libs/EssentialsMysqlStorage-API.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.jeff_media</groupId>
