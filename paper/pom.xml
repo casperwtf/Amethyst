@@ -161,7 +161,7 @@
         <dependency>
             <groupId>me.gamercoder215</groupId>
             <artifactId>mobchip-bukkit</artifactId>
-            <version>1.7.1-20221229.215925-2</version>
+            <version>1.8.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
