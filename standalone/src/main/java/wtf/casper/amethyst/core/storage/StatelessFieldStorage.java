@@ -192,10 +192,17 @@ public interface StatelessFieldStorage<K, V> {
             if (values.isEmpty()) {
                 return values;
             }
-            final Class<?> type = values.iterator().next().getClass();
-            if (!isApplicable(type)) {
-                throw new IllegalArgumentException("Cannot sort " + type.getSimpleName() + " with " + this.name());
+            V next = values.iterator().next();
+            Optional<Object> fieldValue = ReflectionUtil.getFieldValue(next, field);
+            if (fieldValue.isEmpty()) {
+                throw new IllegalArgumentException("Field " + field + " does not exist in " + next.getClass().getSimpleName());
             }
+
+            final Object o = fieldValue.get();
+            if (!isApplicable(o.getClass())) {
+                throw new IllegalArgumentException("Field " + field + " is not of a valid type for sorting.");
+            }
+
             final List<V> list = new ArrayList<>(values);
             list.sort((o1, o2) -> {
                 final Optional<Object> optional1 = ReflectionUtil.getFieldValue(o1, field);
@@ -203,16 +210,16 @@ public interface StatelessFieldStorage<K, V> {
                 if (optional1.isEmpty() || optional2.isEmpty()) {
                     return 0;
                 }
-                final Object o = optional1.get();
-                final Object o3 = optional2.get();
+                final Object o4 = optional1.get();
+                final Object o5 = optional2.get();
                 if (o instanceof String) {
-                    return ((String) o).compareTo((String) o3);
+                    return ((String) o4).compareTo((String) o5);
                 }
                 if (o instanceof Number) {
-                    return ((Number) o).doubleValue() > ((Number) o3).doubleValue() ? 1 : -1;
+                    return ((Number) o4).doubleValue() > ((Number) o5).doubleValue() ? 1 : -1;
                 }
                 if (o instanceof Boolean) {
-                    return ((Boolean) o).compareTo((Boolean) o3);
+                    return ((Boolean) o4).compareTo((Boolean) o5);
                 }
                 return 0;
             });
