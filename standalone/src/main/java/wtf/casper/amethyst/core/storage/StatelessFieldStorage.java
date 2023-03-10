@@ -26,7 +26,7 @@ public interface StatelessFieldStorage<K, V> {
      * @param sortingType the sorting type to use.
      * @return a future that will complete with a collection of all values that match the given field and value.
      */
-    CompletableFuture<Collection<V>> get(final String field, final Object value, FilterType filterType, SortingType sortingType);
+    CompletableFuture<Collection<V>> get(final String field, final Object value, final FilterType filterType, final SortingType sortingType);
 
     /**
      * @param fields the fields to search for. Must contain all keys and values.
@@ -240,7 +240,7 @@ public interface StatelessFieldStorage<K, V> {
         LESS_THAN(Number.class),
         GREATER_THAN_OR_EQUAL_TO(Number.class),
         LESS_THAN_OR_EQUAL_TO(Number.class),
-        IN(Collection.class),
+        IN(Collection.class, Map.class),
         NOT_EQUALS(Object.class),
         NOT_CONTAINS(String.class),
         NOT_STARTS_WITH(String.class),
@@ -249,7 +249,7 @@ public interface StatelessFieldStorage<K, V> {
         NOT_LESS_THAN(Number.class),
         NOT_GREATER_THAN_OR_EQUAL_TO(Number.class),
         NOT_LESS_THAN_OR_EQUAL_TO(Number.class),
-        NOT_IN(Collection.class);
+        NOT_IN(Collection.class, Map.class);
 
         private final Class<?>[] types;
 
@@ -270,6 +270,10 @@ public interface StatelessFieldStorage<K, V> {
             return types;
         }
 
+        /**
+         * @param object the object to check.
+         * @param value the value we are checking for.
+         * */
         public boolean passes(Object object, Object value) {
             if (!isApplicable(object.getClass())) {
                 return false;
@@ -301,10 +305,16 @@ public interface StatelessFieldStorage<K, V> {
                     return ((Number) object).doubleValue() <= ((Number) value).doubleValue();
                 }
                 case IN -> {
-                    if (!(value instanceof Collection)) {
-                        return false;
+                    if ((value instanceof Collection)) {
+                        return ((Collection<?>) value).contains(object);
                     }
-                    return ((Collection<?>) value).contains(object);
+                    if (value.getClass().isArray()) {
+                        return Arrays.asList(value).contains(object);
+                    }
+                    if (value instanceof Map<?, ?>) {
+                        return ((Map<?, ?>) value).containsKey(object) || ((Map<?, ?>) value).containsValue(object);
+                    }
+                    return false;
                 }
                 case NOT_EQUALS -> {
                     return !object.equals(value);

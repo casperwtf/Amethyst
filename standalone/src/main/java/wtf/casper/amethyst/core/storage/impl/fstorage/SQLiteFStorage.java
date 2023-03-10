@@ -241,7 +241,6 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
         });
     }
 
-
     @Override
     public CompletableFuture<V> get(K key) {
         return getFirst(IdUtils.getIdName(this.valueClass), key);
@@ -388,9 +387,6 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
      */
     private void scanForMissingColumns() {
         final Field[] declaredFields = this.valueClass.getDeclaredFields();
-        if (declaredFields.length == 0) {
-            return;
-        }
 
         for (Field declaredField : declaredFields) {
             if (declaredField.isAnnotationPresent(Transient.class)) {
@@ -425,23 +421,32 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
 
         builder.append("CREATE TABLE IF NOT EXISTS ").append(this.table).append(" (");
 
+        String idName = IdUtils.getIdName(valueClass);
+
         int index = 0;
         for (Field declaredField : declaredFields) {
-            index++;
             if (declaredField.isAnnotationPresent(Transient.class)) {
                 continue;
             }
 
             final String name = declaredField.getName();
-            final String type = this.getType(declaredField.getType());
+            String type = this.getType(declaredField.getType());
+
+            if (declaredField.isAnnotationPresent(StorageSerialized.class)) {
+                type = "VARCHAR(255)";
+            }
 
             builder.append(name).append(" ").append(type);
+            if (name.equals(idName)) {
+                builder.append(" PRIMARY KEY");
+            }
+
             if (index != declaredFields.length) {
                 builder.append(", ");
             }
+            index++;
         }
-
-        builder.append("PRIMARY KEY (").append(IdUtils.getIdName(valueClass)).append("));");
+        builder.append(") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;");
 
         return builder.toString();
     }
@@ -518,43 +523,19 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
      * Converts a Java class to an SQL type.
      * */
     private String getType(Class<?> type) {
-        String name;
-        switch (type.getName()) {
-            case "java.lang.String":
-                name = "VARCHAR(255)";
-                break;
-            case "java.lang.Integer":
-                name = "INT";
-                break;
-            case "java.lang.Long":
-                name = "BIGINT";
-                break;
-            case "java.lang.Boolean":
-                name = "BOOLEAN";
-                break;
-            case "java.lang.Double":
-                name = "DOUBLE";
-                break;
-            case "java.lang.Float":
-                name = "FLOAT";
-                break;
-            case "java.lang.Short":
-                name = "SMALLINT";
-                break;
-            case "java.lang.Byte":
-                name = "TINYINT";
-                break;
-            case "java.lang.Character":
-                name = "CHAR";
-                break;
-            case "java.lang.Object":
-                name = "BLOB";
-                break;
-            default:
-                name = "VARCHAR(255)";
-                break;
-        }
 
-        return name;
+        return switch (type.getName()) {
+            case "java.lang.String" -> "VARCHAR(255)";
+            case "java.lang.Integer" -> "INT";
+            case "java.lang.Long" -> "BIGINT";
+            case "java.lang.Boolean" -> "BOOLEAN";
+            case "java.lang.Double" -> "DOUBLE";
+            case "java.lang.Float" -> "FLOAT";
+            case "java.lang.Short" -> "SMALLINT";
+            case "java.lang.Byte" -> "TINYINT";
+            case "java.lang.Character" -> "CHAR";
+            case "java.lang.Object" -> "BLOB";
+            default -> "VARCHAR(255)";
+        };
     }
 }
