@@ -21,24 +21,23 @@ public abstract class AmethystPlugin extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        AmethystLogger.log(getDescription().getName() + " is now loading!");
         load();
     }
 
     @Override
     public void onEnable() {
-        AmethystLogger.log(getDescription().getName() + " is now enabling!");
         enable();
     }
 
     @Override
     public void onDisable() {
-        AmethystLogger.log(getDescription().getName() + " is now disabling!");
         disable();
     }
 
     public void setName(String name) {
         PluginDescriptionFile descriptionFile = getDescription();
+        if (descriptionFile.getName().equals(name)) return;
+
         if (getServer().getPluginManager().getPlugin(name) != null) {
             AmethystLogger.log("Plugin with name " + name + " already exists!");
             return;

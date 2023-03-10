@@ -11,8 +11,6 @@ import java.util.function.Consumer;
 public class RunnableUtil {
 
     public static WorkloadRunnable getWorkload(AmethystPlugin plugin) {
-        if (!isEnabled()) throw new IllegalStateException("AmethystPaper is not enabled!");
-
         WorkloadRunnable workloadRunnable = new WorkloadRunnable();
         plugin.getServer().getScheduler().runTaskTimer(plugin, workloadRunnable, 1, 1);
         return workloadRunnable;
@@ -117,7 +115,7 @@ public class RunnableUtil {
             }
         };
 
-        runnable.runTaskTimer(AmethystPaper.getInstance().getCallingPlugin(), initialDelay, repeatDelay);
+        runnable.runTaskTimer(AmethystPaper.getInstance(), initialDelay, repeatDelay);
         return runnable;
     }
 
@@ -130,7 +128,7 @@ public class RunnableUtil {
         }
 
         BukkitRunnable runnable = createSimpleTask(task);
-        runnable.runTaskTimerAsynchronously(AmethystPaper.getInstance().getCallingPlugin(), initialDelay, repeatDelay);
+        runnable.runTaskTimerAsynchronously(AmethystPaper.getInstance(), initialDelay, repeatDelay);
         return runnable;
     }
 
@@ -168,7 +166,7 @@ public class RunnableUtil {
             }
         };
 
-        runnable.runTaskTimerAsynchronously(AmethystPaper.getInstance().getCallingPlugin(), initialDelay, repeatDelay);
+        runnable.runTaskTimerAsynchronously(AmethystPaper.getInstance(), initialDelay, repeatDelay);
         return runnable;
     }
 

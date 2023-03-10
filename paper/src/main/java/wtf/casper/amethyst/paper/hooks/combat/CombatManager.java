@@ -24,11 +24,13 @@ public class CombatManager {
         }
     }
 
-    public static void registerCombatHandler(ICombat combatHandler) {
+    public static boolean registerCombatHandler(ICombat combatHandler) {
         if (combatHandler.canEnable()) {
             combatHandlers.add(combatHandler);
             combatHandler.enable();
+            return true;
         }
+        return false;
     }
 
     @Nullable

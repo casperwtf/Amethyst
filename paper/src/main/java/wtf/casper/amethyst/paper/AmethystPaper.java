@@ -19,6 +19,7 @@ import wtf.casper.amethyst.paper.hooks.GeyserExpansion;
 import wtf.casper.amethyst.paper.hooks.combat.CombatManager;
 import wtf.casper.amethyst.paper.hooks.economy.EconomyManager;
 import wtf.casper.amethyst.paper.hooks.protection.ProtectionManager;
+import wtf.casper.amethyst.paper.hooks.stacker.StackerManager;
 import wtf.casper.amethyst.paper.hooks.vanish.VanishManager;
 import wtf.casper.amethyst.paper.listeners.PluginListener;
 import wtf.casper.amethyst.paper.serialized.SerializableItem;
@@ -28,7 +29,6 @@ import wtf.casper.amethyst.paper.tracker.PlayerTracker;
 import wtf.casper.amethyst.paper.tracker.PlayerTrackerListener;
 import wtf.casper.amethyst.paper.utils.ArmorstandUtils;
 import wtf.casper.amethyst.paper.utils.GeneralUtils;
-import wtf.casper.amethyst.paper.utils.RunnableUtil;
 
 import java.awt.Color;
 import java.io.File;
@@ -60,63 +60,61 @@ public class AmethystPaper extends AmethystPlugin implements Listener {
                 return true;
             }
 
-            RunnableUtil.runSync(bukkitRunnable -> {
-                boolean isOurPlugin = false;
-                for (StackTraceElement stackTraceElement : record.getThrown().getCause().getStackTrace()) {
-                    for (String packageName : getYamlConfig().getStringList("logged-packages")) {
-                        if (stackTraceElement.getClassName().startsWith(packageName)) {
-                            isOurPlugin = true;
-                            break;
-                        }
+            boolean isOurPlugin = false;
+            for (StackTraceElement stackTraceElement : record.getThrown().getCause().getStackTrace()) {
+                for (String packageName : getYamlConfig().getStringList("logged-packages")) {
+                    if (stackTraceElement.getClassName().startsWith(packageName)) {
+                        isOurPlugin = true;
+                        break;
                     }
                 }
+            }
 
-                if (!isOurPlugin) {
+            if (!isOurPlugin) {
+                return true;
+            }
+
+            File log = new File("logs" + File.separator + "latest.log");
+            PasteProvider.paste(
+                    "Server Version: " + Bukkit.getVersionMessage() + "\n" +
+                            "Server Jar: " + GeneralUtils.getServerJar(log) + "\n" +
+                            "Java Version: " + System.getProperty("java.version") + "\n\n\n" +
+                            GeneralUtils.readLog(log)
+            ).whenComplete((link, throwable) -> {
+                if (throwable != null) {
+                    AmethystLogger.error("Failed to paste log to pasting service");
+                    throwable.printStackTrace();
+                }
+                if (link == null) {
+                    AmethystLogger.log("", "", "An error was found in the console, please report this to the developer of the plugin that caused this error." +
+                            " An error was found when generating an error link, please report that to the developer as-well." +
+                            " Please send a spark report that has been running for at least 5 minutes as-well as the entirety of your server's" +
+                            " latest.log file.", "", "");
                     return;
                 }
 
-                File log = new File("logs" + File.separator + "latest.log");
-                PasteProvider.paste(
-                        "Server Version: " + Bukkit.getVersionMessage() + "\n" +
-                                "Server Jar: " + GeneralUtils.getServerJar(log) + "\n" +
-                                "Java Version: " + System.getProperty("java.version") + "\n\n\n" +
-                                GeneralUtils.readLog(log)
-                ).whenComplete((link, throwable) -> {
-                    if (throwable != null) {
-                        AmethystLogger.error("Failed to paste log to pasting service");
-                        throwable.printStackTrace();
-                    }
-                    if (link == null) {
-                        AmethystLogger.log("", "", "An error was found in the console, please report this to the developer of the plugin that caused this error." +
-                                " An error was found when generating an error link, please report that to the developer as-well." +
-                                " Please send a spark report that has been running for at least 5 minutes as-well as the entirety of your server's" +
-                                " latest.log file.", "", "");
-                        return;
+                AmethystLogger.log("", "", "An error was found in the console, please report this to the developer of the plugin that caused this error." +
+                        " Please forward this link to the developer. " + link, "", "");
+
+                if (getYamlConfig().getBoolean("send-errors-to-discord")) {
+                    DiscordWebhook webhook = new DiscordWebhook(getYamlConfig().getString("discord-webhook"));
+
+                    StringBuilder stacktrace = new StringBuilder();
+                    for (StackTraceElement stackTraceElement : record.getThrown().getCause().getStackTrace()) {
+                        stacktrace.append(stackTraceElement.toString()).append("\n");
                     }
 
-                    AmethystLogger.log("", "", "An error was found in the console, please report this to the developer of the plugin that caused this error." +
-                            " Please forward this link to the developer. " + link, "", "");
-
-                    if (getYamlConfig().getBoolean("send-errors-to-discord")) {
-                        DiscordWebhook webhook = new DiscordWebhook(getYamlConfig().getString("discord-webhook"));
-
-                        StringBuilder stacktrace = new StringBuilder();
-                        for (StackTraceElement stackTraceElement : record.getThrown().getCause().getStackTrace()) {
-                            stacktrace.append(stackTraceElement.toString()).append("\n");
-                        }
-
-                        webhook.addEmbed(new DiscordWebhook.EmbedObject()
-                                .setTitle("Error")
-                                .setDescription("An error was found in the console, please report this to the developer of the plugin that caused this error." +
-                                        " Please forward this link to the developer.\n" + stacktrace)
-                                .addField("Link", link, false)
-                                .setColor(Color.decode("#ff0000")));
-                        try {
-                            webhook.execute();
-                        } catch (IOException ignored) {
-                        }
+                    webhook.addEmbed(new DiscordWebhook.EmbedObject()
+                            .setTitle("Error")
+                            .setDescription("An error was found in the console, please report this to the developer of the plugin that caused this error." +
+                                    " Please forward this link to the developer.\n" + stacktrace)
+                            .addField("Link", link, false)
+                            .setColor(Color.decode("#ff0000")));
+                    try {
+                        webhook.execute();
+                    } catch (IOException ignored) {
                     }
-                });
+                }
             });
             return true;
         };
@@ -147,6 +145,10 @@ public class AmethystPaper extends AmethystPlugin implements Listener {
         new HologramBridge(this, true);
 
         EconomyManager.init();
+        new CombatManager();
+        new ProtectionManager();
+        new StackerManager();
+        new VanishManager();
 
         new PlayerTrackerListener(this);
         getServer().getScheduler().runTaskTimer(this, new PlayerTracker(), 0L, 1L);
