@@ -8,7 +8,8 @@ import wtf.casper.amethyst.paper.hooks.stacker.impl.RoseStackStacker;
 import java.util.List;
 
 public class StackerManager {
-    @Getter private static IStacker stacker;
+    @Getter
+    private static IStacker stacker;
 
     static {
         List<IStacker> stackers = List.of(

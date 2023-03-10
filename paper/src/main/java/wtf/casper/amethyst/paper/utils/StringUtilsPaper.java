@@ -296,6 +296,21 @@ public class StringUtilsPaper extends StringUtils {
     }
 
     /**
+     * @param current The current progress
+     * @param max The max progress
+     * @param totalBars The total amount of bars
+     * @param symbol The symbol to use
+     * @param completedColor The color of the completed bars
+     * @param notCompletedColor The color of the not completed bars
+     * */
+    public static String getProgressBar(int current, int max, int totalBars, String symbol, String completedColor, String notCompletedColor) {
+        float percent = (float) current / max;
+        int progressBars = (int) (totalBars * percent);
+
+        return completedColor + symbol.repeat(Math.max(0, progressBars)) + notCompletedColor + symbol.repeat(Math.max(0, totalBars - progressBars));
+    }
+
+    /**
      * @param message The message to colorify
      * @return The colorified message
      * */

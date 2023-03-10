@@ -11,6 +11,8 @@ import java.util.function.Consumer;
 public class RunnableUtil {
 
     public static WorkloadRunnable getWorkload(AmethystPlugin plugin) {
+        if (!isEnabled()) throw new IllegalStateException("AmethystPaper is not enabled!");
+
         WorkloadRunnable workloadRunnable = new WorkloadRunnable();
         plugin.getServer().getScheduler().runTaskTimer(plugin, workloadRunnable, 1, 1);
         return workloadRunnable;
@@ -18,6 +20,8 @@ public class RunnableUtil {
 
     @NotNull
     public static BukkitRunnable runSync(Consumer<BukkitRunnable> task) {
+        if (!isEnabled()) throw new IllegalStateException("AmethystPaper is not enabled!");
+
         BukkitRunnable runnable = createSimpleTask(task);
         runnable.runTask(AmethystPaper.getInstance());
         return runnable;
@@ -25,6 +29,8 @@ public class RunnableUtil {
 
     @NotNull
     public static BukkitRunnable runAsync(Consumer<BukkitRunnable> task) {
+        if (!isEnabled()) throw new IllegalStateException("AmethystPaper is not enabled!");
+
         BukkitRunnable runnable = createSimpleTask(task);
         runnable.runTaskAsynchronously(AmethystPaper.getInstance());
         return runnable;
@@ -32,6 +38,8 @@ public class RunnableUtil {
 
     @NotNull
     public static BukkitRunnable delay(Consumer<BukkitRunnable> task, long delay) {
+        if (!isEnabled()) throw new IllegalStateException("AmethystPaper is not enabled!");
+
         BukkitRunnable runnable = createSimpleTask(task);
         runnable.runTaskLater(AmethystPaper.getInstance(), delay);
         return runnable;
@@ -39,6 +47,8 @@ public class RunnableUtil {
 
     @NotNull
     public static BukkitRunnable delayAsync(Consumer<BukkitRunnable> task, long delay) {
+        if (!isEnabled()) throw new IllegalStateException("AmethystPaper is not enabled!");
+
         BukkitRunnable runnable = createSimpleTask(task);
         runnable.runTaskLaterAsynchronously(AmethystPaper.getInstance(), delay);
         return runnable;
@@ -46,6 +56,8 @@ public class RunnableUtil {
 
     @NotNull
     public static BukkitRunnable repeat(Consumer<BukkitRunnable> task, long initialDelay, long repeatDelay) {
+        if (!isEnabled()) throw new IllegalStateException("AmethystPaper is not enabled!");
+
         BukkitRunnable runnable = createSimpleTask(task);
         runnable.runTaskTimer(AmethystPaper.getInstance(), initialDelay, repeatDelay);
         return runnable;
@@ -53,6 +65,8 @@ public class RunnableUtil {
 
     @NotNull
     public static BukkitRunnable repeat(final Consumer<BukkitRunnable> task, long initialDelay, long repeatDelay, final int limit) {
+
+        if (!isEnabled()) throw new IllegalStateException("AmethystPaper is not enabled!");
 
         BukkitRunnable runnable = new BukkitRunnable() {
             int repeats = 0;
@@ -73,6 +87,8 @@ public class RunnableUtil {
 
     @NotNull
     public static BukkitRunnable repeatAsync(Consumer<BukkitRunnable> task, long initialDelay, long repeatDelay) {
+        if (!isEnabled()) throw new IllegalStateException("AmethystPaper is not enabled!");
+
         BukkitRunnable runnable = createSimpleTask(task);
         runnable.runTaskTimerAsynchronously(AmethystPaper.getInstance().getCallingPlugin(), initialDelay, repeatDelay);
         return runnable;
@@ -80,6 +96,8 @@ public class RunnableUtil {
 
     @NotNull
     public static BukkitRunnable repeatAsync(final Consumer<BukkitRunnable> task, long initialDelay, long repeatDelay, final int limit) {
+
+        if (!isEnabled()) throw new IllegalStateException("AmethystPaper is not enabled!");
 
         BukkitRunnable runnable = new BukkitRunnable() {
             int repeats = 0;
@@ -96,6 +114,10 @@ public class RunnableUtil {
 
         runnable.runTaskTimerAsynchronously(AmethystPaper.getInstance().getCallingPlugin(), initialDelay, repeatDelay);
         return runnable;
+    }
+
+    private static boolean isEnabled() {
+        return AmethystPaper.getInstance().isEnabled();
     }
 
 

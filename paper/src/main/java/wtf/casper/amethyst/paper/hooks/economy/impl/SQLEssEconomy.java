@@ -10,6 +10,7 @@ import wtf.casper.amethyst.paper.utils.GeyserUtils;
 
 import java.lang.reflect.Field;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 public class SQLEssEconomy implements IEconomy {
@@ -69,16 +70,9 @@ public class SQLEssEconomy implements IEconomy {
             return;
         }
 
-        if (GeyserUtils.isFloodgateEnabled()) {
-            UUID uuid = FloodgateApi.getInstance().getUuidFor(player).join();
-            if (uuid == null) {
-                modifyBalance(Bukkit.getOfflinePlayer(player).getUniqueId(), amount);
-                return;
-            }
+        GeyserUtils.getUUID(player).ifPresent(uuid -> {
             modifyBalance(uuid, amount);
-        } else {
-            modifyBalance(Bukkit.getOfflinePlayer(player).getUniqueId(), amount);
-        }
+        });
     }
 
     @Override
@@ -88,16 +82,9 @@ public class SQLEssEconomy implements IEconomy {
             return;
         }
 
-        if (GeyserUtils.isFloodgateEnabled()) {
-            UUID uuid = FloodgateApi.getInstance().getUuidFor(player).join();
-            if (uuid == null) {
-                modifyBalance(Bukkit.getOfflinePlayer(player).getUniqueId(), -amount);
-                return;
-            }
+        GeyserUtils.getUUID(player).ifPresent(uuid -> {
             modifyBalance(uuid, -amount);
-        } else {
-            modifyBalance(Bukkit.getOfflinePlayer(player).getUniqueId(), -amount);
-        }
+        });
     }
 
     @Override
@@ -107,9 +94,10 @@ public class SQLEssEconomy implements IEconomy {
 
     @Override
     public double get(String player) {
-        if (GeyserUtils.isFloodgateEnabled()) {
-            UUID uuid = FloodgateApi.getInstance().getUuidFor(player).join();
-            return ems.getOfflineMoney(Objects.requireNonNullElseGet(uuid, () -> Bukkit.getOfflinePlayer(player).getUniqueId()));
+        Optional<UUID> optional = GeyserUtils.getUUID(player);
+
+        if (optional.isPresent()) {
+            return ems.getOfflineMoney(optional.get());
         }
 
         return ems.getOfflineMoney(Bukkit.getOfflinePlayer(player).getUniqueId());
