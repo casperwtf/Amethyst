@@ -15,13 +15,11 @@ import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.core.utils.ReflectionUtil;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public abstract class StatelessMariaDBStorage<K, V> implements ConstructableValue<K, V>, StatelessFieldStorage<K, V> {
@@ -232,9 +230,6 @@ public abstract class StatelessMariaDBStorage<K, V> implements ConstructableValu
         final Field[] declaredFields = this.valueClass.getDeclaredFields();
 
         for (Field declaredField : declaredFields) {
-            if (declaredField.isAnnotationPresent(Transient.class)) {
-                continue;
-            }
 
             final String name = declaredField.getName();
             final String type = this.getType(declaredField.getType());
@@ -251,14 +246,18 @@ public abstract class StatelessMariaDBStorage<K, V> implements ConstructableValu
         }
     }
 
-    /*
+    /**
      * Generate an SQL Script to create the table based on the class
      * */
     private String createTableFromObject() {
         final StringBuilder builder = new StringBuilder();
-        final Field[] declaredFields = this.valueClass.getDeclaredFields();
 
-        if (declaredFields.length == 0) {
+        List<Field> fields = Arrays.stream(this.valueClass.getDeclaredFields())
+                .filter(field -> !field.isAnnotationPresent(Transient.class))
+                .filter(field -> !Modifier.isTransient(field.getModifiers()))
+                .toList();
+
+        if (fields.size() == 0) {
             return "";
         }
 
@@ -267,11 +266,7 @@ public abstract class StatelessMariaDBStorage<K, V> implements ConstructableValu
         String idName = IdUtils.getIdName(valueClass);
 
         int index = 0;
-        for (Field declaredField : declaredFields) {
-            index++;
-            if (declaredField.isAnnotationPresent(Transient.class)) {
-                continue;
-            }
+        for (Field declaredField : fields) {
 
             final String name = declaredField.getName();
             String type = this.getType(declaredField.getType());
@@ -285,11 +280,14 @@ public abstract class StatelessMariaDBStorage<K, V> implements ConstructableValu
                 builder.append(" PRIMARY KEY");
             }
 
-            if (index != declaredFields.length) {
+            if (index != fields.size()) {
                 builder.append(", ");
             }
+            index++;
         }
-        builder.append(") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+        builder.append(") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;");
+
+        AmethystLogger.debug("Generated SQL: " + builder);
         return builder.toString();
     }
 
@@ -302,9 +300,6 @@ public abstract class StatelessMariaDBStorage<K, V> implements ConstructableValu
         final Field[] declaredFields = this.valueClass.getDeclaredFields();
 
         for (Field declaredField : declaredFields) {
-            if (declaredField.isAnnotationPresent(Transient.class)) {
-                continue;
-            }
             if (declaredField.isAnnotationPresent(StorageSerialized.class)) {
                 final String name = declaredField.getName();
                 final String string = resultSet.getString(name);

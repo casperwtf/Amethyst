@@ -15,11 +15,9 @@ import wtf.casper.amethyst.core.utils.ReflectionUtil;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -386,36 +384,42 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
      * Will scan the class for fields and add them to the database if they don't exist
      */
     private void scanForMissingColumns() {
-        final Field[] declaredFields = this.valueClass.getDeclaredFields();
-
-        for (Field declaredField : declaredFields) {
-            if (declaredField.isAnnotationPresent(Transient.class)) {
-                continue;
+        try (final PreparedStatement statement = this.connection.prepareStatement("SELECT * FROM " + this.table)) {
+            final ResultSetMetaData metaData = statement.getMetaData();
+            final int columnCount = metaData.getColumnCount();
+            final List<String> columns = new ArrayList<>();
+            for (int i = 1; i <= columnCount; i++) {
+                columns.add(metaData.getColumnName(i));
             }
 
-            final String name = declaredField.getName();
-            final String type = this.getType(declaredField.getType());
+            final List<Field> fields = Arrays.stream(this.valueClass.getDeclaredFields())
+                    .filter(field -> !field.isAnnotationPresent(Transient.class))
+                    .filter(field -> !Modifier.isTransient(field.getModifiers()))
+                    .toList();
 
-            this.query("SELECT * FROM " + this.table + " LIMIT 1;", resultSet -> {
-                try {
-                    if (resultSet.findColumn(name) == 0) {
-                        this.addColumn(name, type);
-                    }
-                } catch (SQLException e) {
-                    this.addColumn(name, type);
+            for (final Field field : fields) {
+                final String name = field.getName();
+                if (!columns.contains(name)) {
+                    this.addColumn(name, this.getType(field.getType()));
                 }
-            });
+            }
+        } catch (final SQLException e) {
+            e.printStackTrace();
         }
     }
 
     /**
      * Generate an SQL Script to create the table based on the class
-     */
+     * */
     private String createTableFromObject() {
         final StringBuilder builder = new StringBuilder();
-        final Field[] declaredFields = this.valueClass.getDeclaredFields();
 
-        if (declaredFields.length == 0) {
+        List<Field> fields = Arrays.stream(this.valueClass.getDeclaredFields())
+                .filter(field -> !field.isAnnotationPresent(Transient.class))
+                .filter(field -> !Modifier.isTransient(field.getModifiers()))
+                .toList();
+
+        if (fields.size() == 0) {
             return "";
         }
 
@@ -424,10 +428,7 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
         String idName = IdUtils.getIdName(valueClass);
 
         int index = 0;
-        for (Field declaredField : declaredFields) {
-            if (declaredField.isAnnotationPresent(Transient.class)) {
-                continue;
-            }
+        for (Field declaredField : fields) {
 
             final String name = declaredField.getName();
             String type = this.getType(declaredField.getType());
@@ -441,13 +442,16 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
                 builder.append(" PRIMARY KEY");
             }
 
-            if (index != declaredFields.length) {
+            index++;
+
+            if (index != fields.size()) {
                 builder.append(", ");
             }
-            index++;
-        }
-        builder.append(") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;");
 
+        }
+        builder.append(");");
+
+        AmethystLogger.debug("Generated SQL: " + builder);
         return builder.toString();
     }
 
@@ -460,9 +464,6 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
         final Field[] declaredFields = this.valueClass.getDeclaredFields();
 
         for (Field declaredField : declaredFields) {
-            if (declaredField.isAnnotationPresent(Transient.class)) {
-                continue;
-            }
             if (declaredField.isAnnotationPresent(StorageSerialized.class)) {
                 final String name = declaredField.getName();
                 final String string = resultSet.getString(name);
