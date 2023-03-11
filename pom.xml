@@ -20,6 +20,7 @@
         <module>paper</module>
         <module>bungee</module>
         <module>velocity</module>
+        <module>paper-shaded</module>
     </modules>
 
     <build>

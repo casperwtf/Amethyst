@@ -45,13 +45,14 @@ public class DependencyManager {
                 this.getLibrary("io{}github{}rysefoxx{}inventory", "RyseInventory-Plugin", "1.5.7", "", ""),
                 this.getLibrary("de{}themoep", "minedown-adventure", "1.7.1-SNAPSHOT", "de{}themoep{}minedown", "wtf{}casper{}amethyst{}libs{}minedown"),
                 this.getLibrary("com{}github{}chubbyduck1", "HologramBridge", "1.1.0", "", ""),
-                this.getLibrary("com{}google{}code{}gson", "gson", "2.10.1", "com{}google{}gson", "wtf{}casper{}amethyst{}libs{}google{}gson"),//
+                this.getLibrary("com{}google{}code{}gson", "gson", "2.10.1", "com{}google{}gson", "wtf{}casper{}amethyst{}libs{}google{}gson"),
                 // this does not want to load via libby, not sure why
 //                this.getLibrary("me{}gamercoder215", "mobchip-bukkit", "1.8.1-SNAPSHOT", "me{}gamercoder215{}mobchip", "wtf{}casper{}amethyst{}libs{}mobchip"),
                 this.getLibrary("org{}mongodb", "mongo-java-driver", "3.12.11", "", ""),
                 this.getLibrary("io{}lettuce", "lettuce-core", "6.2.3.RELEASE", "io{}lettuce{}core", "wtf{}casper{}amethyst{}libs{}lettuce"),
+                this.getLibrary("io{}projectreactor", "reactor-core", "3.5.2", "", ""),
                 this.getLibrary("com{}github{}Redempt", "Crunch", "1.0", "", ""),
-                this.getLibrary("org{}quartz-scheduler", "quartz", "2.3.2", "org{}quartz", "wtf{}casper{}amethyst{}libs{}quartz"),
+                this.getLibrary("org{}quartz-scheduler", "quartz", "2.3.2", "", ""),
                 this.getLibrary("com{}github{}ben-manes{}caffeine", "caffeine", "3.1.5", "", ""),
                 this.getLibrary("org{}reflections", "reflections", "0.10.2", "", ""),
                 this.getLibrary("com{}zaxxer", "HikariCP", "5.0.1", "", ""),
