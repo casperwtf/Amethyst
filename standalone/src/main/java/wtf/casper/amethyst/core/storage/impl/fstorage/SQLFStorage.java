@@ -281,7 +281,7 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
             }
 
             String values = this.getValues(value);
-            this.execute("INSERT INTO " + this.table + " (" + this.getColumns() + ") VALUES (" + values + ") ON DUPLICATE KEY UPDATE " + values);
+            this.execute("INSERT INTO " + this.table + " (" + this.getColumns() + ") VALUES (" + values + ") ON DUPLICATE KEY UPDATE " + getUpdateValues(value));
         });
     }
 
@@ -391,10 +391,12 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
      * Will scan the class for fields and add them to the database if they don't exist
      * */
     private void scanForMissingColumns() {
-        final Field[] declaredFields = this.valueClass.getDeclaredFields();
+        List<Field> fields = Arrays.stream(this.valueClass.getDeclaredFields())
+                .filter(field -> !field.isAnnotationPresent(Transient.class))
+                .filter(field -> !Modifier.isTransient(field.getModifiers()))
+                .toList();
 
-        for (Field declaredField : declaredFields) {
-
+        for (Field declaredField : fields) {
             final String name = declaredField.getName();
             final String type = this.getType(declaredField.getType());
 
@@ -487,22 +489,47 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
     private String getValues(V value) {
         final StringBuilder builder = new StringBuilder();
         int i = 0;
-        Field[] fields = ReflectionUtil.getAllFields(valueClass);
+
+        List<Field> fields = Arrays.stream(this.valueClass.getDeclaredFields())
+                .filter(field -> !field.isAnnotationPresent(Transient.class))
+                .filter(field -> !Modifier.isTransient(field.getModifiers()))
+                .toList();
+
         for (final Field field : fields) {
-            if (field.isAnnotationPresent(Transient.class)) {
-                continue;
-            }
             if (field.isAnnotationPresent(StorageSerialized.class)) {
                 builder.append("'").append(AmethystCore.getGson().toJson(ReflectionUtil.getPrivateField(value, field.getName()))).append("'");
             } else {
                 builder.append("'").append(ReflectionUtil.getPrivateField(value, field.getName())).append("'");
             }
-            if (i != fields.length - 1) {
+            if (i != fields.size() - 1) {
                 builder.append(", ");
             }
             i++;
         }
-        return builder.substring(0, builder.length() - 1);
+
+        return builder.toString();
+    }
+
+    private String getUpdateValues(V value) {
+        final StringBuilder builder = new StringBuilder();
+        int i = 0;
+
+        List<Field> fields = Arrays.stream(this.valueClass.getDeclaredFields())
+                .filter(field -> !field.isAnnotationPresent(Transient.class))
+                .filter(field -> !Modifier.isTransient(field.getModifiers()))
+                .toList();
+
+        for (final Field field : fields) {
+            builder.append("`").append(field.getName()).append("` = VALUES(`").append(field.getName()).append("`)");
+
+            if (i != fields.size() - 1) {
+                builder.append(", ");
+            }
+
+            i++;
+        }
+
+        return builder.toString();
     }
 
     /*
@@ -510,12 +537,16 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
      * */
     private String getColumns() {
         final StringBuilder builder = new StringBuilder();
-        for (final Field field : this.valueClass.getDeclaredFields()) {
-            if (field.isAnnotationPresent(Transient.class)) {
-                continue;
-            }
-            builder.append(field.getName()).append(",");
+
+        List<Field> fields = Arrays.stream(this.valueClass.getDeclaredFields())
+                .filter(field -> !field.isAnnotationPresent(Transient.class))
+                .filter(field -> !Modifier.isTransient(field.getModifiers()))
+                .toList();
+
+        for (final Field field : fields) {
+            builder.append("`" + field.getName() + "`").append(",");
         }
+
         return builder.substring(0, builder.length() - 1);
     }
 
