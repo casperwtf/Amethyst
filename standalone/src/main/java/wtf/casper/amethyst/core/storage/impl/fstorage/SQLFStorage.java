@@ -293,7 +293,7 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
                 return;
             }
             String field = idField.getName();
-            this.execute("DELETE FROM " + this.table + " WHERE " + field + " = ?;", statement -> {
+            this.execute("DELETE FROM " + this.table + " WHERE `" + field + "` = ?;", statement -> {
                 statement.setString(1, IdUtils.getId(this.valueClass, value).toString());
             });
         });
@@ -462,7 +462,10 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
     @SneakyThrows
     private V construct(final ResultSet resultSet) {
         final V value = constructValue();
-        final Field[] declaredFields = this.valueClass.getDeclaredFields();
+        List<Field> declaredFields = Arrays.stream(this.valueClass.getDeclaredFields())
+                .filter(field -> !field.isAnnotationPresent(Transient.class))
+                .filter(field -> !Modifier.isTransient(field.getModifiers()))
+                .toList();
 
         for (Field declaredField : declaredFields) {
             if (declaredField.isAnnotationPresent(StorageSerialized.class)) {
