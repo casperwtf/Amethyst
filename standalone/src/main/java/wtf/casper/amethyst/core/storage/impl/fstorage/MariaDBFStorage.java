@@ -439,7 +439,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
                 type = "VARCHAR(255)";
             }
 
-            builder.append(name).append(" ").append(type);
+            builder.append("`" + name + "`").append(" ").append(type);
             if (name.equals(idName)) {
                 builder.append(" PRIMARY KEY");
             }
