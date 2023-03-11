@@ -44,7 +44,7 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
         this.valueClass = valueClass;
         this.table = table;
         this.ds = new HikariDataSource();
-        this.ds.setMaximumPoolSize(10);
+        this.ds.setMaximumPoolSize(20);
         this.ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
         this.ds.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database + "?allowPublicKeyRetrieval=true&autoReconnect=true&useSSL=false");
         this.ds.addDataSourceProperty("user", username);
