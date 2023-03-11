@@ -17,6 +17,7 @@ import wtf.casper.amethyst.core.utils.ReflectionUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -49,6 +50,9 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
         this.ds.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database + "?allowPublicKeyRetrieval=true&autoReconnect=true&useSSL=false");
         this.ds.addDataSourceProperty("user", username);
         this.ds.addDataSourceProperty("password", password);
+        this.ds.setConnectionTimeout(300000);
+        this.ds.setConnectionTimeout(120000);
+        this.ds.setLeakDetectionThreshold(300000);
         this.execute(createTableFromObject());
         this.scanForMissingColumns();
     }
@@ -72,170 +76,190 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
                 return values;
             }
 
-            switch (filterType) {
-                case EQUALS -> {
-                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " = ?")) {
-                        if (value instanceof UUID) {
-                            statement.setString(1, value.toString());
-                        } else {
-                            statement.setObject(1, value);
-                        }
+            try (final Connection connection = this.ds.getConnection()) {
+                switch (filterType) {
+                    case EQUALS -> {
+                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " = ?")) {
+                            if (value instanceof UUID) {
+                                statement.setString(1, value.toString());
+                            } else {
+                                statement.setObject(1, value);
+                            }
 
-                        final ResultSet resultSet = statement.executeQuery();
-                        while (resultSet.next()) {
-                            values.add(this.construct(resultSet));
+                            final ResultSet resultSet = statement.executeQuery();
+                            while (resultSet.next()) {
+                                values.add(this.construct(resultSet));
+                            }
+
+                            resultSet.close();
+                        } catch (final SQLException e) {
+                            e.printStackTrace();
                         }
-                    } catch (final SQLException e) {
-                        e.printStackTrace();
                     }
-                }
-                case CONTAINS -> {
-                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " LIKE ?")) {
-                        statement.setObject(1, "%" + value + "%");
-                        final ResultSet resultSet = statement.executeQuery();
-                        while (resultSet.next()) {
-                            values.add(this.construct(resultSet));
+                    case CONTAINS -> {
+                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " LIKE ?")) {
+                            statement.setObject(1, "%" + value + "%");
+                            final ResultSet resultSet = statement.executeQuery();
+                            while (resultSet.next()) {
+                                values.add(this.construct(resultSet));
+                            }
+
+                            resultSet.close();
+                        } catch (final SQLException e) {
+                            e.printStackTrace();
                         }
-                    } catch (final SQLException e) {
-                        e.printStackTrace();
                     }
-                }
-                case STARTS_WITH -> {
-                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " LIKE ?")) {
-                        statement.setObject(1, value + "%");
-                        final ResultSet resultSet = statement.executeQuery();
-                        while (resultSet.next()) {
-                            values.add(this.construct(resultSet));
+                    case STARTS_WITH -> {
+                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " LIKE ?")) {
+                            statement.setObject(1, value + "%");
+                            final ResultSet resultSet = statement.executeQuery();
+                            while (resultSet.next()) {
+                                values.add(this.construct(resultSet));
+                            }
+                            resultSet.close();
+                        } catch (final SQLException e) {
+                            e.printStackTrace();
                         }
-                    } catch (final SQLException e) {
-                        e.printStackTrace();
                     }
-                }
-                case ENDS_WITH -> {
-                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " LIKE ?")) {
-                        statement.setObject(1, "%" + value);
-                        final ResultSet resultSet = statement.executeQuery();
-                        while (resultSet.next()) {
-                            values.add(this.construct(resultSet));
+                    case ENDS_WITH -> {
+                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " LIKE ?")) {
+                            statement.setObject(1, "%" + value);
+                            final ResultSet resultSet = statement.executeQuery();
+                            while (resultSet.next()) {
+                                values.add(this.construct(resultSet));
+                            }
+                            resultSet.close();
+                        } catch (final SQLException e) {
+                            e.printStackTrace();
                         }
-                    } catch (final SQLException e) {
-                        e.printStackTrace();
                     }
-                }
-                case GREATER_THAN -> {
-                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " > ?")) {
-                        statement.setObject(1, value);
-                        final ResultSet resultSet = statement.executeQuery();
-                        while (resultSet.next()) {
-                            values.add(this.construct(resultSet));
-                        }
-                    } catch (final SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-                case LESS_THAN -> {
-                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " < ?")) {
-                        statement.setObject(1, value);
-                        final ResultSet resultSet = statement.executeQuery();
-                        while (resultSet.next()) {
-                            values.add(this.construct(resultSet));
-                        }
-                    } catch (final SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-                case GREATER_THAN_OR_EQUAL_TO -> {
-                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " >= ?")) {
-                        statement.setObject(1, value);
-                        final ResultSet resultSet = statement.executeQuery();
-                        while (resultSet.next()) {
-                            values.add(this.construct(resultSet));
-                        }
-                    } catch (final SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-                case LESS_THAN_OR_EQUAL_TO -> {
-                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " <= ?")) {
-                        statement.setObject(1, value);
-                        final ResultSet resultSet = statement.executeQuery();
-                        while (resultSet.next()) {
-                            values.add(this.construct(resultSet));
-                        }
-                    } catch (final SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-                case IN -> {
-                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " IN (?)")) {
-                        statement.setObject(1, value);
-                        final ResultSet resultSet = statement.executeQuery();
-                        while (resultSet.next()) {
-                            values.add(this.construct(resultSet));
-                        }
-                    } catch (final SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-                case NOT_EQUALS -> {
-                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " != ?")) {
-                        if (value instanceof UUID) {
-                            statement.setString(1, value.toString());
-                        } else {
+                    case GREATER_THAN -> {
+                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " > ?")) {
                             statement.setObject(1, value);
+                            final ResultSet resultSet = statement.executeQuery();
+                            while (resultSet.next()) {
+                                values.add(this.construct(resultSet));
+                            }
+                            resultSet.close();
+                        } catch (final SQLException e) {
+                            e.printStackTrace();
                         }
-                        final ResultSet resultSet = statement.executeQuery();
-                        while (resultSet.next()) {
-                            values.add(this.construct(resultSet));
+                    }
+                    case LESS_THAN -> {
+                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " < ?")) {
+                            statement.setObject(1, value);
+                            final ResultSet resultSet = statement.executeQuery();
+                            while (resultSet.next()) {
+                                values.add(this.construct(resultSet));
+                            }
+                            resultSet.close();
+                        } catch (final SQLException e) {
+                            e.printStackTrace();
                         }
-                    } catch (final SQLException e) {
-                        e.printStackTrace();
+                    }
+                    case GREATER_THAN_OR_EQUAL_TO -> {
+                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " >= ?")) {
+                            statement.setObject(1, value);
+                            final ResultSet resultSet = statement.executeQuery();
+                            while (resultSet.next()) {
+                                values.add(this.construct(resultSet));
+                            }
+                            resultSet.close();
+                        } catch (final SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    case LESS_THAN_OR_EQUAL_TO -> {
+                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " <= ?")) {
+                            statement.setObject(1, value);
+                            final ResultSet resultSet = statement.executeQuery();
+                            while (resultSet.next()) {
+                                values.add(this.construct(resultSet));
+                            }
+                            resultSet.close();
+                        } catch (final SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    case IN -> {
+                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " IN (?)")) {
+                            statement.setObject(1, value);
+                            final ResultSet resultSet = statement.executeQuery();
+                            while (resultSet.next()) {
+                                values.add(this.construct(resultSet));
+                            }
+                            resultSet.close();
+                        } catch (final SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    case NOT_EQUALS -> {
+                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " != ?")) {
+                            if (value instanceof UUID) {
+                                statement.setString(1, value.toString());
+                            } else {
+                                statement.setObject(1, value);
+                            }
+                            final ResultSet resultSet = statement.executeQuery();
+                            while (resultSet.next()) {
+                                values.add(this.construct(resultSet));
+                            }
+                            resultSet.close();
+                        } catch (final SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    case NOT_CONTAINS -> {
+                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " NOT LIKE ?")) {
+                            statement.setObject(1, "%" + value + "%");
+                            final ResultSet resultSet = statement.executeQuery();
+                            while (resultSet.next()) {
+                                values.add(this.construct(resultSet));
+                            }
+                            resultSet.close();
+                        } catch (final SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    case NOT_STARTS_WITH -> {
+                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " NOT LIKE ?")) {
+                            statement.setObject(1, value + "%");
+                            final ResultSet resultSet = statement.executeQuery();
+                            while (resultSet.next()) {
+                                values.add(this.construct(resultSet));
+                            }
+                            resultSet.close();
+                        } catch (final SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    case NOT_ENDS_WITH -> {
+                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " NOT LIKE ?")) {
+                            statement.setObject(1, "%" + value);
+                            final ResultSet resultSet = statement.executeQuery();
+                            while (resultSet.next()) {
+                                values.add(this.construct(resultSet));
+                            }
+                            resultSet.close();
+                        } catch (final SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    case NOT_IN -> {
+                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " NOT IN (?)")) {
+                            statement.setObject(1, value);
+                            final ResultSet resultSet = statement.executeQuery();
+                            while (resultSet.next()) {
+                                values.add(this.construct(resultSet));
+                            }
+                            resultSet.close();
+                        } catch (final SQLException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-                case NOT_CONTAINS -> {
-                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " NOT LIKE ?")) {
-                        statement.setObject(1, "%" + value + "%");
-                        final ResultSet resultSet = statement.executeQuery();
-                        while (resultSet.next()) {
-                            values.add(this.construct(resultSet));
-                        }
-                    } catch (final SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-                case NOT_STARTS_WITH -> {
-                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " NOT LIKE ?")) {
-                        statement.setObject(1, value + "%");
-                        final ResultSet resultSet = statement.executeQuery();
-                        while (resultSet.next()) {
-                            values.add(this.construct(resultSet));
-                        }
-                    } catch (final SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-                case NOT_ENDS_WITH -> {
-                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " NOT LIKE ?")) {
-                        statement.setObject(1, "%" + value);
-                        final ResultSet resultSet = statement.executeQuery();
-                        while (resultSet.next()) {
-                            values.add(this.construct(resultSet));
-                        }
-                    } catch (final SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-                case NOT_IN -> {
-                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " NOT IN (?)")) {
-                        statement.setObject(1, value);
-                        final ResultSet resultSet = statement.executeQuery();
-                        while (resultSet.next()) {
-                            values.add(this.construct(resultSet));
-                        }
-                    } catch (final SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
+            } catch (final SQLException e) {
+                e.printStackTrace();
             }
             return values;
         });
@@ -249,22 +273,6 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
     @Override
     public CompletableFuture<V> getFirst(String field, Object value, FilterType filterType) {
         return CompletableFuture.supplyAsync(() -> {
-//            try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " = ?")) {
-//
-//                if (value instanceof UUID) {
-//                    statement.setString(1, value.toString());
-//                } else {
-//                    statement.setObject(1, value);
-//                }
-//
-//                final ResultSet resultSet = statement.executeQuery();
-//                if (resultSet.next()) {
-//                    return this.construct(resultSet);
-//                }
-//            } catch (final SQLException e) {
-//                e.printStackTrace();
-//            }
-//            return null;
             return this.get(field, value, filterType, SortingType.NONE).join().stream().findFirst().orElse(null);
         });
     }
@@ -322,44 +330,38 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
     public CompletableFuture<Collection<V>> allValues() {
         return CompletableFuture.supplyAsync(() -> {
             final List<V> values = new ArrayList<>();
-            try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table)) {
-                final ResultSet resultSet = statement.executeQuery();
-                while (resultSet.next()) {
-                    values.add(this.construct(resultSet));
+            try (final Connection connection = this.ds.getConnection()) {
+                try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table)) {
+                    final ResultSet resultSet = statement.executeQuery();
+                    while (resultSet.next()) {
+                        values.add(this.construct(resultSet));
+                    }
+                } catch (final SQLException e) {
+                    e.printStackTrace();
                 }
-            } catch (final SQLException e) {
-                e.printStackTrace();
+                return values;
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
-            return values;
         });
     }
 
     private CompletableFuture<ResultSet> query(final String query, final UnsafeConsumer<PreparedStatement> statement, final UnsafeConsumer<ResultSet> result) {
         return CompletableFuture.supplyAsync(() -> {
-            try {
-                return this.ds.getConnection().prepareStatement(query);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+            try (final Connection connection = this.ds.getConnection()) {
+                try (final PreparedStatement prepared = connection.prepareStatement(query)) {
+                    statement.accept(prepared);
+                    final ResultSet resultSet = prepared.executeQuery();
+                    result.accept(resultSet);
+                    return resultSet;
+                } catch (final SQLException e) {
+                    e.printStackTrace();
+                }
+            } catch (final SQLException e) {
+                e.printStackTrace();
             }
-        }).whenCompleteAsync((prepared, exception) -> {
-            if (exception != null) {
-                exception.printStackTrace();
-                return;
-            }
-            statement.accept(prepared);
-        }).thenApply(prepared -> {
-            try {
-                return prepared.executeQuery();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        }).whenCompleteAsync((set, exception) -> {
-            if (exception != null) {
-                exception.printStackTrace();
-                return;
-            }
-            result.accept(set);
-        }).toCompletableFuture();
+            return null;
+        });
     }
 
     private CompletableFuture<ResultSet> query(final String query, final UnsafeConsumer<ResultSet> result) {
@@ -373,9 +375,13 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
     }
 
     private void execute(final String statement, final UnsafeConsumer<PreparedStatement> consumer) {
-        try (final PreparedStatement prepared = this.ds.getConnection().prepareStatement(statement)) {
-            consumer.accept(prepared);
-            prepared.execute();
+        try (final Connection connection = this.ds.getConnection()) {
+            try (final PreparedStatement prepared = connection.prepareStatement(statement)) {
+                consumer.accept(prepared);
+                prepared.execute();
+            } catch (final SQLException e) {
+                e.printStackTrace();
+            }
         } catch (final SQLException e) {
             e.printStackTrace();
         }
@@ -407,6 +413,8 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
                 } catch (SQLException e) {
                     this.addColumn(name, type);
                 }
+
+                resultSet.close();
             });
         }
     }
@@ -445,10 +453,11 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
                 builder.append(" PRIMARY KEY");
             }
 
-            if (index+1 != fields.size()) {
+            index++;
+
+            if (index != fields.size()) {
                 builder.append(", ");
             }
-            index++;
         }
         builder.append(") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;");
 
