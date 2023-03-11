@@ -556,17 +556,18 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
     private String getType(Class<?> type) {
         return switch (type.getName()) {
             case "java.lang.String" -> "VARCHAR(255)";
-            case "java.lang.Integer" -> "INT";
-            case "java.lang.Long" -> "BIGINT";
-            case "java.lang.Boolean" -> "BOOLEAN";
-            case "java.lang.Double" -> "DOUBLE";
-            case "java.lang.Float" -> "FLOAT";
-            case "java.lang.Short" -> "SMALLINT";
-            case "java.lang.Byte" -> "TINYINT";
-            case "java.lang.Character" -> "CHAR";
+            case "java.lang.Integer", "int" -> "INT";
+            case "java.lang.Long", "long" -> "BIGINT";
+            case "java.lang.Boolean", "boolean" -> "BOOLEAN";
+            case "java.lang.Double", "double" -> "DOUBLE";
+            case "java.lang.Float", "float" -> "FLOAT";
+            case "java.lang.Short", "short" -> "SMALLINT";
+            case "java.lang.Byte", "byte" -> "TINYINT";
+            case "java.lang.Character", "char" -> "CHAR";
             case "java.lang.Object" -> "VARCHAR(255)";
             case "java.util.UUID" -> "VARCHAR(36)";
             default -> "VARCHAR(255)";
         };
     }
+
 }
