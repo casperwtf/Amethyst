@@ -48,6 +48,13 @@ public class AmethystPaper extends AmethystPlugin implements Listener {
     @Getter private final NamespacedKey playerPlacedBlockKey = new NamespacedKey(this, "PLAYER_PLACED_BLOCK");
     @Getter private YamlDocument amethystConfig;
 
+    public AmethystPaper() {
+        super();
+
+        DependencyManager dependencyManager = new DependencyManager(this);
+        dependencyManager.loadDependencies();
+    }
+
     @Override
     public void disable() {
         EconomyManager.disable();
@@ -58,8 +65,7 @@ public class AmethystPaper extends AmethystPlugin implements Listener {
 
     @Override
     public void load() {
-        DependencyManager dependencyManager = new DependencyManager(this);
-        dependencyManager.loadDependencies();
+
     }
 
     @Override

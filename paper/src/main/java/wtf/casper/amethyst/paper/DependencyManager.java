@@ -3,6 +3,7 @@ package wtf.casper.amethyst.paper;
 import com.google.common.collect.Lists;
 import net.byteflux.libby.BukkitLibraryManager;
 import net.byteflux.libby.Library;
+import org.reactivestreams.Publisher;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -50,7 +51,8 @@ public class DependencyManager {
 //                this.getLibrary("me{}gamercoder215", "mobchip-bukkit", "1.8.1-SNAPSHOT", "me{}gamercoder215{}mobchip", "wtf{}casper{}amethyst{}libs{}mobchip"),
                 this.getLibrary("org{}mongodb", "mongo-java-driver", "3.12.11", "", ""),
                 this.getLibrary("io{}lettuce", "lettuce-core", "6.2.3.RELEASE", "io{}lettuce{}core", "wtf{}casper{}amethyst{}libs{}lettuce"),
-                this.getLibrary("io{}projectreactor", "reactor-core", "3.5.2", "", ""),
+                this.getLibrary("io{}projectreactor", "reactor-core", "3.5.3", "", ""),
+                this.getLibrary("org{}reactivestreams", "reactive-streams", "1.0.4", "", ""),
                 this.getLibrary("com{}github{}Redempt", "Crunch", "1.0", "", ""),
                 this.getLibrary("org{}quartz-scheduler", "quartz", "2.3.2", "", ""),
                 this.getLibrary("com{}github{}ben-manes{}caffeine", "caffeine", "3.1.5", "", ""),
