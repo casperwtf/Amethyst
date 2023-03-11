@@ -49,7 +49,6 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
         this.ds.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database + "?allowPublicKeyRetrieval=true&autoReconnect=true&useSSL=false");
         this.ds.addDataSourceProperty("user", username);
         this.ds.addDataSourceProperty("password", password);
-        this.ds.setAutoCommit(false);
         this.execute(createTableFromObject());
         this.scanForMissingColumns();
     }
