@@ -51,7 +51,7 @@
                         <configuration>
                             <relocations>
                                 <relocation>
-                                    <pattern>de.themoep.minedown.</pattern>
+                                    <pattern>de.themoep.minedown</pattern>
                                     <shadedPattern>wtf.casper.amethyst.libs.minedown</shadedPattern>
                                 </relocation>
                                 <relocation>
@@ -70,19 +70,12 @@
                                     <pattern>com.jeff_media.customblockdata</pattern>
                                     <shadedPattern>wtf.casper.amethyst.libs.customblockdata</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>net.byteflux.libby</pattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.libby</shadedPattern>
+                                </relocation>
                             </relocations>
                             <filters>
-                                <filter>
-                                    <artifact>wtf.casper.amethyst:standalone</artifact>
-                                    <excludes>
-                                        <exclude>org/bson/**</exclude>
-                                        <exclude>org/bson/**</exclude>
-                                        <exclude>reactor/**</exclude>
-                                        <exclude>com/mongodb/**</exclude>
-                                        <exclude>com/google/**</exclude>
-                                        <exclude>org/reflections/**</exclude>
-                                    </excludes>
-                                </filter>
                                 <filter>
                                     <artifact>*:*</artifact>
                                     <excludes>
@@ -90,6 +83,19 @@
                                         <exclude>META-INF/*.DSA</exclude>
                                         <exclude>META-INF/*.RSA</exclude>
                                         <exclude>META-INF/maven/**</exclude>
+                                        <exclude>org/**</exclude>
+                                        <exclude>dev/**</exclude>
+                                        <exclude>me/**</exclude>
+                                        <exclude>reactor/**</exclude>
+                                        <exclude>com/**</exclude>
+                                        <exclude>io/**</exclude>
+                                        <exclude>javassist/**</exclude>
+                                        <exclude>javax/**</exclude>
+                                        <exclude>redempt/**</exclude>
+                                        <exclude>wtf/casper/amethyst/libs/google/**</exclude>
+                                        <exclude>wtf/casper/amethyst/libs/hikari/**</exclude>
+                                        <exclude>wtf/casper/amethyst/libs/boostedyaml/**</exclude>
+                                        <exclude>wtf/casper/amethyst/libs/lettuce/**</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
@@ -131,39 +137,38 @@
             <groupId>dev.dejvokep</groupId>
             <artifactId>boosted-yaml</artifactId>
             <version>1.3</version>
-            <scope>compile</scope>
-            <optional>true</optional>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.github.rysefoxx.inventory</groupId>
             <artifactId>RyseInventory-Plugin</artifactId>
             <version>1.5.7</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>de.themoep</groupId>
             <artifactId>minedown-adventure</artifactId>
             <version>1.7.1-SNAPSHOT</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.chubbyduck1</groupId>
             <artifactId>HologramBridge</artifactId>
             <version>1.1.0</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.10.1</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>me.gamercoder215</groupId>
-            <artifactId>mobchip-bukkit</artifactId>
-            <version>1.8.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>me.gamercoder215</groupId>-->
+<!--            <artifactId>mobchip-bukkit</artifactId>-->
+<!--            <version>1.8.1-SNAPSHOT</version>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>dev.rosewood</groupId>
             <artifactId>rosestacker</artifactId>
@@ -268,19 +273,25 @@
             <groupId>com.jeff_media</groupId>
             <artifactId>CustomBlockData</artifactId>
             <version>2.1.0</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-api</artifactId>
             <version>4.12.0</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-bukkit</artifactId>
             <version>7.2.7</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.byteflux</groupId>
+            <artifactId>libby-bukkit</artifactId>
+            <version>1.1.5</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

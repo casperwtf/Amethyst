@@ -1,6 +1,7 @@
 package wtf.casper.amethyst.paper;
 
 import com.jeff_media.customblockdata.CustomBlockData;
+import dev.dejvokep.boostedyaml.YamlDocument;
 import gg.optimalgames.hologrambridge.HologramBridge;
 import io.github.rysefoxx.inventory.plugin.pagination.InventoryManager;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 import wtf.casper.amethyst.core.AmethystCore;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.core.utils.DiscordWebhook;
@@ -44,14 +46,28 @@ public class AmethystPaper extends AmethystPlugin implements Listener {
     @Getter private static AmethystPaper instance = null;
     @Getter private static Filter filter;
     @Getter private final NamespacedKey playerPlacedBlockKey = new NamespacedKey(this, "PLAYER_PLACED_BLOCK");
+    @Getter private YamlDocument amethystConfig;
+
+    @Override
+    public void disable() {
+        EconomyManager.disable();
+        VanishManager.disable();
+        CombatManager.disable();
+        ProtectionManager.disable();
+    }
+
+    @Override
+    public void load() {
+        DependencyManager dependencyManager = new DependencyManager(this);
+        dependencyManager.loadDependencies();
+    }
 
     @Override
     public void enable() {
-        saveDefaultConfig();
-        saveConfig();
+
+        this.amethystConfig = getYamlDocument("amethyst-config.yml");
 
         CustomBlockData.registerListener(this);
-
         instance = this;
 
         filter = record -> {
@@ -156,22 +172,15 @@ public class AmethystPaper extends AmethystPlugin implements Listener {
         if (getYamlConfig().getBoolean("debug", false)) {
             AmethystLogger.debug(
                     "Debug mode is enabled, this will cause a lot of spam in the console.",
-                    "Please disable debug mode in the config.yml if you do not need it."
+                    "Please disable debug mode in the amethyst-config.yml if you do not need it."
             );
         }
     }
 
+    @NotNull
     @Override
-    public void disable() {
-        EconomyManager.disable();
-        VanishManager.disable();
-        CombatManager.disable();
-        ProtectionManager.disable();
-    }
-
-    @Override
-    public void load() {
-
+    public YamlDocument getYamlConfig() {
+        return amethystConfig;
     }
 
     public InventoryManager getInventoryManager(JavaPlugin plugin) {
