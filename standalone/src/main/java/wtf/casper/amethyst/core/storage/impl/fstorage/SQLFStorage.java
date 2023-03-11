@@ -392,7 +392,7 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
         this.execute("ALTER TABLE " + this.table + " ADD " + column + " " + type + ";");
     }
 
-    /*
+    /**
      * Will scan the class for fields and add them to the database if they don't exist
      * */
     private void scanForMissingColumns() {
@@ -465,7 +465,7 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
         return builder.toString();
     }
 
-    /*
+    /**
      * This takes an SQL Result Set and parses it into an object
      * */
     @SneakyThrows
@@ -494,7 +494,7 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
         return value;
     }
 
-    /*
+    /**
      * Generates an SQL String for inserting a value into the database.
      * */
     private String getValues(V value) {
@@ -543,7 +543,7 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
         return builder.toString();
     }
 
-    /*
+    /**
      * Generates an SQL String for the columns associated with a value class.
      * */
     private String getColumns() {
@@ -562,7 +562,7 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
     }
 
 
-    /*
+    /**
      * Converts a Java class to an SQL type.
      * */
     private String getType(Class<?> type) {
