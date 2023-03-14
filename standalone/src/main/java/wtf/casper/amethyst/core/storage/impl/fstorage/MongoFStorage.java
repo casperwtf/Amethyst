@@ -88,14 +88,7 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
             List<Document> into = getCollection().find(filter).into(new ArrayList<>());
 
             if (!cache.asMap().isEmpty()) {
-                cache.asMap().values().stream().filter(v -> {
-                    try {
-                        Object o = v.getClass().getField(field).get(v);
-                        return filterType.passes(o, value);
-                    } catch (NoSuchFieldException | IllegalAccessException e) {
-                        return false;
-                    }
-                }).forEach(collection::add);
+                cache.asMap().values().stream().filter(v -> filterType.passes(v, field, value)).forEach(collection::add);
 
                 if (!collection.isEmpty()) {
                     return collection;
@@ -136,14 +129,7 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
         return CompletableFuture.supplyAsync(() -> {
             if (!cache.asMap().isEmpty()) {
                 for (V v : cache.asMap().values()) {
-                    try {
-                        Object o = v.getClass().getField(field).get(v);
-                        if (filterType.passes(o, value)) {
-                            return v;
-                        }
-                    } catch (NoSuchFieldException | IllegalAccessException e) {
-                        return null;
-                    }
+                    if (filterType.passes(v, field, value)) return v;
                 }
             }
 
@@ -158,27 +144,6 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
             cache.put((K) document.get(idFieldName), obj);
             return obj;
         });
-//            if (!cache.asMap().isEmpty()){
-//                for (V v : cache.asMap().values()) {
-//                    try {
-//                        if (v.getClass().getField(field).get(v).equals(value)) {
-//                            return v;
-//                        }
-//                    } catch (NoSuchFieldException | IllegalAccessException e) {
-//                        return null;
-//                    }
-//                }
-//            }
-//
-//            Document document = getCollection().find(new Document(field, value)).first();
-//
-//            if (document == null) {
-//                return null;
-//            }
-//
-//            V obj = AmethystCore.getGson().fromJson(document.toJson(AmethystCore.getJsonWriterSettings()), type);
-//            cache.put((K) document.get(idFieldName), obj);
-//            return obj;
     }
 
     @Override

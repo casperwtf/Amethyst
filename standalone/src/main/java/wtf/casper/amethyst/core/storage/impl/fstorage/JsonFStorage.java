@@ -8,6 +8,7 @@ import wtf.casper.amethyst.core.AmethystCore;
 import wtf.casper.amethyst.core.storage.ConstructableValue;
 import wtf.casper.amethyst.core.storage.FieldStorage;
 import wtf.casper.amethyst.core.storage.id.utils.IdUtils;
+import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.core.utils.ReflectionUtil;
 
 import java.io.File;
@@ -117,42 +118,7 @@ public abstract class JsonFStorage<K, V> implements FieldStorage<K, V>, Construc
     private Collection<V> filter(final Collection<V> values, final String field, final Object value, FilterType filterType) {
         List<V> list = new ArrayList<>();
         for (final V v : values) {
-            Object privateField = ReflectionUtil.getPrivateField(v, field);
-            if (privateField == null) continue;
-
-            if (privateField instanceof Collection) {
-                for (final Object o : (Collection<?>) privateField) {
-                    if (filterType.passes(value, o)) {
-                        list.add(v);
-                    }
-                }
-                continue;
-            }
-
-            if (privateField.getClass().isArray()) {
-                for (int i = 0; i < Array.getLength(privateField); i++) {
-                    if (filterType.passes(value, Array.get(privateField, i))) {
-                        list.add(v);
-                    }
-                }
-                continue;
-            }
-
-            if (privateField instanceof Map<?,?>) {
-                ((Map<?, ?>) privateField).forEach((o, o2) -> {
-                    if (filterType.passes(value, o2)) {
-                        list.add(v);
-                        return;
-                    }
-
-                    if (filterType.passes(value, o)) {
-                        list.add(v);
-                    }
-                });
-                continue;
-            }
-
-            if (filterType.passes(value, privateField)) {
+            if (filterType.passes(v, field, value)) {
                 list.add(v);
             }
         }
@@ -162,40 +128,7 @@ public abstract class JsonFStorage<K, V> implements FieldStorage<K, V>, Construc
     @Nullable
     private V filterFirst(final Collection<V> values, final String field, final Object value, FilterType filterType) {
         for (final V v : values) {
-            Object privateField = ReflectionUtil.getPrivateField(v, field);
-
-            if (privateField == null) continue;
-
-            if (privateField instanceof Collection) {
-                for (final Object o : (Collection<?>) privateField) {
-                    if (filterType.passes(value, o)) {
-                        return v;
-                    }
-                }
-                continue;
-            }
-
-            if (privateField.getClass().isArray()) {
-                for (int i = 0; i < Array.getLength(privateField); i++) {
-                    if (filterType.passes(value, Array.get(privateField, i))) {
-                        return v;
-                    }
-                }
-                continue;
-            }
-
-            if (privateField instanceof Map<?,?>) {
-                for (final Object o : ((Map<?,?>) privateField).values()) {
-                    if (filterType.passes(value, o)) {
-                        return v;
-                    }
-                }
-                continue;
-            }
-
-            if (filterType.passes(value, privateField)) {
-                return v;
-            }
+            if (filterType.passes(v, field, value)) return v;
         }
         return null;
     }

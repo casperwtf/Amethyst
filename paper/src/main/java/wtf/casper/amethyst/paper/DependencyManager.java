@@ -57,7 +57,7 @@ public class DependencyManager {
                 this.getLibrary("org{}quartz-scheduler", "quartz", "2.3.2", "", ""),
                 this.getLibrary("com{}github{}ben-manes{}caffeine", "caffeine", "3.1.5", "", ""),
                 this.getLibrary("org{}reflections", "reflections", "0.10.2", "", ""),
-                this.getLibrary("com{}zaxxer", "HikariCP", "5.0.1", "", ""),
+                this.getLibrary("com{}zaxxer", "HikariCP", "5.0.1", "com{}zaxxer.hikari", "wtf{}casper{}amethyst{}libs{}hikari"),
                 this.getLibrary("com{}jeff_media", "CustomBlockData", "2.2.0", "com{}jeff_media{}customblockdata", "wtf{}casper{}amethyst{}libs{}customblockdata")
         );
         for (Library library : libraries) {

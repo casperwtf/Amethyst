@@ -53,7 +53,7 @@
                             <relocations>
                                 <relocation>
                                     <pattern>de.themoep.minedown</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.minedownadventure</shadedPattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.minedown</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>fr.mrmicky.fastboard</pattern>
