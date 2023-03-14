@@ -43,7 +43,6 @@ public abstract class StatelessSQLFStorage<K, V> implements ConstructableValue<K
         this.ds.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database + "?allowPublicKeyRetrieval=true&autoReconnect=true&useSSL=false");
         this.ds.addDataSourceProperty("user", username);
         this.ds.addDataSourceProperty("password", password);
-        this.ds.setAutoCommit(false);
         this.execute(createTableFromObject());
         this.scanForMissingColumns();
     }
@@ -398,7 +397,7 @@ public abstract class StatelessSQLFStorage<K, V> implements ConstructableValue<K
                 type = "VARCHAR(255)";
             }
 
-            builder.append(name).append(" ").append(type);
+            builder.append("`" + name + "`").append(" ").append(type);
             if (name.equals(idName)) {
                 builder.append(" PRIMARY KEY");
             }
@@ -408,6 +407,7 @@ public abstract class StatelessSQLFStorage<K, V> implements ConstructableValue<K
             }
             index++;
         }
+        System.out.println(index);
         builder.append(") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;");
 
         AmethystLogger.debug("Generated SQL: " + builder);
