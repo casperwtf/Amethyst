@@ -2,11 +2,13 @@ package wtf.casper.amethyst.core.storage;
 
 import org.jetbrains.annotations.NotNull;
 import wtf.casper.amethyst.core.obj.Pair;
+import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.core.utils.ReflectionUtil;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public interface StatelessFieldStorage<K, V> {
 
@@ -193,41 +195,93 @@ public interface StatelessFieldStorage<K, V> {
             if (values.isEmpty() || this == NONE) {
                 return values;
             }
+
+            values = new ArrayList<>(values);
+
+            // Get the first value and check if the field exists.
             V next = values.iterator().next();
             Optional<Object> fieldValue = ReflectionUtil.getFieldValue(next, field);
             if (fieldValue.isEmpty()) {
                 throw new IllegalArgumentException("Field " + field + " does not exist in " + next.getClass().getSimpleName());
             }
 
+            // Check if the field is of a valid type for sorting.
             final Object o = fieldValue.get();
-            if (!isApplicable(o.getClass())) {
+            if (!isApplicable(o.getClass()) && !(o instanceof Map<?, ?>)) {
                 throw new IllegalArgumentException("Field " + field + " is not of a valid type for sorting.");
             }
 
-            final List<V> list = new ArrayList<>(values);
-            list.sort((o1, o2) -> {
-                final Optional<Object> optional1 = ReflectionUtil.getFieldValue(o1, field);
-                final Optional<Object> optional2 = ReflectionUtil.getFieldValue(o2, field);
-                if (optional1.isEmpty() || optional2.isEmpty()) {
-                    return 0;
+            // Sort the values if map
+            if (o instanceof Map<?, ?>) {
+                // check if map key and value are sortable
+                Iterator<? extends Map.Entry<?, ?>> entryIterator = ((Map<?, ?>) o).entrySet().iterator();
+                Map.Entry<?, ?> entry = entryIterator.next();
+                if (!isApplicable(entry.getKey().getClass()) || !isApplicable(entry.getValue().getClass())) {
+                    throw new IllegalArgumentException("Field " + field + " is not of a valid type for sorting.");
                 }
-                final Object o4 = optional1.get();
-                final Object o5 = optional2.get();
-                if (o instanceof String) {
-                    return ((String) o4).compareTo((String) o5);
+
+                // we prefer to sort by value because the key is usually the id
+                boolean useValue = isApplicable(entry.getValue().getClass());
+
+                if (useValue) {
+                    values = values.stream().sorted((o1, o2) -> {
+                        Object o1Value = ((Map<?, ?>) ReflectionUtil.getFieldValue(o1, field).get()).values().iterator().next();
+                        Object o2Value = ((Map<?, ?>) ReflectionUtil.getFieldValue(o2, field).get()).values().iterator().next();
+
+                        if (o1Value instanceof Comparable) {
+                            return ((Comparable) o1Value).compareTo(o2Value);
+                        }
+
+                        if (o1Value instanceof Number) {
+                            return Double.compare(((Number) o1Value).doubleValue(), ((Number) o2Value).doubleValue());
+                        }
+
+                        return o1Value.toString().compareTo(o2Value.toString());
+                    }).collect(Collectors.toList());
+                } else {
+                    values = values.stream().sorted((o1, o2) -> {
+                        Object o1Value = ((Map<?, ?>) ReflectionUtil.getFieldValue(o1, field).get()).keySet().iterator().next();
+                        Object o2Value = ((Map<?, ?>) ReflectionUtil.getFieldValue(o2, field).get()).keySet().iterator().next();
+
+                        if (o1Value instanceof Comparable) {
+                            return ((Comparable) o1Value).compareTo(o2Value);
+                        }
+
+                        if (o1Value instanceof Number) {
+                            return Double.compare(((Number) o1Value).doubleValue(), ((Number) o2Value).doubleValue());
+                        }
+
+                        return o1Value.toString().compareTo(o2Value.toString());
+                    }).collect(Collectors.toList());
                 }
-                if (o instanceof Number) {
-                    return ((Number) o4).doubleValue() > ((Number) o5).doubleValue() ? 1 : -1;
+
+                if (this == DESCENDING) {
+                    Collections.reverse((List<?>) values);
                 }
-                if (o instanceof Boolean) {
-                    return ((Boolean) o4).compareTo((Boolean) o5);
-                }
-                return 0;
-            });
-            if (this == DESCENDING) {
-                Collections.reverse(list);
+
+                return values;
             }
-            return list;
+
+            values = values.stream().sorted((o1, o2) -> {
+                Object o1Value = ReflectionUtil.getFieldValue(o1, field).get();
+                Object o2Value = ReflectionUtil.getFieldValue(o2, field).get();
+
+                if (o1Value instanceof Comparable) {
+                    return ((Comparable) o1Value).compareTo(o2Value);
+                }
+
+                if (o1Value instanceof Number) {
+                    return Double.compare(((Number) o1Value).doubleValue(), ((Number) o2Value).doubleValue());
+                }
+
+                return o1Value.toString().compareTo(o2Value.toString());
+            }).collect(Collectors.toList());
+
+            if (this == DESCENDING) {
+                Collections.reverse((List<?>) values);
+            }
+
+            return values;
         }
     }
 
@@ -258,7 +312,7 @@ public interface StatelessFieldStorage<K, V> {
         }
 
         public boolean isApplicable(@NotNull final Class<?> type) {
-            for (final Class<?> clazz : types) {
+            for (final Class<?> clazz : getTypes()) {
                 if (clazz.isAssignableFrom(type)) {
                     return true;
                 }
@@ -271,85 +325,103 @@ public interface StatelessFieldStorage<K, V> {
         }
 
         /**
-         * @param object the object to check.
+         * @param object the object we are checking.
+         * @param fieldName the name of the field we are checking.
          * @param value the value we are checking for.
          * */
-        public boolean passes(Object object, Object value) {
-            if (!isApplicable(object.getClass())) {
+        public boolean passes(Object object, String fieldName, Object value) {
+            if (value == null) {
+                return false;
+            }
+
+            Optional<Object> o = ReflectionUtil.getFieldValue(object, fieldName);
+            if (o.isEmpty()) {
+                return false;
+            }
+
+            Object field = o.get();
+            if (!isApplicable(field.getClass()) && !(field instanceof Collection) && !(field instanceof Map)) {
                 return false;
             }
 
             switch (this) {
                 case EQUALS -> {
-                    return object.equals(value);
+                    return field.equals(value);
                 }
                 case CONTAINS -> {
-                    return object.toString().contains(value.toString());
+                    return field.toString().contains(value.toString());
                 }
                 case STARTS_WITH -> {
-                    return object.toString().startsWith(value.toString());
+                    return field.toString().startsWith(value.toString());
                 }
                 case ENDS_WITH -> {
-                    return object.toString().endsWith(value.toString());
+                    return field.toString().endsWith(value.toString());
                 }
                 case GREATER_THAN -> {
-                    return ((Number) object).doubleValue() > ((Number) value).doubleValue();
+                    return ((Number) field).doubleValue() > ((Number) value).doubleValue();
                 }
                 case LESS_THAN -> {
-                    return ((Number) object).doubleValue() < ((Number) value).doubleValue();
+                    return ((Number) field).doubleValue() < ((Number) value).doubleValue();
                 }
                 case GREATER_THAN_OR_EQUAL_TO -> {
-                    return ((Number) object).doubleValue() >= ((Number) value).doubleValue();
+                    return ((Number) field).doubleValue() >= ((Number) value).doubleValue();
                 }
                 case LESS_THAN_OR_EQUAL_TO -> {
-                    return ((Number) object).doubleValue() <= ((Number) value).doubleValue();
+                    return ((Number) field).doubleValue() <= ((Number) value).doubleValue();
                 }
                 case IN -> {
-                    if ((value instanceof Collection)) {
-                        return ((Collection<?>) value).contains(object);
+                    if ((field instanceof Collection)) {
+                        return ((Collection<?>) field).contains(value);
                     }
-                    if (value.getClass().isArray()) {
-                        return Arrays.asList(value).contains(object);
+                    if (field.getClass().isArray()) {
+                        return Arrays.asList(field).contains(value);
                     }
-                    if (value instanceof Map<?, ?>) {
-                        return ((Map<?, ?>) value).containsKey(object) || ((Map<?, ?>) value).containsValue(object);
+                    if (field instanceof Map<?, ?>) {
+                        return ((Map<?, ?>) field).containsKey(value) || ((Map<?, ?>) field).containsValue(value);
                     }
                     return false;
                 }
                 case NOT_EQUALS -> {
-                    return !object.equals(value);
+                    return !field.equals(value);
                 }
                 case NOT_CONTAINS -> {
-                    return !object.toString().contains(value.toString());
+                    return !field.toString().contains(value.toString());
                 }
                 case NOT_STARTS_WITH -> {
-                    return !object.toString().startsWith(value.toString());
+                    return !field.toString().startsWith(value.toString());
                 }
                 case NOT_ENDS_WITH -> {
-                    return !object.toString().endsWith(value.toString());
+                    return !field.toString().endsWith(value.toString());
                 }
                 case NOT_GREATER_THAN -> {
-                    return !(((Number) object).doubleValue() > ((Number) value).doubleValue());
+                    return !(((Number) field).doubleValue() > ((Number) value).doubleValue());
                 }
                 case NOT_LESS_THAN -> {
-                    return !(((Number) object).doubleValue() < ((Number) value).doubleValue());
+                    return !(((Number) field).doubleValue() < ((Number) value).doubleValue());
                 }
                 case NOT_GREATER_THAN_OR_EQUAL_TO -> {
-                    return !(((Number) object).doubleValue() >= ((Number) value).doubleValue());
+                    return !(((Number) field).doubleValue() >= ((Number) value).doubleValue());
                 }
                 case NOT_LESS_THAN_OR_EQUAL_TO -> {
-                    return !(((Number) object).doubleValue() <= ((Number) value).doubleValue());
+                    return !(((Number) field).doubleValue() <= ((Number) value).doubleValue());
                 }
                 case NOT_IN -> {
-                    if (!(value instanceof Collection)) {
-                        return false;
+                    if ((value instanceof Collection)) {
+                        return !((Collection<?>) value).contains(field);
                     }
-                    return !(((Collection<?>) value).contains(object));
+                    if (value.getClass().isArray()) {
+                        return !Arrays.asList(value).contains(field);
+                    }
+                    if (value instanceof Map<?, ?>) {
+                        return !((Map<?, ?>) value).containsKey(field) && !((Map<?, ?>) value).containsValue(field);
+                    }
+                    return false;
                 }
                 default -> {
                     return false;
                 }
             }
+
         }
     }
 }

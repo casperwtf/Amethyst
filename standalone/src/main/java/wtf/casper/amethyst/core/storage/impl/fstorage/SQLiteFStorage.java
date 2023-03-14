@@ -482,30 +482,6 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
     }
 
     /*
-     * Generates an SQL String for inserting a value into the database.
-     * */
-    private String getValues(V value) {
-        final StringBuilder builder = new StringBuilder();
-        int i = 0;
-        Field[] fields = ReflectionUtil.getAllFields(valueClass);
-        for (final Field field : fields) {
-            if (field.isAnnotationPresent(Transient.class)) {
-                continue;
-            }
-            if (field.isAnnotationPresent(StorageSerialized.class)) {
-                builder.append("'").append(AmethystCore.getGson().toJson(ReflectionUtil.getPrivateField(value, field.getName()))).append("'");
-            } else {
-                builder.append("'").append(ReflectionUtil.getPrivateField(value, field.getName())).append("'");
-            }
-            if (i != fields.length - 1) {
-                builder.append(", ");
-            }
-            i++;
-        }
-        return builder.substring(0, builder.length() - 1);
-    }
-
-    /*
      * Generates an SQL String for the columns associated with a value class.
      * */
     private String getColumns() {
@@ -524,19 +500,53 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
      * Converts a Java class to an SQL type.
      * */
     private String getType(Class<?> type) {
-
         return switch (type.getName()) {
             case "java.lang.String" -> "VARCHAR(255)";
-            case "java.lang.Integer" -> "INT";
-            case "java.lang.Long" -> "BIGINT";
-            case "java.lang.Boolean" -> "BOOLEAN";
-            case "java.lang.Double" -> "DOUBLE";
-            case "java.lang.Float" -> "FLOAT";
-            case "java.lang.Short" -> "SMALLINT";
-            case "java.lang.Byte" -> "TINYINT";
-            case "java.lang.Character" -> "CHAR";
-            case "java.lang.Object" -> "BLOB";
+            case "java.lang.Integer", "int" -> "INT";
+            case "java.lang.Long", "long" -> "BIGINT";
+            case "java.lang.Boolean", "boolean" -> "BOOLEAN";
+            case "java.lang.Double", "double" -> "DOUBLE";
+            case "java.lang.Float", "float" -> "FLOAT";
+            case "java.lang.Short", "short" -> "SMALLINT";
+            case "java.lang.Byte", "byte" -> "TINYINT";
+            case "java.lang.Character", "char" -> "CHAR";
+            case "java.util.UUID" -> "VARCHAR(36)";
             default -> "VARCHAR(255)";
         };
+    }
+
+    /*
+     * Generates an SQL String for inserting a value into the database.
+     * */
+    private String getValues(V value) {
+        final StringBuilder builder = new StringBuilder();
+        int i = 0;
+        Field[] fields = ReflectionUtil.getAllFields(valueClass);
+        for (final Field field : fields) {
+            if (field.isAnnotationPresent(Transient.class)) {
+                continue;
+            }
+            if (field.isAnnotationPresent(StorageSerialized.class)) {
+                builder.append("'").append(sanitize(AmethystCore.getGson().toJson(ReflectionUtil.getPrivateField(value, field.getName())))).append("'");
+            } else {
+                builder.append("'").append(sanitize(ReflectionUtil.getPrivateField(value, field.getName()))).append("'");
+            }
+            if (i != fields.length - 1) {
+                builder.append(", ");
+            }
+            i++;
+        }
+        return builder.substring(0, builder.length() - 1);
+    }
+
+    /**
+     * Sanitizes an object to be used in an SQL statement.
+     * This is to prevent SQL injection.
+     * */
+    private Object sanitize(Object object) {
+        if (object instanceof String) {
+            return ((String) object).replace("'", "''");
+        }
+        return object;
     }
 }

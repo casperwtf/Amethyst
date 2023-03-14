@@ -395,18 +395,6 @@ public class SerializableItem {
     }
 
     public boolean isSimilar(SerializableItem item) {
-        AmethystLogger.debug("--------------------");
-        AmethystLogger.debug("Type" + (item.getType() == this.getType()) + "");
-        AmethystLogger.debug("Name" + (Objects.equals(item.getName(), this.getName())) + "");
-        AmethystLogger.debug("Lore" + (Objects.equals(item.getLore(), this.getLore())) + "");
-        AmethystLogger.debug("Damage" + (item.getDamage() == this.getDamage()) + "");
-        AmethystLogger.debug("CMD" + (item.getCustomModelData() == this.getCustomModelData()) + "");
-        AmethystLogger.debug("Enchants" + (Objects.equals(item.getEnchantments(), this.getEnchantments())) + "");
-        AmethystLogger.debug("SkullProfile" + (Objects.equals(item.getSkullPlayerProfile(), this.getSkullPlayerProfile())) + "");
-        AmethystLogger.debug("SkullUser" + (Objects.equals(item.getSkullUser(), this.getSkullUser())) + "");
-        AmethystLogger.debug("Potion" + (Objects.equals(item.getPotionMeta(), this.getPotionMeta())) + "");
-        AmethystLogger.debug("NBTString" + (Objects.equals(item.getNbtDataString(), this.getNbtDataString())) + "");
-        AmethystLogger.debug("--------------------");
 
         return item.getType() == this.getType()
                 && Objects.equals(item.getName(), this.getName())

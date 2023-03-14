@@ -1,5 +1,7 @@
 package wtf.casper.amethyst.core.storage.impl.statelessfstorage;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
@@ -21,13 +23,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 public abstract class StatelessMariaDBStorage<K, V> implements ConstructableValue<K, V>, StatelessFieldStorage<K, V> {
-
     private final HikariDataSource ds;
     private final Class<K> keyClass;
     private final Class<V> valueClass;
-
     private final String table;
 
     public StatelessMariaDBStorage(final Class<K> keyClass, final Class<V> valueClass, final String table, final Credentials credentials) {
@@ -49,24 +50,183 @@ public abstract class StatelessMariaDBStorage<K, V> implements ConstructableValu
         this.execute(createTableFromObject());
         this.scanForMissingColumns();
     }
-
     @SneakyThrows
-    public CompletableFuture<Collection<V>> get(final String field, Object value) {
+    public CompletableFuture<Collection<V>> get(final String field, Object value, FilterType filterType, SortingType sortingType) {
         return CompletableFuture.supplyAsync(() -> {
             final List<V> values = new ArrayList<>();
-            try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " = ?")) {
-                statement.setObject(1, value);
-                final ResultSet resultSet = statement.executeQuery();
-                while (resultSet.next()) {
-                    values.add(this.construct(resultSet));
+            if (!filterType.isApplicable(value.getClass())) {
+                AmethystLogger.error("Filter type " + filterType.name() + " is not applicable to " + value.getClass().getSimpleName());
+                return values;
+            }
+
+            switch (filterType) {
+                case EQUALS -> {
+                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " = ?")) {
+                        if (value instanceof UUID) {
+                            statement.setString(1, value.toString());
+                        } else {
+                            statement.setObject(1, value);
+                        }
+
+                        final ResultSet resultSet = statement.executeQuery();
+                        while (resultSet.next()) {
+                            values.add(this.construct(resultSet));
+                        }
+                    } catch (final SQLException e) {
+                        e.printStackTrace();
+                    }
                 }
-            } catch (final SQLException e) {
-                e.printStackTrace();
+                case CONTAINS -> {
+                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " LIKE ?")) {
+                        statement.setObject(1, "%" + value + "%");
+                        final ResultSet resultSet = statement.executeQuery();
+                        while (resultSet.next()) {
+                            values.add(this.construct(resultSet));
+                        }
+                    } catch (final SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                case STARTS_WITH -> {
+                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " LIKE ?")) {
+                        statement.setObject(1, value + "%");
+                        final ResultSet resultSet = statement.executeQuery();
+                        while (resultSet.next()) {
+                            values.add(this.construct(resultSet));
+                        }
+                    } catch (final SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                case ENDS_WITH -> {
+                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " LIKE ?")) {
+                        statement.setObject(1, "%" + value);
+                        final ResultSet resultSet = statement.executeQuery();
+                        while (resultSet.next()) {
+                            values.add(this.construct(resultSet));
+                        }
+                    } catch (final SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                case GREATER_THAN -> {
+                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " > ?")) {
+                        statement.setObject(1, value);
+                        final ResultSet resultSet = statement.executeQuery();
+                        while (resultSet.next()) {
+                            values.add(this.construct(resultSet));
+                        }
+                    } catch (final SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                case LESS_THAN -> {
+                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " < ?")) {
+                        statement.setObject(1, value);
+                        final ResultSet resultSet = statement.executeQuery();
+                        while (resultSet.next()) {
+                            values.add(this.construct(resultSet));
+                        }
+                    } catch (final SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                case GREATER_THAN_OR_EQUAL_TO -> {
+                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " >= ?")) {
+                        statement.setObject(1, value);
+                        final ResultSet resultSet = statement.executeQuery();
+                        while (resultSet.next()) {
+                            values.add(this.construct(resultSet));
+                        }
+                    } catch (final SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                case LESS_THAN_OR_EQUAL_TO -> {
+                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " <= ?")) {
+                        statement.setObject(1, value);
+                        final ResultSet resultSet = statement.executeQuery();
+                        while (resultSet.next()) {
+                            values.add(this.construct(resultSet));
+                        }
+                    } catch (final SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                case IN -> {
+                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " IN (?)")) {
+                        statement.setObject(1, value);
+                        final ResultSet resultSet = statement.executeQuery();
+                        while (resultSet.next()) {
+                            values.add(this.construct(resultSet));
+                        }
+                    } catch (final SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                case NOT_EQUALS -> {
+                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " != ?")) {
+                        if (value instanceof UUID) {
+                            statement.setString(1, value.toString());
+                        } else {
+                            statement.setObject(1, value);
+                        }
+                        final ResultSet resultSet = statement.executeQuery();
+                        while (resultSet.next()) {
+                            values.add(this.construct(resultSet));
+                        }
+                    } catch (final SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                case NOT_CONTAINS -> {
+                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " NOT LIKE ?")) {
+                        statement.setObject(1, "%" + value + "%");
+                        final ResultSet resultSet = statement.executeQuery();
+                        while (resultSet.next()) {
+                            values.add(this.construct(resultSet));
+                        }
+                    } catch (final SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                case NOT_STARTS_WITH -> {
+                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " NOT LIKE ?")) {
+                        statement.setObject(1, value + "%");
+                        final ResultSet resultSet = statement.executeQuery();
+                        while (resultSet.next()) {
+                            values.add(this.construct(resultSet));
+                        }
+                    } catch (final SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                case NOT_ENDS_WITH -> {
+                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " NOT LIKE ?")) {
+                        statement.setObject(1, "%" + value);
+                        final ResultSet resultSet = statement.executeQuery();
+                        while (resultSet.next()) {
+                            values.add(this.construct(resultSet));
+                        }
+                    } catch (final SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                case NOT_IN -> {
+                    try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " NOT IN (?)")) {
+                        statement.setObject(1, value);
+                        final ResultSet resultSet = statement.executeQuery();
+                        while (resultSet.next()) {
+                            values.add(this.construct(resultSet));
+                        }
+                    } catch (final SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
             return values;
         });
     }
-
 
     @Override
     public CompletableFuture<V> get(K key) {
@@ -74,37 +234,9 @@ public abstract class StatelessMariaDBStorage<K, V> implements ConstructableValu
     }
 
     @Override
-    @NotNull
-    public CompletableFuture<V> getFirst(String field, Object value) {
+    public CompletableFuture<V> getFirst(String field, Object value, FilterType filterType) {
         return CompletableFuture.supplyAsync(() -> {
-            try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " = ?")) {
-                if (value instanceof UUID) {
-                    statement.setString(1, value.toString());
-                } else {
-                    statement.setObject(1, value);
-                }
-                final ResultSet resultSet = statement.executeQuery();
-                if (resultSet.next()) {
-                    return this.construct(resultSet);
-                }
-            } catch (final SQLException e) {
-                e.printStackTrace();
-            }
-            return null;
-        });
-    }
-
-    @Override
-    public CompletableFuture<Boolean> contains(String field, Object value) {
-        return CompletableFuture.supplyAsync(() -> {
-            try (final PreparedStatement statement = this.ds.getConnection().prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " = ?")) {
-                statement.setObject(1, value);
-                final ResultSet resultSet = statement.executeQuery();
-                return resultSet.next();
-            } catch (final SQLException e) {
-                e.printStackTrace();
-            }
-            return false;
+            return this.get(field, value, filterType, SortingType.NONE).join().stream().findFirst().orElse(null);
         });
     }
 
@@ -114,6 +246,7 @@ public abstract class StatelessMariaDBStorage<K, V> implements ConstructableValu
             Object id = IdUtils.getId(valueClass, value);
 
             if (id == null) {
+                AmethystLogger.error("Could not find id field for " + keyClass.getSimpleName());
                 return;
             }
 
@@ -134,13 +267,6 @@ public abstract class StatelessMariaDBStorage<K, V> implements ConstructableValu
             this.execute("DELETE FROM " + this.table + " WHERE " + field + " = ?;", statement -> {
                 statement.setString(1, IdUtils.getId(this.valueClass, value).toString());
             });
-        });
-    }
-
-    @Override
-    @SneakyThrows
-    public CompletableFuture<Void> write() {
-        return CompletableFuture.runAsync(() -> {
         });
     }
 
@@ -212,7 +338,7 @@ public abstract class StatelessMariaDBStorage<K, V> implements ConstructableValu
     private void execute(final String statement, final UnsafeConsumer<PreparedStatement> consumer) {
         try (final PreparedStatement prepared = this.ds.getConnection().prepareStatement(statement)) {
             consumer.accept(prepared);
-            prepared.executeUpdate();
+            prepared.execute();
         } catch (final SQLException e) {
             e.printStackTrace();
         }
@@ -318,30 +444,6 @@ public abstract class StatelessMariaDBStorage<K, V> implements ConstructableValu
     }
 
     /*
-     * Generates an SQL String for inserting a value into the database.
-     * */
-    private String getValues(V value) {
-        final StringBuilder builder = new StringBuilder();
-        int i = 0;
-        Field[] fields = ReflectionUtil.getAllFields(valueClass);
-        for (final Field field : fields) {
-            if (field.isAnnotationPresent(Transient.class)) {
-                continue;
-            }
-            if (field.isAnnotationPresent(StorageSerialized.class)) {
-                builder.append("'").append(AmethystCore.getGson().toJson(ReflectionUtil.getPrivateField(value, field.getName()))).append("'");
-            } else {
-                builder.append("'").append(ReflectionUtil.getPrivateField(value, field.getName())).append("'");
-            }
-            if (i != fields.length - 1) {
-                builder.append(", ");
-            }
-            i++;
-        }
-        return builder.substring(0, builder.length() - 1);
-    }
-
-    /*
      * Generates an SQL String for the columns associated with a value class.
      * */
     private String getColumns() {
@@ -355,59 +457,58 @@ public abstract class StatelessMariaDBStorage<K, V> implements ConstructableValu
         return builder.substring(0, builder.length() - 1);
     }
 
-    private boolean isFieldList(final String field) {
-        try {
-            Field classField = valueClass.getField(field);
-            return classField.getType().isAssignableFrom(Collection.class);
-        } catch (NoSuchFieldException e) {
-            return false;
-        }
-    }
 
     /*
      * Converts a Java class to an SQL type.
      * */
     private String getType(Class<?> type) {
-        String name;
-        switch (type.getName()) {
-            case "java.lang.String":
-                name = "VARCHAR(255)";
-                break;
-            case "java.lang.Integer":
-                name = "INT";
-                break;
-            case "java.lang.Long":
-                name = "BIGINT";
-                break;
-            case "java.lang.Boolean":
-                name = "BOOLEAN";
-                break;
-            case "java.lang.Double":
-                name = "DOUBLE";
-                break;
-            case "java.lang.Float":
-                name = "FLOAT";
-                break;
-            case "java.lang.Short":
-                name = "SMALLINT";
-                break;
-            case "java.lang.Byte":
-                name = "TINYINT";
-                break;
-            case "java.lang.Character":
-                name = "CHAR";
-                break;
-            case "java.lang.Object":
-                name = "BLOB";
-                break;
-            case "java.util.UUID":
-                name = "VARCHAR(36)";
-                break;
-            default:
-                name = "VARCHAR(255)";
-                break;
-        }
+        return switch (type.getName()) {
+            case "java.lang.String" -> "VARCHAR(255)";
+            case "java.lang.Integer", "int" -> "INT";
+            case "java.lang.Long", "long" -> "BIGINT";
+            case "java.lang.Boolean", "boolean" -> "BOOLEAN";
+            case "java.lang.Double", "double" -> "DOUBLE";
+            case "java.lang.Float", "float" -> "FLOAT";
+            case "java.lang.Short", "short" -> "SMALLINT";
+            case "java.lang.Byte", "byte" -> "TINYINT";
+            case "java.lang.Character", "char" -> "CHAR";
+            case "java.util.UUID" -> "VARCHAR(36)";
+            default -> "VARCHAR(255)";
+        };
+    }
 
-        return name;
+    /*
+     * Generates an SQL String for inserting a value into the database.
+     * */
+    private String getValues(V value) {
+        final StringBuilder builder = new StringBuilder();
+        int i = 0;
+        Field[] fields = ReflectionUtil.getAllFields(valueClass);
+        for (final Field field : fields) {
+            if (field.isAnnotationPresent(Transient.class)) {
+                continue;
+            }
+            if (field.isAnnotationPresent(StorageSerialized.class)) {
+                builder.append("'").append(sanitize(AmethystCore.getGson().toJson(ReflectionUtil.getPrivateField(value, field.getName())))).append("'");
+            } else {
+                builder.append("'").append(sanitize(ReflectionUtil.getPrivateField(value, field.getName()))).append("'");
+            }
+            if (i != fields.length - 1) {
+                builder.append(", ");
+            }
+            i++;
+        }
+        return builder.substring(0, builder.length() - 1);
+    }
+
+    /**
+     * Sanitizes an object to be used in an SQL statement.
+     * This is to prevent SQL injection.
+     * */
+    private Object sanitize(Object object) {
+        if (object instanceof String) {
+            return ((String) object).replace("'", "''");
+        }
+        return object;
     }
 }

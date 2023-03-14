@@ -17,6 +17,7 @@ import wtf.casper.amethyst.core.utils.ReflectionUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -259,12 +260,20 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
             } catch (final SQLException e) {
                 e.printStackTrace();
             }
+
+            for (V v : values) {
+                cache.put((K) IdUtils.getId(keyClass, v), v);
+            }
+
             return values;
         });
     }
 
     @Override
     public CompletableFuture<V> get(K key) {
+        if (cache.getIfPresent(key) != null) {
+            return CompletableFuture.completedFuture(cache.getIfPresent(key));
+        }
         return getFirst(IdUtils.getIdName(this.valueClass), key);
     }
 
@@ -298,6 +307,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
                 AmethystLogger.error("Could not find id field for " + keyClass.getSimpleName());
                 return;
             }
+            this.cache.invalidate((K) IdUtils.getId(this.valueClass, value));
             String field = idField.getName();
             this.execute("DELETE FROM " + this.table + " WHERE `" + field + "` = ?;", statement -> {
                 statement.setString(1, IdUtils.getId(this.valueClass, value).toString());
@@ -394,6 +404,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
      * Will scan the class for fields and add them to the database if they don't exist
      * */
     private void scanForMissingColumns() {
+
         List<Field> fields = Arrays.stream(this.valueClass.getDeclaredFields())
                 .filter(field -> !field.isAnnotationPresent(Transient.class))
                 .filter(field -> !Modifier.isTransient(field.getModifiers()))
@@ -456,6 +467,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
             if (index != fields.size()) {
                 builder.append(", ");
             }
+
         }
         builder.append(") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;");
 
@@ -490,33 +502,6 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
         }
 
         return value;
-    }
-
-    /**
-     * Generates an SQL String for inserting a value into the database.
-     * */
-    private String getValues(V value) {
-        final StringBuilder builder = new StringBuilder();
-        int i = 0;
-
-        List<Field> fields = Arrays.stream(this.valueClass.getDeclaredFields())
-                .filter(field -> !field.isAnnotationPresent(Transient.class))
-                .filter(field -> !Modifier.isTransient(field.getModifiers()))
-                .toList();
-
-        for (final Field field : fields) {
-            if (field.isAnnotationPresent(StorageSerialized.class)) {
-                builder.append("'").append(AmethystCore.getGson().toJson(ReflectionUtil.getPrivateField(value, field.getName()))).append("'");
-            } else {
-                builder.append("'").append(ReflectionUtil.getPrivateField(value, field.getName())).append("'");
-            }
-            if (i != fields.size() - 1) {
-                builder.append(", ");
-            }
-            i++;
-        }
-
-        return builder.toString();
     }
 
     private String getUpdateValues(V value) {
@@ -574,9 +559,46 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
             case "java.lang.Short", "short" -> "SMALLINT";
             case "java.lang.Byte", "byte" -> "TINYINT";
             case "java.lang.Character", "char" -> "CHAR";
-            case "java.lang.Object" -> "VARCHAR(255)";
             case "java.util.UUID" -> "VARCHAR(36)";
             default -> "VARCHAR(255)";
         };
+    }
+
+    /**
+     * Generates an SQL String for inserting a value into the database.
+     * */
+    private String getValues(V value) {
+        final StringBuilder builder = new StringBuilder();
+        int i = 0;
+
+        List<Field> fields = Arrays.stream(this.valueClass.getDeclaredFields())
+                .filter(field -> !field.isAnnotationPresent(Transient.class))
+                .filter(field -> !Modifier.isTransient(field.getModifiers()))
+                .toList();
+
+        for (final Field field : fields) {
+            if (field.isAnnotationPresent(StorageSerialized.class)) {
+                builder.append("'").append(AmethystCore.getGson().toJson(ReflectionUtil.getPrivateField(value, field.getName()))).append("'");
+            } else {
+                builder.append("'").append(ReflectionUtil.getPrivateField(value, field.getName())).append("'");
+            }
+            if (i != fields.size() - 1) {
+                builder.append(", ");
+            }
+            i++;
+        }
+
+        return builder.toString();
+    }
+
+    /**
+     * Sanitizes an object to be used in an SQL statement.
+     * This is to prevent SQL injection.
+     * */
+    private Object sanitize(Object object) {
+        if (object instanceof String) {
+            return ((String) object).replace("'", "''");
+        }
+        return object;
     }
 }
