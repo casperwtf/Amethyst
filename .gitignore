@@ -10,6 +10,7 @@
 /bungee/bungee.iml
 /common/common.iml
 /paper/paper.iml
+/paper-shaded/paper-shaded.iml
 common/target/
 
 paper/target/
