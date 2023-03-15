@@ -10,6 +10,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.core.utils.MathUtils;
 
 import javax.annotation.Nullable;
@@ -20,10 +21,12 @@ public class ItemConfigUtils {
     public static ItemBuilder getItemBuilder(Section section, @Nullable OfflinePlayer player, @Nullable PlaceholderReplacer replacer) {
 
         if (!section.contains("material")) {
+            AmethystLogger.error("Material is not defined in the config for "+ section.getRouteAsString());
             return null;
         }
 
         if (!StringUtilsPaper.validateEnum(section.getString("material").toUpperCase(Locale.ROOT), Material.class)) {
+            AmethystLogger.error("Material is not valid in the config for "+ section.getRouteAsString());
             return null;
         }
 
