@@ -8,6 +8,7 @@ import wtf.casper.amethyst.core.storage.Credentials;
 import wtf.casper.amethyst.core.storage.StatelessFieldStorage;
 import wtf.casper.amethyst.core.storage.id.StorageSerialized;
 import wtf.casper.amethyst.core.storage.id.Transient;
+import wtf.casper.amethyst.core.storage.id.exceptions.IdNotFoundException;
 import wtf.casper.amethyst.core.storage.id.utils.IdUtils;
 import wtf.casper.amethyst.core.unsafe.UnsafeConsumer;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
@@ -254,10 +255,11 @@ public abstract class StatelessSQLFStorage<K, V> implements ConstructableValue<K
     @Override
     public CompletableFuture<Void> remove(final V value) {
         return CompletableFuture.runAsync(() -> {
-            Field idField = IdUtils.getIdField(valueClass);
-            if (idField == null) {
-                AmethystLogger.error("Could not find id field for " + keyClass.getSimpleName());
-                return;
+            Field idField = null;
+            try {
+                idField = IdUtils.getIdField(valueClass);
+            } catch (IdNotFoundException e) {
+                throw new RuntimeException(e);
             }
             String field = idField.getName();
             this.execute("DELETE FROM " + this.table + " WHERE " + field + " = ?;", statement -> {

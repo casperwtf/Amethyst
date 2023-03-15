@@ -1,8 +1,8 @@
 debug: false # (Optional) Enable debug mode. This will log more information to the console.
 
 # (Optional) This will send Amethyst related errors to the discord webhook.
-send-errors-to-discord: true
-discord-webhook: "https://discord.com/api/webhooks/1056760529336680458/k6ykyJznrhrzCQqh5mf5sWFoRFrpGn5EFZVu3OpXKK2i6coUiATjzJ08FCbZd136j3n3"
+send-errors-to-discord: false
+discord-webhook: ""
 
 logged-packages:
   - wtf.casper

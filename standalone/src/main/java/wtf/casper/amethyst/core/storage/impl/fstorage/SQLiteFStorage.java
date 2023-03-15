@@ -8,6 +8,7 @@ import wtf.casper.amethyst.core.storage.ConstructableValue;
 import wtf.casper.amethyst.core.storage.FieldStorage;
 import wtf.casper.amethyst.core.storage.id.StorageSerialized;
 import wtf.casper.amethyst.core.storage.id.Transient;
+import wtf.casper.amethyst.core.storage.id.exceptions.IdNotFoundException;
 import wtf.casper.amethyst.core.storage.id.utils.IdUtils;
 import wtf.casper.amethyst.core.unsafe.UnsafeConsumer;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
@@ -248,20 +249,6 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
     public CompletableFuture<V> getFirst(String field, Object value, FilterType filterType) {
         return CompletableFuture.supplyAsync(() -> {
             return this.get(field, value, filterType, SortingType.NONE).join().stream().findFirst().orElse(null);
-//            try (final PreparedStatement statement = this.connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " = ?")) {
-//                if (value instanceof UUID) {
-//                    statement.setString(1, value.toString());
-//                } else {
-//                    statement.setObject(1, value);
-//                }
-//                final ResultSet resultSet = statement.executeQuery();
-//                if (resultSet.next()) {
-//                    return this.construct(resultSet);
-//                }
-//            } catch (final SQLException e) {
-//                e.printStackTrace();
-//            }
-//            return null;
         });
     }
 
@@ -282,10 +269,11 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
     @Override
     public CompletableFuture<Void> remove(final V value) {
         return CompletableFuture.runAsync(() -> {
-            Field idField = IdUtils.getIdField(valueClass);
-            if (idField == null) {
-                AmethystLogger.error("Could not find id field for " + keyClass.getSimpleName());
-                return;
+            Field idField = null;
+            try {
+                idField = IdUtils.getIdField(valueClass);
+            } catch (IdNotFoundException e) {
+                throw new RuntimeException(e);
             }
             String field = idField.getName();
             this.execute("DELETE FROM " + this.table + " WHERE " + field + " = ?;", statement -> {

@@ -24,11 +24,7 @@ public final class IdUtils {
 
         final Method method = IdUtils.getIdMethod(type);
 
-        if (method != null) {
-            return method.invoke(instance);
-        }
-
-        throw new IdNotFoundException();
+        return method.invoke(instance);
     }
 
     @SneakyThrows
@@ -50,7 +46,7 @@ public final class IdUtils {
             return method.getName();
         }
 
-        throw new IdNotFoundException();
+        throw new IdNotFoundException(type);
     }
 
     @SneakyThrows
@@ -72,11 +68,11 @@ public final class IdUtils {
             return method.getDeclaringClass();
         }
 
-        throw new IdNotFoundException();
+        throw new IdNotFoundException(type);
 
     }
 
-    private static Method getIdMethod(final Class<?> type) {
+    private static Method getIdMethod(final Class<?> type) throws IdNotFoundException {
 
         for (final Method method : type.getDeclaredMethods()) {
             method.setAccessible(true);
@@ -88,10 +84,10 @@ public final class IdUtils {
             return method;
         }
 
-        return null;
+        throw new IdNotFoundException(type);
     }
 
-    public static Field getIdField(final Class<?> type) {
+    public static Field getIdField(final Class<?> type) throws IdNotFoundException {
 
         for (final Field field : type.getDeclaredFields()) {
             field.setAccessible(true);
@@ -103,7 +99,7 @@ public final class IdUtils {
             return field;
         }
 
-        return null;
+        throw new IdNotFoundException(type);
     }
 
 

@@ -106,27 +106,6 @@ public class StatelessMongoFStorage<K, V> implements StatelessFieldStorage<K, V>
 
             return AmethystCore.getGson().fromJson(document.toJson(AmethystCore.getJsonWriterSettings()), type);
         });
-//            if (!cache.asMap().isEmpty()){
-//                for (V v : cache.asMap().values()) {
-//                    try {
-//                        if (v.getClass().getField(field).get(v).equals(value)) {
-//                            return v;
-//                        }
-//                    } catch (NoSuchFieldException | IllegalAccessException e) {
-//                        return null;
-//                    }
-//                }
-//            }
-//
-//            Document document = getCollection().find(new Document(field, value)).first();
-//
-//            if (document == null) {
-//                return null;
-//            }
-//
-//            V obj = AmethystCore.getGson().fromJson(document.toJson(AmethystCore.getJsonWriterSettings()), type);
-//            cache.put((K) document.get(idFieldName), obj);
-//            return obj;
     }
 
     @Override

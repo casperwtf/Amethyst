@@ -1,6 +1,8 @@
 package wtf.casper.amethyst.core.storage;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import wtf.casper.amethyst.core.exceptions.AmethystException;
 import wtf.casper.amethyst.core.obj.Pair;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.core.utils.ReflectionUtil;
@@ -67,6 +69,7 @@ public interface StatelessFieldStorage<K, V> {
     /**
      * @param key the key to search for.
      * @return a future that will complete with the value that matches the given key.
+     * The value may be null if the key is not found.
      */
     CompletableFuture<V> get(final K key);
 
