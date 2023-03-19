@@ -8,6 +8,7 @@ import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
@@ -60,6 +61,23 @@ public class ItemBuilder {
             List<String> lore = new ArrayList<>();
             for (String s : meta.getLore()) {
                 lore.add(replacer.parse(s));
+            }
+            meta.setLore(lore);
+        }
+        stack.setItemMeta(meta);
+        return stack;
+    }
+
+    public ItemStack getStack(Player player, PlaceholderReplacer replacer) {
+        ItemStack stack = this.stack.clone();
+        ItemMeta meta = stack.getItemMeta();
+        if (meta.hasDisplayName()) {
+            meta.setDisplayName(StringUtilsPaper.parsePlaceholders(meta.getDisplayName(), replacer, player));
+        }
+        if (meta.hasLore()) {
+            List<String> lore = new ArrayList<>();
+            for (String s : meta.getLore()) {
+                lore.add(StringUtilsPaper.parsePlaceholders(s, replacer, player));
             }
             meta.setLore(lore);
         }

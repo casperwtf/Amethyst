@@ -20,7 +20,12 @@ public class RunnableUtil {
     public static BukkitRunnable runSync(Consumer<BukkitRunnable> task) {
         if (!isEnabled()) {
             BukkitRunnable runnable = createSimpleTask(task);
-            runnable.runTask(AmethystPaper.getInstance().getCallingPlugin());
+            AmethystPlugin plugin = AmethystPaper.getInstance().getCallingPlugin();
+            if (plugin == null) {
+                runnable.runTask(AmethystPaper.getInstance());
+                return runnable;
+            }
+            runnable.runTask(plugin);
             return runnable;
         }
 
@@ -33,7 +38,12 @@ public class RunnableUtil {
     public static BukkitRunnable runAsync(Consumer<BukkitRunnable> task) {
         if (!isEnabled()) {
             BukkitRunnable runnable = createSimpleTask(task);
-            runnable.runTaskAsynchronously(AmethystPaper.getInstance().getCallingPlugin());
+            AmethystPlugin plugin = AmethystPaper.getInstance().getCallingPlugin();
+            if (plugin == null) {
+                runnable.runTaskAsynchronously(AmethystPaper.getInstance());
+                return runnable;
+            }
+            runnable.runTaskAsynchronously(plugin);
             return runnable;
         }
 
@@ -46,7 +56,12 @@ public class RunnableUtil {
     public static BukkitRunnable delay(Consumer<BukkitRunnable> task, long delay) {
         if (!isEnabled()) {
             BukkitRunnable runnable = createSimpleTask(task);
-            runnable.runTaskLater(AmethystPaper.getInstance().getCallingPlugin(), delay);
+            AmethystPlugin plugin = AmethystPaper.getInstance().getCallingPlugin();
+            if (plugin == null) {
+                runnable.runTaskLater(AmethystPaper.getInstance(), delay);
+                return runnable;
+            }
+            runnable.runTaskLater(plugin, delay);
             return runnable;
         }
 
@@ -59,7 +74,12 @@ public class RunnableUtil {
     public static BukkitRunnable delayAsync(Consumer<BukkitRunnable> task, long delay) {
         if (!isEnabled()) {
             BukkitRunnable runnable = createSimpleTask(task);
-            runnable.runTaskLaterAsynchronously(AmethystPaper.getInstance().getCallingPlugin(), delay);
+            AmethystPlugin plugin = AmethystPaper.getInstance().getCallingPlugin();
+            if (plugin == null) {
+                runnable.runTaskLaterAsynchronously(AmethystPaper.getInstance(), delay);
+                return runnable;
+            }
+            runnable.runTaskLaterAsynchronously(plugin, delay);
             return runnable;
         }
 
@@ -72,7 +92,13 @@ public class RunnableUtil {
     public static BukkitRunnable repeat(Consumer<BukkitRunnable> task, long initialDelay, long repeatDelay) {
         if (!isEnabled()) {
             BukkitRunnable runnable = createSimpleTask(task);
-            runnable.runTaskTimer(AmethystPaper.getInstance().getCallingPlugin(), initialDelay, repeatDelay);
+            AmethystPlugin plugin = AmethystPaper.getInstance().getCallingPlugin();
+            if (plugin == null) {
+                runnable.runTaskTimer(AmethystPaper.getInstance(), initialDelay, repeatDelay);
+                return runnable;
+            }
+            runnable.runTask(plugin);
+            runnable.runTaskTimer(plugin, initialDelay, repeatDelay);
             return runnable;
         }
 

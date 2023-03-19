@@ -5,11 +5,8 @@ import dev.dejvokep.boostedyaml.YamlDocument;
 import gg.optimalgames.hologrambridge.HologramBridge;
 import io.github.rysefoxx.inventory.plugin.pagination.InventoryManager;
 import lombok.Getter;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.*;
-import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import wtf.casper.amethyst.core.AmethystCore;
@@ -23,7 +20,7 @@ import wtf.casper.amethyst.paper.hooks.economy.EconomyManager;
 import wtf.casper.amethyst.paper.hooks.protection.ProtectionManager;
 import wtf.casper.amethyst.paper.hooks.stacker.StackerManager;
 import wtf.casper.amethyst.paper.hooks.vanish.VanishManager;
-import wtf.casper.amethyst.paper.listeners.PluginListener;
+import wtf.casper.amethyst.paper.listeners.LoggerListener;
 import wtf.casper.amethyst.paper.serialized.SerializableItem;
 import wtf.casper.amethyst.paper.serialized.SerializableItemTypeAdapter;
 import wtf.casper.amethyst.paper.serialized.serializer.*;
@@ -39,20 +36,48 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Filter;
 
-public class AmethystPaper extends AmethystPlugin implements Listener {
+/**
+ * This class is the main class for AmethystPaper
+ */
+public class AmethystPaper extends AmethystPlugin {
+
+    // this is to prevent relocation from changing the package name here, which would break the relocation check
+    private final char[] DEFAULT_PACKAGE = new char[] {'w', 't', 'f', '.', 'c', 'a', 's', 'p', 'e', 'r', '.', 'a', 'm', 'e', 't', 'h', 'y', 's', 't', '.', 'p', 'a', 'p', 'e', 'r'};
 
     @Getter private static final Map<JavaPlugin, InventoryManager> inventoryManagers = new HashMap<>();
-    @Getter private static Economy economy = null;
-    @Getter private static AmethystPaper instance = null;
     @Getter private static Filter filter;
-    @Getter private final NamespacedKey playerPlacedBlockKey = new NamespacedKey(this, "PLAYER_PLACED_BLOCK");
     @Getter private YamlDocument amethystConfig;
+    private final boolean isLoadedFromPlugin;
+    @Getter private static AmethystPlugin instance;
 
+    /**
+     * This constructor is used for loading Amethyst as a plugin
+     * We load dependencies here because we need to load them before the plugin is enabled
+     * This is because the onLoad for plugins does not call in order of depends in plugin.yml
+     */
     public AmethystPaper() {
         super();
 
+        this.isLoadedFromPlugin = true;
+
         DependencyManager dependencyManager = new DependencyManager(this);
         dependencyManager.loadDependencies();
+    }
+
+    /**
+     * This constructor is used for shading purposes
+     * @param plugin The plugin that is shading Amethyst
+     */
+    public AmethystPaper(AmethystPlugin plugin) {
+        this.isLoadedFromPlugin = false;
+        instance = plugin;
+
+        setPlayerPlacedBlockKey(new NamespacedKey(plugin, "PLAYER_PLACED_BLOCK"));
+
+        DependencyManager dependencyManager = new DependencyManager(plugin);
+        dependencyManager.loadDependencies();
+
+        checkRelocation();
     }
 
     @Override
@@ -65,16 +90,27 @@ public class AmethystPaper extends AmethystPlugin implements Listener {
 
     @Override
     public void load() {
-
+        instance = this;
     }
 
     @Override
     public void enable() {
+        setPlayerPlacedBlockKey(new NamespacedKey(this, "PLAYER_PLACED_BLOCK"));
+        initAmethyst(this);
+    }
 
+    public static AmethystPlugin getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException("Amethyst is not loaded. Either install amethyst plugin or shade amethyst into your plugin. Initialize with AmethystPaper(AmethystPlugin)");
+        }
+        return instance;
+    }
+
+    public void initAmethyst(AmethystPlugin plugin) {
+        AmethystCore.init();
         this.amethystConfig = getYamlDocument("amethyst-config.yml");
 
-        CustomBlockData.registerListener(this);
-        instance = this;
+        CustomBlockData.registerListener(plugin);
 
         filter = record -> {
 
@@ -141,17 +177,24 @@ public class AmethystPaper extends AmethystPlugin implements Listener {
             return true;
         };
 
-        getLogger().setFilter(filter);
+        if (isLoadedFromPlugin) {
+            getLogger().setFilter(filter);
+        } else {
+            plugin.getLogger().setFilter(filter);
+        }
         Bukkit.getLogger().setFilter(filter);
         AmethystLogger.getLogger().setFilter(filter);
 
-        new PluginListener(this);
-        new ArmorstandUtils(this);
+        if (isLoadedFromPlugin) {
+            new LoggerListener(this);
+        }
+
+        new PlayerTrackerListener(plugin);
+        getServer().getScheduler().runTaskTimer(plugin, new PlayerTracker(), 0L, 1L);
+
+        new ArmorstandUtils(plugin);
 
         setupConfigOptions();
-        setupEconomy();
-
-        AmethystCore.init();
         AmethystCore.registerTypeAdapter(SerializableItemTypeAdapter.class, new SerializableItemTypeAdapter());
         AmethystCore.registerTypeAdapter(Chunk.class, new ChunkSerializer());
         AmethystCore.registerTypeAdapter(ItemStack.class, new ItemStackSerializer());
@@ -164,16 +207,13 @@ public class AmethystPaper extends AmethystPlugin implements Listener {
             new GeyserExpansion().register();
         }
 
-        new HologramBridge(this, true);
+        new HologramBridge(plugin, true);
 
         EconomyManager.init();
         new CombatManager();
         new ProtectionManager();
         new StackerManager();
         new VanishManager();
-
-        new PlayerTrackerListener(this);
-        getServer().getScheduler().runTaskTimer(this, new PlayerTracker(), 0L, 1L);
 
         if (getYamlConfig().getBoolean("debug", false)) {
             AmethystLogger.debug(
@@ -189,7 +229,7 @@ public class AmethystPaper extends AmethystPlugin implements Listener {
         return amethystConfig;
     }
 
-    public InventoryManager getInventoryManager(JavaPlugin plugin) {
+    public static InventoryManager getInventoryManager(JavaPlugin plugin) {
         if (inventoryManagers.containsKey(plugin)) {
             return inventoryManagers.get(plugin);
         }
@@ -213,31 +253,16 @@ public class AmethystPaper extends AmethystPlugin implements Listener {
             if (isEnabled) {
                 PasteProvider.getEnabledPasteTypes().add(PasteProvider.PasteType.valueOf(key.toUpperCase()));
             }
-
         }
     }
 
-    private void setupEconomy() {
-        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+    private void checkRelocation() {
+        if (isLoadedFromPlugin) {
             return;
         }
-        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null) {
-            return;
-        }
-        economy = rsp.getProvider();
-    }
-
-    public JavaPlugin getCallingPlugin() {
-        Exception ex = new Exception();
-        try {
-            Class<?> clazz = Class.forName(ex.getStackTrace()[2].getClassName());
-            JavaPlugin plugin = JavaPlugin.getProvidingPlugin(clazz);
-            return plugin.isEnabled() ? plugin : (JavaPlugin) Bukkit.getPluginManager().getPlugin(plugin.getName());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return this;
+        if (AmethystPaper.class.getPackage().getName().equals(new String(DEFAULT_PACKAGE))) {
+            AmethystLogger.error("Amethyst is not relocated, please relocate it to prevent conflicts with other plugins.");
+            Bukkit.getPluginManager().disablePlugin(instance);
         }
     }
-
 }

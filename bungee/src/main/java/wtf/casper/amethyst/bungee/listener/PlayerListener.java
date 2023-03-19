@@ -1,9 +1,7 @@
 package wtf.casper.amethyst.bungee.listener;
 
 import net.md_5.bungee.api.config.ServerInfo;
-import net.md_5.bungee.api.event.PlayerDisconnectEvent;
-import net.md_5.bungee.api.event.ServerConnectEvent;
-import net.md_5.bungee.api.event.ServerSwitchEvent;
+import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import wtf.casper.amethyst.bungee.AmethystBungee;
@@ -21,13 +19,17 @@ public class PlayerListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler
+    @EventHandler(priority = 64)
     public void onPlayerQuit(PlayerDisconnectEvent event) {
+        if (event.getPlayer().getServer() == null) {
+            return;
+        }
+
         plugin.getRedisManager().sendRedisMessage(RedisChannels.AMETHYST_MINECRAFT_MESSAGES,
                 new ProxyLeaveMessage(event.getPlayer().getUniqueId(), event.getPlayer().getName(), event.getPlayer().getServer().getInfo().getName()));
     }
 
-    @EventHandler
+    @EventHandler(priority = 64)
     public void onPlayerSwitchServer(ServerSwitchEvent event) {
         ServerInfo from = event.getFrom();
 
@@ -39,13 +41,16 @@ public class PlayerListener implements Listener {
                 new ProxyMoveMessage(event.getPlayer().getUniqueId(), event.getPlayer().getName(), from.getName(), event.getPlayer().getServer().getInfo().getName()));
     }
 
-    @EventHandler
+    @EventHandler(priority = 64)
     public void onPlayerJoinServer(ServerConnectEvent event) {
         if (event.isCancelled()) {
             return;
         }
+        if (event.getPlayer().getServer() != null) {
+            return;
+        }
 
         plugin.getRedisManager().sendRedisMessage(RedisChannels.AMETHYST_MINECRAFT_MESSAGES,
-                new ProxyJoinMessage(event.getPlayer().getUniqueId(), event.getPlayer().getName(), event.getPlayer().getServer().getInfo().getName()));
+                new ProxyJoinMessage(event.getPlayer().getUniqueId(), event.getPlayer().getName(), event.getTarget().getName()));
     }
 }

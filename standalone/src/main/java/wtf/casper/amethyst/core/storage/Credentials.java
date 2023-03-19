@@ -20,11 +20,12 @@ public final class Credentials {
     @Nullable private String password;
     @Nullable private String database;
     @Nullable private String collection;
+    @Nullable private String table;
     @Nullable private String uri;
     private int port;
 
-    public static Credentials of(final StorageType type, @Nullable final String host, @Nullable final String username, @Nullable final String password, @Nullable final String database, @Nullable String collection, @Nullable final String uri, final int port) {
-        return new Credentials(type, host, username, password, database, collection, uri, port);
+    public static Credentials of(final StorageType type, @Nullable final String host, @Nullable final String username, @Nullable final String password, @Nullable final String database, @Nullable String collection, @Nullable String table, @Nullable final String uri, final int port) {
+        return new Credentials(type, host, username, password, database, collection, table, uri, port);
     }
 
     public static Credentials from(final YamlDocument config, String path) {
@@ -36,6 +37,7 @@ public final class Credentials {
                 section.getString("password", null),
                 section.getString("database", null),
                 section.getString("collection", null),
+                section.getString("table", null),
                 section.getString("uri", null),
                 section.getOptionalString("port").map(Integer::parseInt).orElse(section.getInt("port", 3306))
         );

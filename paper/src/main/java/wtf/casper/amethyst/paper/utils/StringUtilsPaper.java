@@ -408,7 +408,7 @@ public class StringUtilsPaper extends StringUtils {
         return hexColorMineDown("&#", "", message);
     }
 
-    /*
+    /**
     * @param startingTag is the starting tag that will be used to scan for the hex color.
     * @param endTag is the end tag that will be used to scan for the hex color. (if it's empty, it will scan the next 6 characters after the starting tag)
     * @param message is the message that will be scanned for the tag.

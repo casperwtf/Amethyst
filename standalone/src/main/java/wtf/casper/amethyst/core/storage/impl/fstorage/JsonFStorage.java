@@ -8,8 +8,6 @@ import wtf.casper.amethyst.core.AmethystCore;
 import wtf.casper.amethyst.core.storage.ConstructableValue;
 import wtf.casper.amethyst.core.storage.FieldStorage;
 import wtf.casper.amethyst.core.storage.id.utils.IdUtils;
-import wtf.casper.amethyst.core.utils.AmethystLogger;
-import wtf.casper.amethyst.core.utils.ReflectionUtil;
 
 import java.io.File;
 import java.io.FileReader;
@@ -19,7 +17,6 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public abstract class JsonFStorage<K, V> implements FieldStorage<K, V>, ConstructableValue<K, V> {

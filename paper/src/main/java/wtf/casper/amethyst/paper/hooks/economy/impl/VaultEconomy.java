@@ -1,12 +1,16 @@
 package wtf.casper.amethyst.paper.hooks.economy.impl;
 
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import wtf.casper.amethyst.paper.AmethystPaper;
 import wtf.casper.amethyst.paper.hooks.economy.IEconomy;
 
 import java.util.UUID;
 
 public class VaultEconomy implements IEconomy {
+
+    private Economy economy;
 
     @Override
     public boolean canEnable() {
@@ -29,7 +33,7 @@ public class VaultEconomy implements IEconomy {
             withdraw(player, -amount);
             return;
         }
-        AmethystPaper.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(player), amount);
+        economy.depositPlayer(Bukkit.getOfflinePlayer(player), amount);
     }
 
     @Override
@@ -38,7 +42,7 @@ public class VaultEconomy implements IEconomy {
             deposit(player, -amount);
             return;
         }
-        AmethystPaper.getEconomy().withdrawPlayer(Bukkit.getOfflinePlayer(player), amount);
+        economy.withdrawPlayer(Bukkit.getOfflinePlayer(player), amount);
     }
 
     @Override
@@ -53,7 +57,7 @@ public class VaultEconomy implements IEconomy {
 
     @Override
     public double get(String player) {
-        return AmethystPaper.getEconomy().getBalance(Bukkit.getOfflinePlayer(player));
+        return economy.getBalance(Bukkit.getOfflinePlayer(player));
     }
 
     @Override
@@ -67,7 +71,7 @@ public class VaultEconomy implements IEconomy {
             withdraw(player, -amount);
             return;
         }
-        AmethystPaper.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(player), amount);
+        economy.depositPlayer(Bukkit.getOfflinePlayer(player), amount);
     }
 
     @Override
@@ -76,7 +80,7 @@ public class VaultEconomy implements IEconomy {
             deposit(player, -amount);
             return;
         }
-        AmethystPaper.getEconomy().withdrawPlayer(Bukkit.getOfflinePlayer(player), amount);
+        economy.withdrawPlayer(Bukkit.getOfflinePlayer(player), amount);
     }
 
     @Override
@@ -91,7 +95,7 @@ public class VaultEconomy implements IEconomy {
 
     @Override
     public double get(UUID player) {
-        return AmethystPaper.getEconomy().getBalance(Bukkit.getOfflinePlayer(player));
+        return economy.getBalance(Bukkit.getOfflinePlayer(player));
     }
 
     @Override
@@ -102,5 +106,16 @@ public class VaultEconomy implements IEconomy {
     @Override
     public String getName() {
         return "VAULT";
+    }
+
+    private void setupEconomy() {
+        if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
+            return;
+        }
+        RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return;
+        }
+        economy = rsp.getProvider();
     }
 }

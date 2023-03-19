@@ -18,7 +18,7 @@ public class MenuUtil {
                 .type(type)
                 .size(size)
                 .title(title)
-                .build(plugin, AmethystPaper.getInstance().getInventoryManager(plugin));
+                .build(plugin, AmethystPaper.getInventoryManager(plugin));
     }
 
     public static RyseInventory getInventory(JavaPlugin plugin, InventoryProvider provider, int size, String title) {
@@ -29,6 +29,6 @@ public class MenuUtil {
                 .provider(provider)
                 .size(size)
                 .title(title)
-                .build(plugin, AmethystPaper.getInstance().getInventoryManager(plugin));
+                .build(plugin, AmethystPaper.getInventoryManager(plugin));
     }
 }

@@ -5,7 +5,11 @@ import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
+import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -14,10 +18,12 @@ import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.core.utils.ReflectionUtil;
 
 import java.io.File;
+import java.util.Optional;
 
 public abstract class AmethystPlugin extends JavaPlugin {
 
     private YamlDocument config;
+    @Getter @Setter private NamespacedKey playerPlacedBlockKey;
 
     @Override
     public void onLoad() {
@@ -106,5 +112,20 @@ public abstract class AmethystPlugin extends JavaPlugin {
                 loaderSettings,
                 dumperSettings,
                 updaterSettings);
+    }
+
+    public AmethystPlugin getCallingPlugin() {
+        Exception ex = new Exception();
+        try {
+            Class<?> clazz = Class.forName(ex.getStackTrace()[2].getClassName());
+            JavaPlugin plugin = JavaPlugin.getProvidingPlugin(clazz);
+            if (plugin instanceof AmethystPlugin) {
+                return (AmethystPlugin) plugin;
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return null;
     }
 }
