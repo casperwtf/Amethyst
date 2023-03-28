@@ -38,6 +38,7 @@ public class ProtectionManager {
     }
 
     public static boolean canAttack(Player player, Location location) {
+        if (protections.isEmpty()) return true;
         for (IProtection protection : protections) {
             if (!protection.canAttack(player, location)) return false;
         }
@@ -45,6 +46,7 @@ public class ProtectionManager {
     }
 
     public static boolean canBuild(Player player, Location location) {
+        if (protections.isEmpty()) return true;
         for (IProtection protection : protections) {
             if (!protection.canBuild(player, location)) return false;
         }
@@ -52,6 +54,7 @@ public class ProtectionManager {
     }
 
     public static boolean canInteract(Player player, Location location) {
+        if (protections.isEmpty()) return true;
         for (IProtection protection : protections) {
             if (!protection.canInteract(player, location)) return false;
         }
@@ -59,6 +62,7 @@ public class ProtectionManager {
     }
 
     public static boolean canBreak(Player player, Location location) {
+        if (protections.isEmpty()) return true;
         for (IProtection protection : protections) {
             if (!protection.canBreak(player, location)) return false;
         }
@@ -66,6 +70,7 @@ public class ProtectionManager {
     }
 
     public static boolean isClaimed(Location location) {
+        if (protections.isEmpty()) return false;
         for (IProtection protection : protections) {
             if (protection.isClaimed(location)) return true;
         }

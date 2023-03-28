@@ -6,7 +6,7 @@
 
     <groupId>wtf.casper.amethyst</groupId>
     <artifactId>velocity</artifactId>
-    <version>1.0.0</version>
+    <version>${amethyst.version}</version>
     <packaging>jar</packaging>
 
     <name>velocity</name>
@@ -14,6 +14,7 @@
     <properties>
         <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <amethyst.version>1.0.1</amethyst.version>
     </properties>
 
     <profiles>
@@ -162,7 +163,7 @@
         <dependency>
             <groupId>wtf.casper.amethyst</groupId>
             <artifactId>minecraft</artifactId>
-            <version>1.0.0</version>
+            <version>${amethyst.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

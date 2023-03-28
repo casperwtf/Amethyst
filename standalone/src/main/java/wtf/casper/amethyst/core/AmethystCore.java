@@ -20,9 +20,11 @@ public class AmethystCore {
 
     @Getter private final static Map<Type, Object> adapters = new HashMap<>();
     private static final Map<Class<? extends Message>, String> messages = new HashMap<>();
+    // write numbers as strings to avoid precision loss
     @Getter private final static JsonWriterSettings jsonWriterSettings = JsonWriterSettings.builder()
             .int64Converter((value, writer) -> writer.writeNumber(value.toString()))
             .build();
+    // exclude fields with @Transient annotation
     private final static ExclusionStrategy exclusionStrategy = new ExclusionStrategy() {
         @Override
         public boolean shouldSkipField(FieldAttributes f) {

@@ -567,7 +567,7 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
                 .toList();
 
         for (final Field field : fields) {
-            builder.append("`" + field.getName() + "`").append(",");
+            builder.append("`").append(field.getName()).append("`").append(",");
         }
 
         return builder.substring(0, builder.length() - 1);
@@ -591,17 +591,5 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
             case "java.util.UUID" -> "VARCHAR(36)";
             default -> "VARCHAR(255)";
         };
-    }
-
-
-    /**
-     * Sanitizes an object to be used in an SQL statement.
-     * This is to prevent SQL injection.
-     * */
-    private Object sanitize(Object object) {
-        if (object instanceof String) {
-            return ((String) object).replace("'", "''");
-        }
-        return object;
     }
 }

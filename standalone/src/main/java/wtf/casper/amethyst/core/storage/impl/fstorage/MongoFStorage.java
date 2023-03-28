@@ -21,6 +21,7 @@ import wtf.casper.amethyst.core.utils.AmethystLogger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -50,6 +51,8 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
                 ))
         );
         try {
+            AmethystLogger.debug("Connecting to MongoDB...");
+            AmethystLogger.debug(uri);
             mongoClient = new MongoClient(uri1);
         } catch (MongoException e) {
             AmethystLogger.warning(" ");
@@ -87,14 +90,6 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
 
             List<Document> into = getCollection().find(filter).into(new ArrayList<>());
 
-            if (!cache.asMap().isEmpty()) {
-                cache.asMap().values().stream().filter(v -> filterType.passes(v, field, value)).forEach(collection::add);
-
-                if (!collection.isEmpty()) {
-                    return collection;
-                }
-            }
-
             for (Document document : into) {
                 V obj = AmethystCore.getGson().fromJson(document.toJson(AmethystCore.getJsonWriterSettings()), type);
                 cache.put((K) document.get(idFieldName), obj);
@@ -112,7 +107,10 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
                 return cache.getIfPresent(key);
             }
 
-            Document document = getCollection().find(new Document(idFieldName, key)).first();
+            Document filter = new Document(idFieldName, key);
+            AmethystLogger.debug(filter);
+            AmethystLogger.debug(filter.toJson());
+            Document document = getCollection().find(filter).first();
 
             if (document == null) {
                 return null;
@@ -181,13 +179,15 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
     public CompletableFuture<Collection<V>> allValues() {
         return CompletableFuture.supplyAsync(() -> {
             List<Document> into = getCollection().find().into(new ArrayList<>());
+            List<V> collection = new ArrayList<>();
 
             for (Document document : into) {
                 V obj = AmethystCore.getGson().fromJson(document.toJson(AmethystCore.getJsonWriterSettings()), type);
+                collection.add(obj);
                 cache.put((K) document.get(idFieldName), obj);
             }
 
-            return cache.asMap().values();
+            return collection;
         });
     }
 
@@ -219,5 +219,12 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
             default -> throw new IllegalStateException("Unexpected value: " + filterType);
         }
         return filter;
+    }
+
+    private Object convert(Object o) {
+        if (o instanceof UUID) {
+            return o.toString();
+        }
+        return o;
     }
 }

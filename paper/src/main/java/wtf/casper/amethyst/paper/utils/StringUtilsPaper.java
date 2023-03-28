@@ -390,6 +390,25 @@ public class StringUtilsPaper extends StringUtils {
         return sb + message;
     }
 
+
+    /**
+     * @param chatChar The chat character to use
+     * @param message The message to convert
+     * This function takes the &x formatting and converts it into the normal hex color formatting.
+     */
+    public static String legacyHexToNormal(String chatChar, String message) {
+        return scanTags(chatChar+"x", "", message, 12, group -> {
+            StringBuilder builder = new StringBuilder();
+            builder.append("&#");
+            for (int i = 0; i < group.length(); i++) {
+                if (i % 2 == 1) {
+                    builder.append(group.charAt(i));
+                }
+            }
+            return builder.toString();
+        });
+    }
+
     /**
      * This method will convert into the minedown hex formatting instead of the regular hex color formatting.
      * This is solely for my personal development uses, if you never use this method, I dont blame you.

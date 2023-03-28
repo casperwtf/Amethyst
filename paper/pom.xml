@@ -2,16 +2,15 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>wtf.casper</groupId>
-        <artifactId>amethyst</artifactId>
-        <version>1.0.0</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
 
     <groupId>wtf.casper.amethyst</groupId>
     <artifactId>paper</artifactId>
-    <version>1.0.0</version>
+    <version>${amethyst.version}</version>
+
+    <properties>
+        <amethyst.version>1.0.1</amethyst.version>
+    </properties>
+
 
     <build>
         <finalName>${project.artifactId}-amethyst-${project.version}</finalName>
@@ -34,8 +33,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.10.1</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -204,7 +203,7 @@
         <dependency>
             <groupId>wtf.casper.amethyst</groupId>
             <artifactId>minecraft</artifactId>
-            <version>1.0.0</version>
+            <version>${amethyst.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -353,6 +352,12 @@
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-bukkit</artifactId>
             <version>7.2.7</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.26</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

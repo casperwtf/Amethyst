@@ -28,6 +28,8 @@ import wtf.casper.amethyst.paper.tracker.PlayerTracker;
 import wtf.casper.amethyst.paper.tracker.PlayerTrackerListener;
 import wtf.casper.amethyst.paper.utils.ArmorstandUtils;
 import wtf.casper.amethyst.paper.utils.GeneralUtils;
+import wtf.casper.amethyst.paper.utils.GeyserUtils;
+import wtf.casper.amethyst.paper.utils.ServerLock;
 
 import java.awt.Color;
 import java.io.File;
@@ -49,7 +51,7 @@ public class AmethystPaper extends AmethystPlugin {
     @Getter private YamlDocument amethystConfig;
     private final boolean isLoadedFromPlugin;
     @Getter private static AmethystPlugin instance;
-
+    private GeyserUtils geyserUtils;
     /**
      * This constructor is used for loading Amethyst as a plugin
      * We load dependencies here because we need to load them before the plugin is enabled
@@ -78,14 +80,13 @@ public class AmethystPaper extends AmethystPlugin {
         dependencyManager.loadDependencies();
 
         checkRelocation();
+
+        initAmethyst(plugin);
     }
 
     @Override
     public void disable() {
-        EconomyManager.disable();
-        VanishManager.disable();
-        CombatManager.disable();
-        ProtectionManager.disable();
+        disableAmethyst();
     }
 
     @Override
@@ -111,6 +112,9 @@ public class AmethystPaper extends AmethystPlugin {
         this.amethystConfig = getYamlDocument("amethyst-config.yml");
 
         CustomBlockData.registerListener(plugin);
+
+        new ServerLock(plugin);
+        geyserUtils = new GeyserUtils(plugin);
 
         filter = record -> {
 
@@ -221,6 +225,15 @@ public class AmethystPaper extends AmethystPlugin {
                     "Please disable debug mode in the amethyst-config.yml if you do not need it."
             );
         }
+    }
+
+    public void disableAmethyst() {
+        EconomyManager.disable();
+        VanishManager.disable();
+        CombatManager.disable();
+        ProtectionManager.disable();
+        geyserUtils.getGeyserStorage().write().join();
+        geyserUtils.getGeyserStorage().close().join();
     }
 
     @NotNull

@@ -19,7 +19,7 @@ public class VaultEconomy implements IEconomy {
 
     @Override
     public void enable() {
-
+        setupEconomy();
     }
 
     @Override

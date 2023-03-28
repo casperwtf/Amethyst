@@ -25,6 +25,7 @@ public abstract class AmethystPlugin extends JavaPlugin {
     private YamlDocument config;
     @Getter @Setter private NamespacedKey playerPlacedBlockKey;
 
+    // this is weird, there is no reason to have it but its more of a pain to remove it.
     @Override
     public void onLoad() {
         load();

@@ -3,16 +3,10 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>wtf.casper</groupId>
-        <artifactId>amethyst</artifactId>
-        <version>1.0.0</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
 
     <groupId>wtf.casper.amethyst</groupId>
     <artifactId>minecraft</artifactId>
-    <version>1.0.0</version>
+    <version>${amethyst.version}</version>
 
     <build>
         <finalName>${project.artifactId}-amethyst-${project.version}</finalName>
@@ -22,14 +16,21 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <amethyst.version>1.0.1</amethyst.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>wtf.casper.amethyst</groupId>
             <artifactId>standalone</artifactId>
-            <version>1.0.0</version>
+            <version>${amethyst.version}</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.26</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

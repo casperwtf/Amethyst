@@ -26,7 +26,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-public abstract class StatelessMariaDBStorage<K, V> implements ConstructableValue<K, V>, StatelessFieldStorage<K, V> {
+public class StatelessMariaDBStorage<K, V> implements ConstructableValue<K, V>, StatelessFieldStorage<K, V> {
     private final HikariDataSource ds;
     private final Class<K> keyClass;
     private final Class<V> valueClass;
@@ -269,6 +269,17 @@ public abstract class StatelessMariaDBStorage<K, V> implements ConstructableValu
             this.execute("DELETE FROM " + this.table + " WHERE " + field + " = ?;", statement -> {
                 statement.setString(1, IdUtils.getId(this.valueClass, value).toString());
             });
+        });
+    }
+
+    @Override
+    public CompletableFuture<Void> write() {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                this.ds.getConnection().close();
+            } catch (final SQLException e) {
+                e.printStackTrace();
+            }
         });
     }
 

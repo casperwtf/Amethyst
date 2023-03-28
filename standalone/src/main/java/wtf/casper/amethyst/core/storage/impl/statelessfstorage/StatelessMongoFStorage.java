@@ -18,6 +18,7 @@ import wtf.casper.amethyst.core.utils.AmethystLogger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class StatelessMongoFStorage<K, V> implements StatelessFieldStorage<K, V>, ConstructableValue<K, V> {
@@ -45,7 +46,7 @@ public class StatelessMongoFStorage<K, V> implements StatelessFieldStorage<K, V>
         );
         try {
             mongoClient = new MongoClient(uri1);
-        } catch (MongoException e) {
+        } catch (Exception e) {
             AmethystLogger.warning(" ");
             AmethystLogger.warning(" ");
             AmethystLogger.warning("Failed to connect to MongoDB. Please check your credentials.");
@@ -66,7 +67,7 @@ public class StatelessMongoFStorage<K, V> implements StatelessFieldStorage<K, V>
 
             Collection<V> collection = new ArrayList<>();
 
-            Document filter = getDocument(filterType, field, value);
+            Document filter = getDocument(filterType, field, convert(value));
 
             List<Document> into = getCollection().find(filter).into(new ArrayList<>());
 
@@ -83,7 +84,7 @@ public class StatelessMongoFStorage<K, V> implements StatelessFieldStorage<K, V>
     public CompletableFuture<V> get(K key) {
         return CompletableFuture.supplyAsync(() -> {
 
-            Document document = getCollection().find(new Document(idFieldName, key)).first();
+            Document document = getCollection().find(new Document(idFieldName, convert(key))).first();
 
             if (document == null) {
                 return null;
@@ -97,7 +98,7 @@ public class StatelessMongoFStorage<K, V> implements StatelessFieldStorage<K, V>
     public CompletableFuture<V> getFirst(String field, Object value, FilterType filterType) {
         return CompletableFuture.supplyAsync(() -> {
 
-            Document filter = getDocument(filterType, field, value);
+            Document filter = getDocument(filterType, field, convert(value));
             Document document = getCollection().find(filter).first();
 
             if (document == null) {
@@ -112,7 +113,7 @@ public class StatelessMongoFStorage<K, V> implements StatelessFieldStorage<K, V>
     public CompletableFuture<Void> save(V value) {
         return CompletableFuture.runAsync(() -> {
             getCollection().replaceOne(
-                    new Document(idFieldName, IdUtils.getId(type, value)),
+                    new Document(idFieldName, convert(IdUtils.getId(type, value))),
                     Document.parse(AmethystCore.getGson().toJson(value)),
                     new ReplaceOptions().upsert(true)
             );
@@ -122,7 +123,7 @@ public class StatelessMongoFStorage<K, V> implements StatelessFieldStorage<K, V>
     @Override
     public CompletableFuture<Void> remove(V key) {
         return CompletableFuture.runAsync(() -> {
-            getCollection().deleteOne(new Document(idFieldName, IdUtils.getId(type, key)));
+            getCollection().deleteOne(new Document(idFieldName, convert(IdUtils.getId(type, key))));
         });
     }
 
@@ -185,5 +186,12 @@ public class StatelessMongoFStorage<K, V> implements StatelessFieldStorage<K, V>
 
     private MongoCollection<Document> getCollection() {
         return mongoDatabase.getCollection(collection);
+    }
+
+    private Object convert(Object o) {
+        if (o instanceof UUID) {
+            return o.toString();
+        }
+        return o;
     }
 }

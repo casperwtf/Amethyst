@@ -1,5 +1,7 @@
 package wtf.casper.amethyst.core.storage;
 
+import dev.dejvokep.boostedyaml.YamlDocument;
+import dev.dejvokep.boostedyaml.block.implementation.Section;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import wtf.casper.amethyst.core.exceptions.AmethystException;
@@ -7,9 +9,12 @@ import wtf.casper.amethyst.core.obj.Pair;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.core.utils.ReflectionUtil;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public interface StatelessFieldStorage<K, V> {
@@ -163,7 +168,48 @@ public interface StatelessFieldStorage<K, V> {
         return CompletableFuture.supplyAsync(() -> getFirst(field, value).join() != null);
     }
 
-    ;
+    /**
+     * @param storage the storage to migrate from. The data will be copied from the given storage to this storage.
+     * @return a future that will complete with a boolean that represents whether the migration was successful.
+     */
+    default CompletableFuture<Boolean> migrate(final StatelessFieldStorage<K, V> storage) {
+        return CompletableFuture.supplyAsync(() -> {
+            storage.allValues().thenAccept((values) -> {
+                values.forEach(this::save);
+            }).join();
+            return true;
+        });
+    }
+
+    /**
+     * @param oldStorageSupplier supplier to provide the old storage
+     * @param config the config
+     * @param path the path to the storage
+     * @return a future that will complete with a boolean that represents whether the migration was successful.
+     */
+    default CompletableFuture<Boolean> migrateFrom(Supplier<StatelessFieldStorage<K, V>> oldStorageSupplier, YamlDocument config, String path) {
+        return CompletableFuture.supplyAsync(() -> {
+            if (config == null) return false;
+            Section section = config.getSection(path);
+            if (section == null) return false;
+            if (!section.getBoolean("migrate", false)) return false;
+            section.set("migrate", false);
+            try {
+                config.save();
+            } catch (IOException e) {
+                AmethystLogger.error("Failed to save config");
+                e.printStackTrace();
+            }
+            // storage that we are migrating to the new storage
+            StatelessFieldStorage<K, V> oldStorage = oldStorageSupplier.get();
+            try {
+                this.migrate(oldStorage).join();
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        });
+    }
 
     /**
      * @return a future that will complete with a collection of all values in the storage.

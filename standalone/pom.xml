@@ -4,17 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>wtf.casper</groupId>
-        <artifactId>amethyst</artifactId>
-        <version>1.0.0</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
-
     <groupId>wtf.casper.amethyst</groupId>
     <artifactId>standalone</artifactId>
-    <version>1.0.0</version>
+    <version>${amethyst.version}</version>
     <packaging>jar</packaging>
+
+    <properties>
+        <amethyst.version>1.0.1</amethyst.version>
+    </properties>
 
     <build>
         <finalName>${project.artifactId}-amethyst-${project.version}</finalName>
@@ -24,8 +21,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.10.1</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -167,6 +164,12 @@
             <artifactId>HikariCP</artifactId>
             <version>5.0.1</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.26</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

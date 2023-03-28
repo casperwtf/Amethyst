@@ -6,12 +6,13 @@
 
     <groupId>wtf.casper</groupId>
     <artifactId>amethyst</artifactId>
-    <version>1.0.0</version>
+    <version>${amethyst.version}</version>
     <packaging>pom</packaging>
 
     <properties>
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <amethyst.version>1.0.1</amethyst.version>
     </properties>
 
     <modules>
@@ -40,15 +41,6 @@
             </plugin>
         </plugins>
     </build>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.26</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
 
     <distributionManagement>
         <repository>

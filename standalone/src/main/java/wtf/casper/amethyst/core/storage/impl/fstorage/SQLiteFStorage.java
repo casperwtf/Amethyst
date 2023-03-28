@@ -388,7 +388,7 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
             for (final Field field : fields) {
                 final String name = field.getName();
                 if (!columns.contains(name)) {
-                    this.addColumn(name, this.getType(field.getType()));
+                    this.addColumn(name, this.getType(field));
                 }
             }
         } catch (final SQLException e) {
@@ -419,13 +419,13 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
         for (Field declaredField : fields) {
 
             final String name = declaredField.getName();
-            String type = this.getType(declaredField.getType());
+            String type = this.getType(declaredField);
 
             if (declaredField.isAnnotationPresent(StorageSerialized.class)) {
                 type = "VARCHAR(255)";
             }
 
-            builder.append("`" + name + "`").append(" ").append(type);
+            builder.append("`").append(name).append("`").append(" ").append(type);
             if (name.equals(idName)) {
                 builder.append(" PRIMARY KEY");
             }
@@ -438,8 +438,6 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
 
         }
         builder.append(");");
-
-        AmethystLogger.debug("Generated SQL: " + builder);
         return builder.toString();
     }
 
@@ -452,6 +450,9 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
         final Field[] declaredFields = this.valueClass.getDeclaredFields();
 
         for (Field declaredField : declaredFields) {
+            if (declaredField.isAnnotationPresent(Transient.class)) {
+                continue;
+            }
             if (declaredField.isAnnotationPresent(StorageSerialized.class)) {
                 final String name = declaredField.getName();
                 final String string = resultSet.getString(name);
@@ -469,7 +470,7 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
         return value;
     }
 
-    /*
+    /**
      * Generates an SQL String for the columns associated with a value class.
      * */
     private String getColumns() {
@@ -478,17 +479,20 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
             if (field.isAnnotationPresent(Transient.class)) {
                 continue;
             }
-            builder.append(field.getName()).append(",");
+            builder.append("`").append(field.getName()).append("`").append(",");
         }
         return builder.substring(0, builder.length() - 1);
     }
 
 
-    /*
+    /**
      * Converts a Java class to an SQL type.
      * */
-    private String getType(Class<?> type) {
-        return switch (type.getName()) {
+    private String getType(Field field) {
+        if (field.isAnnotationPresent(StorageSerialized.class)) {
+            return "VARCHAR(255)";
+        }
+        return switch (field.getType().getName()) {
             case "java.lang.String" -> "VARCHAR(255)";
             case "java.lang.Integer", "int" -> "INT";
             case "java.lang.Long", "long" -> "BIGINT";
@@ -503,7 +507,7 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
         };
     }
 
-    /*
+    /**
      * Generates an SQL String for inserting a value into the database.
      * */
     private String getValues(V value) {
@@ -515,9 +519,9 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
                 continue;
             }
             if (field.isAnnotationPresent(StorageSerialized.class)) {
-                builder.append("'").append(sanitize(AmethystCore.getGson().toJson(ReflectionUtil.getPrivateField(value, field.getName())))).append("'");
+                builder.append("'").append((AmethystCore.getGson().toJson(ReflectionUtil.getPrivateField(value, field.getName())))).append("'");
             } else {
-                builder.append("'").append(sanitize(ReflectionUtil.getPrivateField(value, field.getName()))).append("'");
+                builder.append("'").append((ReflectionUtil.getPrivateField(value, field.getName()))).append("'");
             }
             if (i != fields.length - 1) {
                 builder.append(", ");
@@ -525,16 +529,5 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
             i++;
         }
         return builder.substring(0, builder.length() - 1);
-    }
-
-    /**
-     * Sanitizes an object to be used in an SQL statement.
-     * This is to prevent SQL injection.
-     * */
-    private Object sanitize(Object object) {
-        if (object instanceof String) {
-            return ((String) object).replace("'", "''");
-        }
-        return object;
     }
 }

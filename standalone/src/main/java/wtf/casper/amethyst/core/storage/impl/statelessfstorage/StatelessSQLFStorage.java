@@ -22,7 +22,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-public abstract class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, StatelessFieldStorage<K, V> {
+public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, StatelessFieldStorage<K, V> {
 
     private final HikariDataSource ds;
     private final Class<K> keyClass;
@@ -265,6 +265,17 @@ public abstract class StatelessSQLFStorage<K, V> implements ConstructableValue<K
             this.execute("DELETE FROM " + this.table + " WHERE " + field + " = ?;", statement -> {
                 statement.setString(1, IdUtils.getId(this.valueClass, value).toString());
             });
+        });
+    }
+
+    @Override
+    public CompletableFuture<Void> write() {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                this.ds.getConnection().close();
+            } catch (final SQLException e) {
+                e.printStackTrace();
+            }
         });
     }
 
