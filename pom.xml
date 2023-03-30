@@ -19,9 +19,10 @@
         <module>standalone</module>
         <module>minecraft</module>
         <module>paper</module>
+        <module>paper-shaded</module>
+        <module>paper-tests</module>
         <module>bungee</module>
         <module>velocity</module>
-        <module>paper-shaded</module>
     </modules>
 
     <build>

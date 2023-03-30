@@ -1,0 +1,6 @@
+name: paper-tests
+version: '${project.version}'
+main: wtf.casper.papertests.PaperAmethystTests
+api-version: 1.19
+depend:
+  - Amethyst

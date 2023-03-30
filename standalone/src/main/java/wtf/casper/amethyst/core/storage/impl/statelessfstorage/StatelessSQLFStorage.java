@@ -440,12 +440,18 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
                 final String name = declaredField.getName();
                 final String string = resultSet.getString(name);
                 final Object object = AmethystCore.getGson().fromJson(string, declaredField.getType());
+                declaredField.setAccessible(true);
                 declaredField.set(value, object);
                 continue;
             }
 
             final String name = declaredField.getName();
             final Object object = resultSet.getObject(name);
+
+            if (declaredField.getType() == UUID.class && object instanceof String) {
+                ReflectionUtil.setPrivateField(value, name, UUID.fromString((String) object));
+                continue;
+            }
 
             ReflectionUtil.setPrivateField(value, name, object);
         }

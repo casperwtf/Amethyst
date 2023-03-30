@@ -282,9 +282,9 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
 
     @Override
     public CompletableFuture<V> getFirst(String field, Object value, FilterType filterType) {
-        return CompletableFuture.supplyAsync(() -> {
-            return this.get(field, value, filterType, SortingType.NONE).join().stream().findFirst().orElse(null);
-        });
+        return CompletableFuture.supplyAsync(() ->
+                this.get(field, value, filterType, SortingType.NONE).join().stream().findFirst().orElse(null)
+        );
     }
 
     @Override
@@ -298,14 +298,14 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
             }
 
             String values = this.getValues(value);
-            this.execute("INSERT INTO " + this.table + " (" + this.getColumns() + ") VALUES (" + values + ") ON DUPLICATE KEY UPDATE " + getUpdateValues(value));
+            this.execute("INSERT INTO " + this.table + " (" + this.getColumns() + ") VALUES (" + values + ") ON DUPLICATE KEY UPDATE " + getUpdateValues());
         });
     }
 
     @Override
     public CompletableFuture<Void> remove(final V value) {
         return CompletableFuture.runAsync(() -> {
-            Field idField = null;
+            Field idField;
             try {
                 idField = IdUtils.getIdField(valueClass);
             } catch (IdNotFoundException e) {
@@ -382,23 +382,23 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
     }
 
     private void execute(final String statement) {
-        this.execute(statement, ps -> {
-        });
+        this.execute(statement, ps -> {});
     }
 
     private void execute(final String statement, final UnsafeConsumer<PreparedStatement> consumer) {
+        AmethystLogger.debug("Executing statement: " + statement);
         try (final Connection connection = this.ds.getConnection()) {
             try (final PreparedStatement prepared = connection.prepareStatement(statement)) {
                 consumer.accept(prepared);
                 prepared.execute();
             } catch (final SQLException e) {
                 e.printStackTrace();
+
             }
         } catch (final SQLException e) {
             e.printStackTrace();
         }
     }
-
 
     private void addColumn(final String column, final String type) {
         this.execute("ALTER TABLE " + this.table + " ADD " + column + " " + type + ";");
@@ -408,6 +408,7 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
      * Will scan the class for fields and add them to the database if they don't exist
      * */
     private void scanForMissingColumns() {
+
         List<Field> fields = Arrays.stream(this.valueClass.getDeclaredFields())
                 .filter(field -> !field.isAnnotationPresent(Transient.class))
                 .filter(field -> !Modifier.isTransient(field.getModifiers()))
@@ -470,10 +471,9 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
             if (index != fields.size()) {
                 builder.append(", ");
             }
+
         }
         builder.append(") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;");
-
-        AmethystLogger.debug("Generated SQL: " + builder);
         return builder.toString();
     }
 
@@ -493,6 +493,7 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
                 final String name = declaredField.getName();
                 final String string = resultSet.getString(name);
                 final Object object = AmethystCore.getGson().fromJson(string, declaredField.getType());
+                declaredField.setAccessible(true);
                 declaredField.set(value, object);
                 continue;
             }
@@ -500,40 +501,18 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
             final String name = declaredField.getName();
             final Object object = resultSet.getObject(name);
 
+            if (declaredField.getType() == UUID.class && object instanceof String) {
+                ReflectionUtil.setPrivateField(value, name, UUID.fromString((String) object));
+                continue;
+            }
+
             ReflectionUtil.setPrivateField(value, name, object);
         }
 
         return value;
     }
 
-    /**
-     * Generates an SQL String for inserting a value into the database.
-     * */
-    private String getValues(V value) {
-        final StringBuilder builder = new StringBuilder();
-        int i = 0;
-
-        List<Field> fields = Arrays.stream(this.valueClass.getDeclaredFields())
-                .filter(field -> !field.isAnnotationPresent(Transient.class))
-                .filter(field -> !Modifier.isTransient(field.getModifiers()))
-                .toList();
-
-        for (final Field field : fields) {
-            if (field.isAnnotationPresent(StorageSerialized.class)) {
-                builder.append("'").append(AmethystCore.getGson().toJson(ReflectionUtil.getPrivateField(value, field.getName()))).append("'");
-            } else {
-                builder.append("'").append(ReflectionUtil.getPrivateField(value, field.getName())).append("'");
-            }
-            if (i != fields.size() - 1) {
-                builder.append(", ");
-            }
-            i++;
-        }
-
-        return builder.toString();
-    }
-
-    private String getUpdateValues(V value) {
+    private String getUpdateValues() {
         final StringBuilder builder = new StringBuilder();
         int i = 0;
 
@@ -567,7 +546,7 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
                 .toList();
 
         for (final Field field : fields) {
-            builder.append("`").append(field.getName()).append("`").append(",");
+            builder.append("`" + field.getName() + "`").append(",");
         }
 
         return builder.substring(0, builder.length() - 1);
@@ -590,6 +569,48 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
             case "java.lang.Character", "char" -> "CHAR";
             case "java.util.UUID" -> "VARCHAR(36)";
             default -> "VARCHAR(255)";
+        };
+    }
+
+    /**
+     * Generates an SQL String for inserting a value into the database.
+     * */
+    private String getValues(V value) {
+        final StringBuilder builder = new StringBuilder();
+        int i = 0;
+
+        List<Field> fields = Arrays.stream(this.valueClass.getDeclaredFields())
+                .filter(field -> !field.isAnnotationPresent(Transient.class))
+                .filter(field -> !Modifier.isTransient(field.getModifiers()))
+                .toList();
+
+        for (final Field field : fields) {
+            if (field.isAnnotationPresent(StorageSerialized.class)) {
+                builder.append("'").append(AmethystCore.getGson().toJson(ReflectionUtil.getPrivateField(value, field.getName()))).append("'");
+            } else {
+
+                boolean shouldHaveQuotes = shouldHaveQuotes(ReflectionUtil.getPrivateField(value, field.getName()));
+                if (shouldHaveQuotes) {
+                    builder.append("'");
+                }
+                builder.append(ReflectionUtil.getPrivateField(value, field.getName()));
+                if (shouldHaveQuotes) {
+                    builder.append("'");
+                }
+            }
+            if (i != fields.size() - 1) {
+                builder.append(", ");
+            }
+            i++;
+        }
+
+        return builder.toString();
+    }
+
+    private boolean shouldHaveQuotes(Object value) {
+        return switch (value.getClass().getName()) {
+            case "java.lang.String", "java.util.UUID" -> true;
+            default -> false;
         };
     }
 }

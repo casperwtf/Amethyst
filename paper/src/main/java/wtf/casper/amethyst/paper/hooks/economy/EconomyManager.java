@@ -53,7 +53,7 @@ public class EconomyManager {
         }
 
         @Nullable
-        IEconomy getEconomy() {
+        public IEconomy getEconomy() {
             return EconomyManager.getEconomy(name);
         }
     }
