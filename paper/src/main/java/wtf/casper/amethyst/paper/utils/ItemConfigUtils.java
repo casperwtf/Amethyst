@@ -2,16 +2,12 @@ package wtf.casper.amethyst.paper.utils;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import me.clip.placeholderapi.PlaceholderAPI;
-import org.bukkit.Color;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import wtf.casper.amethyst.core.exceptions.AmethystException;
-import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.core.utils.MathUtils;
 
 import javax.annotation.Nullable;
@@ -45,7 +41,7 @@ public class ItemConfigUtils {
         }
 
         section.getOptionalString("name").ifPresent(s -> {
-            if (player != null) {
+            if (player != null && Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                 s = PlaceholderAPI.setPlaceholders(player, s);
             }
             if (replacer != null) {
@@ -55,7 +51,7 @@ public class ItemConfigUtils {
             builder.setDisplayName(StringUtilsPaper.colorify(s));
         });
         section.getOptionalStringList("lore").ifPresent(lore -> {
-            if (player != null) {
+            if (player != null && Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                 lore = PlaceholderAPI.setPlaceholders(player, lore);
             }
             if (replacer != null) {
