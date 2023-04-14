@@ -96,6 +96,10 @@
                             <pattern>org.reflections</pattern>
                             <shadedPattern>wtf.casper.amethyst.libs.reflections</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>javaassist</pattern>
+                            <shadedPattern>wtf.casper.amethyst.libs.javaassist</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
             </plugin>
@@ -141,6 +145,13 @@
             <version>6.2.3.RELEASE</version>
             <scope>compile</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>31.1-jre</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>com.github.Redempt</groupId>
             <artifactId>Crunch</artifactId>
@@ -170,6 +181,12 @@
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <version>5.0.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <version>3.0.8</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

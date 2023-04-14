@@ -216,6 +216,24 @@ public interface StatelessFieldStorage<K, V> {
      */
     CompletableFuture<Collection<V>> allValues();
 
+    /**
+     * @param field the field to search for.
+     * @param sortingType the sorting type to use.
+     * @return a future that will complete with a collection of all values in the storage that match the given field and value.
+     */
+    default CompletableFuture<Collection<V>> allValues(String field, SortingType sortingType) {
+        return CompletableFuture.supplyAsync(() -> {
+            Collection<V> values = allValues().join();
+            if (values.isEmpty()) {
+                return values;
+            }
+
+            // Sort the values.
+            return sortingType.sort(values, field);
+        });
+    }
+
+
     enum SortingType {
         NONE(Object.class),
         ASCENDING(String.class, Number.class, Boolean.class),

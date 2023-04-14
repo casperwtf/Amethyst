@@ -1,27 +1,25 @@
 package wtf.casper.amethyst.core.storage.impl.fstorage;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.mongodb.*;
+import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
 import lombok.Getter;
 import org.bson.Document;
-import org.bson.UuidRepresentation;
-import org.bson.codecs.configuration.CodecRegistries;
-import org.bson.codecs.pojo.PojoCodecProvider;
+import org.bson.conversions.Bson;
 import wtf.casper.amethyst.core.AmethystCore;
+import wtf.casper.amethyst.core.cache.Cache;
+import wtf.casper.amethyst.core.cache.CaffeineCache;
 import wtf.casper.amethyst.core.storage.ConstructableValue;
 import wtf.casper.amethyst.core.storage.Credentials;
 import wtf.casper.amethyst.core.storage.FieldStorage;
+import wtf.casper.amethyst.core.storage.MongoProvider;
 import wtf.casper.amethyst.core.storage.id.utils.IdUtils;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -30,11 +28,10 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
     private final Class<V> type;
     private final String idFieldName;
     private final MongoClient mongoClient;
-    private final MongoDatabase mongoDatabase;
     @Getter
     private final MongoCollection<Document> collection;
-    private Cache<K, V> cache = Caffeine.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).build();
 
+    private Cache<K, V> cache = new CaffeineCache<>(Caffeine.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).build());
 
     public MongoFStorage(final Class<V> type, final Credentials credentials) {
         this(credentials.getUri(), credentials.getDatabase(), credentials.getCollection(), type);
@@ -43,18 +40,10 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
     public MongoFStorage(final String uri, final String database, final String collection, final Class<V> type) {
         this.type = type;
         this.idFieldName = IdUtils.getIdName(this.type);
-        MongoClientURI uri1 = new MongoClientURI(uri, MongoClientOptions.builder()
-                .uuidRepresentation(UuidRepresentation.JAVA_LEGACY)
-                .codecRegistry(CodecRegistries.fromRegistries(
-                        MongoClientSettings.getDefaultCodecRegistry(),
-                        CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build())
-                ))
-        );
         try {
             AmethystLogger.debug("Connecting to MongoDB...");
-            AmethystLogger.debug(uri);
-            mongoClient = new MongoClient(uri1);
-        } catch (MongoException e) {
+            mongoClient = MongoProvider.getClient(uri);
+        } catch (Exception e) {
             AmethystLogger.warning(" ");
             AmethystLogger.warning(" ");
             AmethystLogger.warning("Failed to connect to MongoDB. Please check your credentials.");
@@ -65,10 +54,9 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
             throw e;
         }
 
-        this.mongoDatabase = mongoClient.getDatabase(database);
+        MongoDatabase mongoDatabase = mongoClient.getDatabase(database);
         this.collection = mongoDatabase.getCollection(collection);
     }
-
 
     @Override
     public Cache<K, V> cache() {
@@ -85,14 +73,11 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
         return CompletableFuture.supplyAsync(() -> {
 
             Collection<V> collection = new ArrayList<>();
-
-            Document filter = getDocument(filterType, field, value);
-
+            Bson filter = getDocument(filterType, field, value);
             List<Document> into = getCollection().find(filter).into(new ArrayList<>());
 
             for (Document document : into) {
                 V obj = AmethystCore.getGson().fromJson(document.toJson(AmethystCore.getJsonWriterSettings()), type);
-                cache.put((K) document.get(idFieldName), obj);
                 collection.add(obj);
             }
 
@@ -107,9 +92,7 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
                 return cache.getIfPresent(key);
             }
 
-            Document filter = new Document(idFieldName, key);
-            AmethystLogger.debug(filter);
-            AmethystLogger.debug(filter.toJson());
+            Document filter = new Document(idFieldName, convertUUIDtoString(key));
             Document document = getCollection().find(filter).first();
 
             if (document == null) {
@@ -117,7 +100,7 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
             }
 
             V obj = AmethystCore.getGson().fromJson(document.toJson(AmethystCore.getJsonWriterSettings()), type);
-            cache.put(key, obj);
+            cache.asMap().putIfAbsent(key, obj);
             return obj;
         });
     }
@@ -127,11 +110,13 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
         return CompletableFuture.supplyAsync(() -> {
             if (!cache.asMap().isEmpty()) {
                 for (V v : cache.asMap().values()) {
-                    if (filterType.passes(v, field, value)) return v;
+                    if (filterType.passes(v, field, value)) {
+                        return v;
+                    }
                 }
             }
 
-            Document filter = getDocument(filterType, field, value);
+            Bson filter = getDocument(filterType, field, value);
             Document document = getCollection().find(filter).first();
 
             if (document == null) {
@@ -139,7 +124,8 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
             }
 
             V obj = AmethystCore.getGson().fromJson(document.toJson(AmethystCore.getJsonWriterSettings()), type);
-            cache.put((K) document.get(idFieldName), obj);
+            K key = (K) IdUtils.getId(type, obj);
+            cache.asMap().putIfAbsent(key, obj);
             return obj;
         });
     }
@@ -147,8 +133,10 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
     @Override
     public CompletableFuture<Void> save(V value) {
         return CompletableFuture.runAsync(() -> {
+            K key = (K) IdUtils.getId(type, value);
+            cache.asMap().putIfAbsent(key, value);
             getCollection().replaceOne(
-                    new Document(idFieldName, IdUtils.getId(type, value)),
+                    new Document(idFieldName, convertUUIDtoString(key)),
                     Document.parse(AmethystCore.getGson().toJson(value)),
                     new ReplaceOptions().upsert(true)
             );
@@ -158,8 +146,13 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
     @Override
     public CompletableFuture<Void> remove(V key) {
         return CompletableFuture.runAsync(() -> {
-            getCollection().deleteOne(new Document(idFieldName, IdUtils.getId(type, key)));
-            cache.invalidate((K) IdUtils.getId(type, key));
+            try {
+                K id = (K) IdUtils.getId(type, key);
+                cache.invalidate(id);
+                getCollection().deleteMany(getDocument(FilterType.EQUALS, idFieldName, convertUUIDtoString(id)));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
     }
 
@@ -172,7 +165,8 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
 
     @Override
     public CompletableFuture<Void> close() {
-        return CompletableFuture.runAsync(mongoClient::close);
+        // No need to close mongo because it's handled by a provider
+        return CompletableFuture.runAsync(() -> {});
     }
 
     @Override
@@ -184,47 +178,60 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
             for (Document document : into) {
                 V obj = AmethystCore.getGson().fromJson(document.toJson(AmethystCore.getJsonWriterSettings()), type);
                 collection.add(obj);
-                cache.put((K) document.get(idFieldName), obj);
             }
 
             return collection;
         });
     }
 
-    private Document getDocument(FilterType filterType, String field, Object value) {
-        Document filter;
+    private Bson getDocument(FilterType filterType, String field, Object value) {
+        value = convertUUIDtoString(value);
+        Bson filter;
         switch (filterType) {
-            case EQUALS -> filter = new Document(field, value);
-            case CONTAINS -> filter = new Document(field, new Document("$regex", value));
-            case STARTS_WITH -> filter = new Document(field, new Document("$regex", "^" + value));
-            case ENDS_WITH -> filter = new Document(field, new Document("$regex", value + "$"));
-            case GREATER_THAN -> filter = new Document(field, new Document("$gt", value));
-            case LESS_THAN -> filter = new Document(field, new Document("$lt", value));
-            case GREATER_THAN_OR_EQUAL_TO -> filter = new Document(field, new Document("$gte", value));
-            case LESS_THAN_OR_EQUAL_TO -> filter = new Document(field, new Document("$lte", value));
-            case IN -> filter = new Document(field, new Document("$in", value));
-            case NOT_EQUALS -> filter = new Document(field, new Document("$ne", value));
-            case NOT_CONTAINS -> filter = new Document(field, new Document("$not", new Document("$regex", value)));
-            case NOT_STARTS_WITH ->
-                    filter = new Document(field, new Document("$not", new Document("$regex", "^" + value)));
-            case NOT_ENDS_WITH ->
-                    filter = new Document(field, new Document("$not", new Document("$regex", value + "$")));
-            case NOT_IN -> filter = new Document(field, new Document("$nin", value));
-            case NOT_GREATER_THAN -> filter = new Document(field, new Document("$not", new Document("$gt", value)));
-            case NOT_LESS_THAN -> filter = new Document(field, new Document("$not", new Document("$lt", value)));
-            case NOT_GREATER_THAN_OR_EQUAL_TO ->
-                    filter = new Document(field, new Document("$not", new Document("$gte", value)));
-            case NOT_LESS_THAN_OR_EQUAL_TO ->
-                    filter = new Document(field, new Document("$not", new Document("$lte", value)));
+            case EQUALS -> filter = Filters.eq(field, value);
+            case NOT_EQUALS -> filter = Filters.ne(field, value);
+            case GREATER_THAN -> filter = Filters.gt(field, value);
+            case LESS_THAN -> filter = Filters.lt(field, value);
+            case GREATER_THAN_OR_EQUAL_TO -> filter = Filters.gte(field, value);
+            case LESS_THAN_OR_EQUAL_TO -> filter = Filters.lte(field, value);
+            case CONTAINS -> filter = Filters.regex(field, value.toString());
+            case STARTS_WITH -> filter = Filters.regex(field, "^" + value.toString());
+            case ENDS_WITH -> filter = Filters.regex(field, value.toString() + "$");
+            case IN -> filter = Filters.in(field, (List<?>) value);
+            case NOT_IN -> filter = Filters.nin(field, (List<?>) value);
+            case NOT_CONTAINS -> filter = Filters.not(Filters.regex(field, value.toString()));
+            case NOT_STARTS_WITH -> filter = Filters.not(Filters.regex(field, "^" + value.toString()));
+            case NOT_ENDS_WITH -> filter = Filters.not(Filters.regex(field, value.toString() + "$"));
+            case NOT_GREATER_THAN -> filter = Filters.not(Filters.gt(field, value));
+            case NOT_LESS_THAN -> filter = Filters.not(Filters.lt(field, value));
+            case NOT_GREATER_THAN_OR_EQUAL_TO -> filter = Filters.not(Filters.gte(field, value));
+            case NOT_LESS_THAN_OR_EQUAL_TO -> filter = Filters.not(Filters.lte(field, value));
             default -> throw new IllegalStateException("Unexpected value: " + filterType);
         }
         return filter;
     }
 
-    private Object convert(Object o) {
-        if (o instanceof UUID) {
-            return o.toString();
+    private Object convertUUIDtoString(Object object) {
+        if (object instanceof UUID) {
+            return object.toString();
         }
-        return o;
+
+        if (object instanceof List) {
+            List<Object> list = new ArrayList<>();
+            for (Object o : (List<?>) object) {
+                list.add(convertUUIDtoString(o));
+            }
+            return list;
+        }
+
+        if (object instanceof Map) {
+            Map<String, Object> map = new HashMap<>();
+            for (Map.Entry<?, ?> entry : ((Map<?, ?>) object).entrySet()) {
+                map.put(entry.getKey().toString(), convertUUIDtoString(entry.getValue()));
+            }
+            return map;
+        }
+
+        return object;
     }
 }

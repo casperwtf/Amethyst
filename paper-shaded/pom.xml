@@ -110,8 +110,16 @@
                                     <shadedPattern>wtf.casper.amethyst.libs.reflections</shadedPattern>
                                 </relocation>
                                 <relocation>
+                                    <pattern>javassist</pattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.javassist</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>com.iridium.iridiumcolorapi</pattern>
                                     <shadedPattern>wtf.casper.amethyst.libs.iridiumcolorapi</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.zaxxer.hikari</pattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.hikari</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>

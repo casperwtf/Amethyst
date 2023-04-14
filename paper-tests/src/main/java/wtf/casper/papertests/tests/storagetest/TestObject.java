@@ -1,10 +1,12 @@
 package wtf.casper.papertests.tests.storagetest;
 
+import lombok.ToString;
 import wtf.casper.amethyst.core.storage.id.Id;
 import wtf.casper.amethyst.core.storage.id.StorageSerialized;
 
 import java.util.UUID;
 
+@ToString
 public class TestObject {
     @Id
     private UUID uniqueId;

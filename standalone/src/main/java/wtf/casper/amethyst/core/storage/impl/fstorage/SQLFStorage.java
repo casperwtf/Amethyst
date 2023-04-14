@@ -1,10 +1,11 @@
 package wtf.casper.amethyst.core.storage.impl.fstorage;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.SneakyThrows;
 import wtf.casper.amethyst.core.AmethystCore;
+import wtf.casper.amethyst.core.cache.Cache;
+import wtf.casper.amethyst.core.cache.CaffeineCache;
 import wtf.casper.amethyst.core.storage.ConstructableValue;
 import wtf.casper.amethyst.core.storage.Credentials;
 import wtf.casper.amethyst.core.storage.FieldStorage;
@@ -33,9 +34,9 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
     private final Class<K> keyClass;
     private final Class<V> valueClass;
     private final String table;
-    private Cache<K, V> cache = Caffeine.newBuilder()
+    private Cache<K, V> cache = new CaffeineCache<>(Caffeine.newBuilder()
             .expireAfterWrite(10, TimeUnit.MINUTES)
-            .build();
+            .build());
 
     public SQLFStorage(final Class<K> keyClass, final Class<V> valueClass, final String table, final Credentials credentials) {
         this(keyClass, valueClass, table, credentials.getHost(), credentials.getPort(), credentials.getDatabase(), credentials.getUsername(), credentials.getPassword());
@@ -291,6 +292,7 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
     public CompletableFuture<Void> save(final V value) {
         return CompletableFuture.runAsync(() -> {
             Object id = IdUtils.getId(valueClass, value);
+            cache.put((K) id, value);
 
             if (id == null) {
                 AmethystLogger.error("Could not find id field for " + keyClass.getSimpleName());

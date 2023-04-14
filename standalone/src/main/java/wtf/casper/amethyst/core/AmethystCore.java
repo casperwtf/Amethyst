@@ -7,6 +7,8 @@ import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.json.JsonWriterSettings;
+import org.reflections.Reflections;
+import wtf.casper.amethyst.core.gson.UUIDTypeAdapter;
 import wtf.casper.amethyst.core.mq.Message;
 import wtf.casper.amethyst.core.storage.id.Transient;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
@@ -15,6 +17,7 @@ import wtf.casper.amethyst.core.utils.RuntimeTypeAdapterFactory;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class AmethystCore {
 
@@ -39,7 +42,8 @@ public class AmethystCore {
     @Getter @Setter private static Gson gson = null;
 
     public static void init() {
-        recreateGson();
+        // no longer need to recreate gson on init because this recreates it
+        registerTypeAdapter(UUID.class, new UUIDTypeAdapter());
     }
 
     public static void registerTypeAdapter(Type type, Object adapter) {

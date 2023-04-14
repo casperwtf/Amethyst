@@ -5,6 +5,7 @@ import io.github.rysefoxx.inventory.plugin.animator.SlideAnimation;
 import io.github.rysefoxx.inventory.plugin.content.IntelligentItem;
 import io.github.rysefoxx.inventory.plugin.content.InventoryContents;
 import io.github.rysefoxx.inventory.plugin.content.InventoryProvider;
+import io.github.rysefoxx.inventory.plugin.enums.InventoryOpenerType;
 import io.github.rysefoxx.inventory.plugin.enums.TimeSetting;
 import io.github.rysefoxx.inventory.plugin.pagination.RyseAnvil;
 import io.github.rysefoxx.inventory.plugin.pagination.RyseInventory;
@@ -198,6 +199,12 @@ public abstract class AmethystMenu implements InventoryProvider {
         for (Player target : targets) {
             inventory.open(target);
         }
+    }
+
+    public void openAnvil(JavaPlugin plugin, Player player, PlaceholderReplacer replacer, String title) {
+        RyseInventory ryseInventory = MenuUtil.getInventory(plugin, this, slots, replacer.parse(title), InventoryOpenerType.ANVIL);
+        this.inventory = ryseInventory;
+        ryseInventory.open(player);
     }
 
     protected void disableUpdating() {

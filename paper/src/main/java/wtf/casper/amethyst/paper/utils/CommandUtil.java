@@ -1,6 +1,7 @@
 package wtf.casper.amethyst.paper.utils;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.defaults.BukkitCommand;
@@ -91,4 +92,18 @@ public class CommandUtil {
             }
         }
     }
+
+    public static Command getCommand(String cmd) {
+        CommandMap commandMap;
+        try {
+            final Field field = Bukkit.getServer().getClass().getDeclaredField("commandMap");
+            field.setAccessible(true);
+            commandMap = (CommandMap) field.get(Bukkit.getServer());
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        assert commandMap != null;
+        return commandMap.getCommand(cmd);
+    }
+
 }

@@ -1,9 +1,10 @@
 package wtf.casper.amethyst.core.storage.impl.fstorage;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.SneakyThrows;
 import wtf.casper.amethyst.core.AmethystCore;
+import wtf.casper.amethyst.core.cache.Cache;
+import wtf.casper.amethyst.core.cache.CaffeineCache;
 import wtf.casper.amethyst.core.storage.ConstructableValue;
 import wtf.casper.amethyst.core.storage.FieldStorage;
 import wtf.casper.amethyst.core.storage.id.StorageSerialized;
@@ -28,9 +29,9 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
     private final Class<K> keyClass;
     private final Class<V> valueClass;
     private final String table;
-    private Cache<K, V> cache = Caffeine.newBuilder()
+    private Cache<K, V> cache = new CaffeineCache<>(Caffeine.newBuilder()
             .expireAfterWrite(10, TimeUnit.MINUTES)
-            .build();
+            .build());
 
     @SneakyThrows
     public SQLiteFStorage(final Class<K> keyClass, final Class<V> valueClass, final File file, String table) {
@@ -264,6 +265,7 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
                 return;
             }
 
+            this.cache.put((K) id, value);
             String values = this.getValues(value);
             this.execute("INSERT OR REPLACE INTO " + this.table + " (" + this.getColumns() + ") VALUES (" + values + ");");
         });
@@ -279,6 +281,7 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
                 throw new RuntimeException(e);
             }
             String field = idField.getName();
+            this.cache.invalidate((K) IdUtils.getId(this.valueClass, value));
             this.execute("DELETE FROM " + this.table + " WHERE " + field + " = ?;", statement -> {
                 statement.setString(1, IdUtils.getId(this.valueClass, value).toString());
             });
@@ -358,10 +361,18 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
     }
 
     private void execute(String statement, final UnsafeConsumer<PreparedStatement> consumer) {
-        try (final PreparedStatement prepared = this.connection.prepareStatement(statement)) {
-            consumer.accept(prepared);
-            prepared.executeUpdate();
-        } catch (final SQLException e) {
+        try {
+            if (this.connection.isClosed()) {
+                AmethystLogger.log("Connection is closed, cannot execute statement: " + statement);
+                return;
+            }
+            try (final PreparedStatement prepared = this.connection.prepareStatement(statement)) {
+                consumer.accept(prepared);
+                prepared.executeUpdate();
+            } catch (final SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

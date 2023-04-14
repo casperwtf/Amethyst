@@ -1,6 +1,7 @@
 package wtf.casper.amethyst.core.storage;
 
-import com.github.benmanes.caffeine.cache.Cache;
+
+import wtf.casper.amethyst.core.cache.Cache;
 
 public interface FieldStorage<K, V> extends StatelessFieldStorage<K, V> {
 
