@@ -156,7 +156,8 @@ public abstract class AmethystCommand extends BukkitCommand {
         return strings == null ? ImmutableList.of() : strings;
     }
 
-    public abstract void runDefault(@NotNull CommandSender sender, String label, @NotNull String[] args);
+    public void runDefault(@NotNull CommandSender sender, String label, @NotNull String[] args) {
+    };
 
     public List<String> defaultTab(@NotNull CommandSender sender, String commandLabel, @NotNull String[] args) {
         return null;

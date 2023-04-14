@@ -39,10 +39,10 @@ public class GeyserExpansion extends PlaceholderExpansion {
         if (GeyserUtils.floodgate() == null) return "";
 
         switch (args[0].toLowerCase(Locale.ROOT)) {
-            case "isbedrock": {
+            case "isbedrock" -> {
                 return GeyserUtils.isUserBedrock(player.getUniqueId()) ? "true" : "false";
             }
-            case "replace": {
+            case "replace" -> {
                 if (GeyserUtils.isUserBedrock(player.getUniqueId())) {
                     return args[2];
                 }
