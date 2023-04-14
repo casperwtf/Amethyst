@@ -18,6 +18,7 @@
     <modules>
         <module>standalone</module>
         <module>minecraft</module>
+        <module>folia</module>
         <module>paper</module>
         <module>paper-shaded</module>
         <module>paper-tests</module>
