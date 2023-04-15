@@ -33,7 +33,7 @@ public class StorageTest implements Test {
                 storage.remove(testObject).join();
             }
 
-            AmethystLogger.log("Cache size: " + storage.cache().asMap().size());
+            AmethystLogger.log("Cache size: " + storage.cache().asMap().size() +" | Should be 0");
 
             for (TestObject testObject : storage.allValues().join()) {
                 AmethystLogger.log("Still in database " + testObject.getUniqueId());
@@ -50,6 +50,14 @@ public class StorageTest implements Test {
             storage.save(object).join();
 
             assertVal(storage.cache().asMap().size(), 1);
+            Collection<TestObject> join4 = storage.allValues().exceptionally(throwable -> {
+                throwable.printStackTrace();
+                return null;
+            }).join();
+            if (join4 == null) {
+                throw new AssertionError("join4 is null");
+            }
+            assertVal(join4.size(), 1);
 
             Collection<TestObject> objects1 = storage.get(StatelessFieldStorage.FilterType.EQUALS, StatelessFieldStorage.SortingType.NONE, Pair.of("name", "Jane")).join();
             assertVal(objects1.size(), 1);

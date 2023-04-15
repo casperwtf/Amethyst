@@ -19,10 +19,9 @@ import wtf.casper.amethyst.core.utils.ReflectionUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.math.BigDecimal;
+import java.sql.*;
+import java.sql.Date;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -68,11 +67,7 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
                 switch (filterType) {
                     case EQUALS -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " = ?")) {
-                            if (value instanceof UUID) {
-                                statement.setString(1, value.toString());
-                            } else {
-                                statement.setObject(1, value);
-                            }
+                            setStatement(statement, 1, value);
 
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
@@ -86,7 +81,7 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
                     }
                     case CONTAINS -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " LIKE ?")) {
-                            statement.setObject(1, "%" + value + "%");
+                            setStatement(statement, 1, "%" + value + "%");
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -99,7 +94,7 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
                     }
                     case STARTS_WITH -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " LIKE ?")) {
-                            statement.setObject(1, value + "%");
+                            setStatement(statement, 1, value + "%" );
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -111,7 +106,7 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
                     }
                     case ENDS_WITH -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " LIKE ?")) {
-                            statement.setObject(1, "%" + value);
+                            setStatement(statement, 1, "%" + value);
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -123,7 +118,7 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
                     }
                     case GREATER_THAN -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " > ?")) {
-                            statement.setObject(1, value);
+                            setStatement(statement, 1, value);
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -135,7 +130,7 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
                     }
                     case LESS_THAN -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " < ?")) {
-                            statement.setObject(1, value);
+                            setStatement(statement, 1, value);
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -147,7 +142,7 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
                     }
                     case GREATER_THAN_OR_EQUAL_TO -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " >= ?")) {
-                            statement.setObject(1, value);
+                            setStatement(statement, 1, value);
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -159,7 +154,7 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
                     }
                     case LESS_THAN_OR_EQUAL_TO -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " <= ?")) {
-                            statement.setObject(1, value);
+                            setStatement(statement, 1, value);
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -171,7 +166,7 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
                     }
                     case IN -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " IN (?)")) {
-                            statement.setObject(1, value);
+                            setStatement(statement, 1, value);
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -183,11 +178,7 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
                     }
                     case NOT_EQUALS -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " != ?")) {
-                            if (value instanceof UUID) {
-                                statement.setString(1, value.toString());
-                            } else {
-                                statement.setObject(1, value);
-                            }
+                            setStatement(statement, 1, value);
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -199,7 +190,7 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
                     }
                     case NOT_CONTAINS -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " NOT LIKE ?")) {
-                            statement.setObject(1, "%" + value + "%");
+                            setStatement(statement, 1, "%" + value + "%");
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -211,7 +202,7 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
                     }
                     case NOT_STARTS_WITH -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " NOT LIKE ?")) {
-                            statement.setObject(1, value + "%");
+                            setStatement(statement, 1, value + "%");
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -223,7 +214,7 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
                     }
                     case NOT_ENDS_WITH -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " NOT LIKE ?")) {
-                            statement.setObject(1, "%" + value);
+                            setStatement(statement, 1, "%" + value);
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -235,7 +226,7 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
                     }
                     case NOT_IN -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " NOT IN (?)")) {
-                            statement.setObject(1, value);
+                            setStatement(statement, 1, value);
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -270,14 +261,13 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
     public CompletableFuture<Void> save(final V value) {
         return CompletableFuture.runAsync(() -> {
             Object id = IdUtils.getId(valueClass, value);
-
             if (id == null) {
                 AmethystLogger.error("Could not find id field for " + keyClass.getSimpleName());
                 return;
             }
 
             String values = this.getValues(value);
-            this.execute("INSERT INTO " + this.table + " (" + this.getColumns() + ") VALUES (" + values + ") ON DUPLICATE KEY UPDATE " + getUpdateValues());
+            this.executeUpdate("INSERT INTO " + this.table + " (" + this.getColumns() + ") VALUES (" + values + ") ON DUPLICATE KEY UPDATE " + getUpdateValues());
         });
     }
 
@@ -300,7 +290,7 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
     @Override
     @SneakyThrows
     public CompletableFuture<Void> write() {
-        // Doesnt need to write
+        // Doesn't need to do anything
         return CompletableFuture.runAsync(() -> {
         });
     }
@@ -371,7 +361,40 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
                 prepared.execute();
             } catch (final SQLException e) {
                 e.printStackTrace();
+            }
+        } catch (final SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
+    private void executeQuery(final String statement) {
+        this.executeQuery(statement, ps -> {});
+    }
+
+    private void executeQuery(final String statement, final UnsafeConsumer<PreparedStatement> consumer) {
+        try (final Connection connection = this.ds.getConnection()) {
+            try (final PreparedStatement prepared = connection.prepareStatement(statement)) {
+                consumer.accept(prepared);
+                prepared.executeQuery();
+            } catch (final SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (final SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void executeUpdate(final String statement) {
+        this.executeUpdate(statement, ps -> {});
+    }
+
+    private void executeUpdate(final String statement, final UnsafeConsumer<PreparedStatement> consumer) {
+        try (final Connection connection = this.ds.getConnection()) {
+            try (final PreparedStatement prepared = connection.prepareStatement(statement)) {
+                consumer.accept(prepared);
+                prepared.executeUpdate();
+            } catch (final SQLException e) {
+                e.printStackTrace();
             }
         } catch (final SQLException e) {
             e.printStackTrace();
@@ -386,7 +409,6 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
      * Will scan the class for fields and add them to the database if they don't exist
      * */
     private void scanForMissingColumns() {
-
         List<Field> fields = Arrays.stream(this.valueClass.getDeclaredFields())
                 .filter(field -> !field.isAnnotationPresent(Transient.class))
                 .filter(field -> !Modifier.isTransient(field.getModifiers()))
@@ -436,10 +458,10 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
             String type = this.getType(declaredField.getType());
 
             if (declaredField.isAnnotationPresent(StorageSerialized.class)) {
-                type = "VARCHAR(255)";
+                type = "JSON";
             }
 
-            builder.append("`" + name + "`").append(" ").append(type);
+            builder.append("`").append(name).append("`").append(" ").append(type);
             if (name.equals(idName)) {
                 builder.append(" PRIMARY KEY");
             }
@@ -590,5 +612,171 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
             case "java.lang.String", "java.util.UUID" -> true;
             default -> false;
         };
+    }
+
+    private void setStatement(PreparedStatement statement, int i, Object value) {
+        switch (value.getClass().getSimpleName()) {
+            case "String" -> {
+                try {
+                    statement.setString(i, (String) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Integer", "int" -> {
+                try {
+                    statement.setInt(i, (Integer) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Long", "long" -> {
+                try {
+                    statement.setLong(i, (Long) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Boolean", "boolean" -> {
+                try {
+                    statement.setBoolean(i, (Boolean) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Double", "double" -> {
+                try {
+                    statement.setDouble(i, (Double) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Float", "float" -> {
+                try {
+                    statement.setFloat(i, (Float) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Short", "short" -> {
+                try {
+                    statement.setShort(i, (Short) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Byte", "byte" -> {
+                try {
+                    statement.setByte(i, (Byte) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Character", "char" -> {
+                try {
+                    statement.setString(i, String.valueOf(value));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "UUID" -> {
+                try {
+                    statement.setString(i, value.toString());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Timestamp" -> {
+                try {
+                    statement.setTimestamp(i, (Timestamp) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Date" -> {
+                try {
+                    statement.setDate(i, (Date) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Time" -> {
+                try {
+                    statement.setTime(i, (Time) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "BigDecimal" -> {
+                try {
+                    statement.setBigDecimal(i, (BigDecimal) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Blob" -> {
+                try {
+                    statement.setBlob(i, (Blob) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Clob" -> {
+                try {
+                    statement.setClob(i, (Clob) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Array" -> {
+                try {
+                    statement.setArray(i, (Array) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Ref" -> {
+                try {
+                    statement.setRef(i, (Ref) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "NClob" -> {
+                try {
+                    statement.setNClob(i, (NClob) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "NString" -> {
+                try {
+                    statement.setNString(i, (String) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "RowId" -> {
+                try {
+                    statement.setRowId(i, (RowId) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "SQLXML" -> {
+                try {
+                    statement.setSQLXML(i, (SQLXML) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            default -> {
+                try {
+                    statement.setObject(i, value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

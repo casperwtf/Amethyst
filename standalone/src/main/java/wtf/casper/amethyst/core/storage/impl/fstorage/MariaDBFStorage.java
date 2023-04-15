@@ -58,7 +58,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
         this.ds.setJdbcUrl("jdbc:mariadb://" + host + ":" + port + "/" + database + "?allowPublicKeyRetrieval=true&autoReconnect=true&useSSL=false");
         this.ds.addDataSourceProperty("user", username);
         this.ds.addDataSourceProperty("password", password);
-        this.ds.setAutoCommit(false);
+        this.ds.setAutoCommit(true);
         this.execute(createTableFromObject());
         this.scanForMissingColumns();
     }
@@ -90,7 +90,6 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
 
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
-                                AmethystLogger.debug("Found " + resultSet +" in database");
                                 values.add(this.construct(resultSet));
                             }
 
@@ -288,15 +287,15 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
     public CompletableFuture<Void> save(final V value) {
         return CompletableFuture.runAsync(() -> {
             Object id = IdUtils.getId(valueClass, value);
-            cache.put((K) id, value);
-
             if (id == null) {
                 AmethystLogger.error("Could not find id field for " + keyClass.getSimpleName());
                 return;
             }
 
+            cache.put((K) id, value);
+
             String values = this.getValues(value);
-            this.execute("INSERT INTO " + this.table + " (" + this.getColumns() + ") VALUES (" + values + ") ON DUPLICATE KEY UPDATE " + getUpdateValues());
+            this.executeUpdate("INSERT INTO " + this.table + " (" + this.getColumns() + ") VALUES (" + values + ") ON DUPLICATE KEY UPDATE " + getUpdateValues());
         });
     }
 
@@ -384,14 +383,47 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
     }
 
     private void execute(final String statement, final UnsafeConsumer<PreparedStatement> consumer) {
-        AmethystLogger.debug("Executing statement: " + statement);
+        
         try (final Connection connection = this.ds.getConnection()) {
             try (final PreparedStatement prepared = connection.prepareStatement(statement)) {
                 consumer.accept(prepared);
                 prepared.execute();
             } catch (final SQLException e) {
                 e.printStackTrace();
+            }
+        } catch (final SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
+    private void executeQuery(final String statement) {
+        this.executeQuery(statement, ps -> {});
+    }
+
+    private void executeQuery(final String statement, final UnsafeConsumer<PreparedStatement> consumer) {
+        try (final Connection connection = this.ds.getConnection()) {
+            try (final PreparedStatement prepared = connection.prepareStatement(statement)) {
+                consumer.accept(prepared);
+                prepared.executeQuery();
+            } catch (final SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (final SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void executeUpdate(final String statement) {
+        this.executeUpdate(statement, ps -> {});
+    }
+
+    private void executeUpdate(final String statement, final UnsafeConsumer<PreparedStatement> consumer) {
+        try (final Connection connection = this.ds.getConnection()) {
+            try (final PreparedStatement prepared = connection.prepareStatement(statement)) {
+                consumer.accept(prepared);
+                prepared.executeUpdate();
+            } catch (final SQLException e) {
+                e.printStackTrace();
             }
         } catch (final SQLException e) {
             e.printStackTrace();
@@ -406,7 +438,6 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
      * Will scan the class for fields and add them to the database if they don't exist
      * */
     private void scanForMissingColumns() {
-
         List<Field> fields = Arrays.stream(this.valueClass.getDeclaredFields())
                 .filter(field -> !field.isAnnotationPresent(Transient.class))
                 .filter(field -> !Modifier.isTransient(field.getModifiers()))
@@ -456,10 +487,10 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
             String type = this.getType(declaredField.getType());
 
             if (declaredField.isAnnotationPresent(StorageSerialized.class)) {
-                type = "VARCHAR(255)";
+                type = "JSON";
             }
 
-            builder.append("`" + name + "`").append(" ").append(type);
+            builder.append("`").append(name).append("`").append(" ").append(type);
             if (name.equals(idName)) {
                 builder.append(" PRIMARY KEY");
             }
