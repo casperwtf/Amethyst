@@ -275,11 +275,11 @@ public class StringUtilsPaper extends StringUtils {
     }
 
     /**
-     * @param text The text to parse
+     * @param text     The text to parse
      * @param replacer The replacer to use
-     * @param player The player to parse for
+     * @param player   The player to parse for
      * @return The parsed text
-     * */
+     */
     public static String parsePlaceholders(String text, @Nullable PlaceholderReplacer replacer, Player player) {
 
         if (replacer == null) {
@@ -296,13 +296,13 @@ public class StringUtilsPaper extends StringUtils {
     }
 
     /**
-     * @param current The current progress
-     * @param max The max progress
-     * @param totalBars The total amount of bars
-     * @param symbol The symbol to use
-     * @param completedColor The color of the completed bars
+     * @param current           The current progress
+     * @param max               The max progress
+     * @param totalBars         The total amount of bars
+     * @param symbol            The symbol to use
+     * @param completedColor    The color of the completed bars
      * @param notCompletedColor The color of the not completed bars
-     * */
+     */
     public static String getProgressBar(int current, int max, int totalBars, String symbol, String completedColor, String notCompletedColor) {
         float percent = (float) current / max;
         int progressBars = (int) (totalBars * percent);
@@ -313,16 +313,16 @@ public class StringUtilsPaper extends StringUtils {
     /**
      * @param message The message to colorify
      * @return The colorified message
-     * */
+     */
     public static String colorify(String message) {
         message = hexColor(message);
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
     /**
-    * @param message The messages to colorify
-    * @return The colorified messages
-    * */
+     * @param message The messages to colorify
+     * @return The colorified messages
+     */
 
     public static List<String> colorify(List<String> message) {
         message.replaceAll(StringUtilsPaper::colorify);
@@ -330,10 +330,10 @@ public class StringUtilsPaper extends StringUtils {
     }
 
     /**
-     * @param arg The argument to complete
+     * @param arg         The argument to complete
      * @param completions The list of completions
      * @return The parsed message
-     * */
+     */
     public static List<String> partialCompletion(String arg, List<String> completions) {
         List<String> completion = new ArrayList<>();
         StringUtil.copyPartialMatches(arg, completions, completion);
@@ -343,10 +343,11 @@ public class StringUtilsPaper extends StringUtils {
 
     /**
      * Just an alias for {@link #partialCompletion(String, List)} because I forget the order of the arguments
+     *
      * @param list The list of completions
-     * @param arg The argument to complete
+     * @param arg  The argument to complete
      * @return The list of completions
-     * */
+     */
     public static List<String> partialCompletion(List<String> list, String arg) {
         return partialCompletion(arg, list);
     }
@@ -354,7 +355,7 @@ public class StringUtilsPaper extends StringUtils {
     /**
      * @param message The message to center
      * @return The centered message
-     * */
+     */
     public static String centerMessage(String message) {
         if (message == null || message.equals("")) return "";
 
@@ -393,11 +394,11 @@ public class StringUtilsPaper extends StringUtils {
 
     /**
      * @param chatChar The chat character to use
-     * @param message The message to convert
-     * This function takes the &x formatting and converts it into the normal hex color formatting.
+     * @param message  The message to convert
+     *                 This function takes the &x formatting and converts it into the normal hex color formatting.
      */
     public static String legacyHexToNormal(String chatChar, String message) {
-        return scanTags(chatChar+"x", "", message, 12, group -> {
+        return scanTags(chatChar + "x", "", message, 12, group -> {
             StringBuilder builder = new StringBuilder();
             builder.append("&#");
             for (int i = 0; i < group.length(); i++) {
@@ -412,10 +413,11 @@ public class StringUtilsPaper extends StringUtils {
     /**
      * This method will convert into the minedown hex formatting instead of the regular hex color formatting.
      * This is solely for my personal development uses, if you never use this method, I dont blame you.
+     *
      * @param startingTag is the starting tag that will be used to scan for the hex color.
-     * @param endTag is the end tag that will be used to scan for the hex color. (if it's empty, it will scan the next 6 characters after the starting tag)
-     * @param message is the message that will be scanned for the tag.
-     * */
+     * @param endTag      is the end tag that will be used to scan for the hex color. (if it's empty, it will scan the next 6 characters after the starting tag)
+     * @param message     is the message that will be scanned for the tag.
+     */
     public static String hexColorMineDown(String startingTag, String endTag, String message) {
         return scanTags(startingTag, endTag, message, 6, group -> "&#"
                 + group.charAt(0) + group.charAt(1)
@@ -428,12 +430,12 @@ public class StringUtilsPaper extends StringUtils {
     }
 
     /**
-    * @param startingTag is the starting tag that will be used to scan for the hex color.
-    * @param endTag is the end tag that will be used to scan for the hex color. (if it's empty, it will scan the next 6 characters after the starting tag)
-    * @param message is the message that will be scanned for the tag.
-    * @param chatColor is the chat color code that will be used when generating the hex color.
-    * @return the message with the hex color replaced with the chat color code.
-    * */
+     * @param startingTag is the starting tag that will be used to scan for the hex color.
+     * @param endTag      is the end tag that will be used to scan for the hex color. (if it's empty, it will scan the next 6 characters after the starting tag)
+     * @param message     is the message that will be scanned for the tag.
+     * @param chatColor   is the chat color code that will be used when generating the hex color.
+     * @return the message with the hex color replaced with the chat color code.
+     */
     public static String hexColor(String startingTag, String endTag, String message, String chatColor) {
         return scanTags(startingTag, endTag, message, 6, group -> chatColor + "x"
                 + chatColor + group.charAt(0) + chatColor + group.charAt(1)
@@ -442,16 +444,16 @@ public class StringUtilsPaper extends StringUtils {
     }
 
     /**
-    * @param message is the message that will be scanned for the tag.
+     * @param message   is the message that will be scanned for the tag.
      * @param chatColor is the chat color code that will be used when generating the hex color.
-    * */
+     */
     public static String hexColor(String message, String chatColor) {
         return hexColor("&#", "", message, chatColor);
     }
 
     /**
      * @param message is the message that will be scanned for the tag.
-     * */
+     */
     public static String hexColor(String message) {
         return hexColor(message, ChatColor.COLOR_CHAR + "");
     }

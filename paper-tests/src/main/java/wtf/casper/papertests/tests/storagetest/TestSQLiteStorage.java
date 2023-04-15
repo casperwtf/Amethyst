@@ -1,7 +1,6 @@
 package wtf.casper.papertests.tests.storagetest;
 
 import wtf.casper.amethyst.core.storage.Credentials;
-import wtf.casper.amethyst.core.storage.impl.fstorage.JsonFStorage;
 import wtf.casper.amethyst.core.storage.impl.fstorage.SQLiteFStorage;
 
 import java.io.File;

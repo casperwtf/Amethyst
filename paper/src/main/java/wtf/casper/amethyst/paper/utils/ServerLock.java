@@ -7,11 +7,11 @@ import wtf.casper.amethyst.paper.AmethystPlugin;
 
 import java.util.*;
 
-public class ServerLock extends AmethystListener<AmethystPlugin>  {
+public class ServerLock extends AmethystListener<AmethystPlugin> {
 
+    private final static List<AmethystPlugin> lockingPlugins = new ArrayList<>();
     private static boolean locked = false;
     private static Map<String, String> reason = new HashMap<>();
-    private final static List<AmethystPlugin> lockingPlugins = new ArrayList<>();
 
     public ServerLock(AmethystPlugin plugin) {
         super(plugin);
@@ -35,7 +35,8 @@ public class ServerLock extends AmethystListener<AmethystPlugin>  {
         if (!locked) return;
         Optional<String> reason = ServerLock.reason.values().stream().findFirst();
 
-        if (reason.isPresent()) event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Component.text(reason.get()));
+        if (reason.isPresent())
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Component.text(reason.get()));
         else event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Component.text("Server is locked"));
     }
 }

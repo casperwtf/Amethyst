@@ -19,10 +19,9 @@ import wtf.casper.amethyst.core.utils.ReflectionUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-
 import java.math.BigDecimal;
-import java.sql.*;
 import java.sql.Date;
+import java.sql.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -113,7 +112,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
                     }
                     case STARTS_WITH -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " LIKE ?")) {
-                            setStatement(statement, 1, value + "%" );
+                            setStatement(statement, 1, value + "%");
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -379,11 +378,12 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
     }
 
     private void execute(final String statement) {
-        this.execute(statement, ps -> {});
+        this.execute(statement, ps -> {
+        });
     }
 
     private void execute(final String statement, final UnsafeConsumer<PreparedStatement> consumer) {
-        
+
         try (final Connection connection = this.ds.getConnection()) {
             try (final PreparedStatement prepared = connection.prepareStatement(statement)) {
                 consumer.accept(prepared);
@@ -397,7 +397,8 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
     }
 
     private void executeQuery(final String statement) {
-        this.executeQuery(statement, ps -> {});
+        this.executeQuery(statement, ps -> {
+        });
     }
 
     private void executeQuery(final String statement, final UnsafeConsumer<PreparedStatement> consumer) {
@@ -414,7 +415,8 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
     }
 
     private void executeUpdate(final String statement) {
-        this.executeUpdate(statement, ps -> {});
+        this.executeUpdate(statement, ps -> {
+        });
     }
 
     private void executeUpdate(final String statement, final UnsafeConsumer<PreparedStatement> consumer) {
@@ -436,7 +438,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
 
     /**
      * Will scan the class for fields and add them to the database if they don't exist
-     * */
+     */
     private void scanForMissingColumns() {
         List<Field> fields = Arrays.stream(this.valueClass.getDeclaredFields())
                 .filter(field -> !field.isAnnotationPresent(Transient.class))
@@ -463,7 +465,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
 
     /**
      * Generate an SQL Script to create the table based on the class
-     * */
+     */
     private String createTableFromObject() {
         final StringBuilder builder = new StringBuilder();
 
@@ -508,7 +510,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
 
     /**
      * This takes an SQL Result Set and parses it into an object
-     * */
+     */
     @SneakyThrows
     private V construct(final ResultSet resultSet) {
         final V value = constructValue();
@@ -565,7 +567,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
 
     /**
      * Generates an SQL String for the columns associated with a value class.
-     * */
+     */
     private String getColumns() {
         final StringBuilder builder = new StringBuilder();
 
@@ -584,7 +586,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
 
     /**
      * Converts a Java class to an SQL type.
-     * */
+     */
     private String getType(Class<?> type) {
         return switch (type.getName()) {
             case "java.lang.String" -> "VARCHAR(255)";
@@ -603,7 +605,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
 
     /**
      * Generates an SQL String for inserting a value into the database.
-     * */
+     */
     private String getValues(V value) {
         final StringBuilder builder = new StringBuilder();
         int i = 0;

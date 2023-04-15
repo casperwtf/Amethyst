@@ -7,7 +7,6 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import wtf.casper.amethyst.core.AmethystCore;
-import wtf.casper.amethyst.core.mq.redis.RedisListener;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.minecraft.mq.messages.ProxyMoveServerRequest;
 

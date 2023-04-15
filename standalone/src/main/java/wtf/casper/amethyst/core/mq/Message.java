@@ -12,8 +12,9 @@ public abstract class Message {
      * We add in our own "amethyst_class_type" property to the JSON, so we can deserialize it later
      * This is to make sure that we don't have to use a type adapter for every single message
      * while still having the listener not listen to every message possible
+     *
      * @return The message serialized to JSON
-     * */
+     */
     public String serialize() {
         String json = AmethystCore.getGson().toJson(this);
         JsonObject jsonObject = AmethystCore.getGson().fromJson(json, JsonObject.class);

@@ -3,13 +3,10 @@ package wtf.casper.amethyst.core.storage;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import wtf.casper.amethyst.core.exceptions.AmethystException;
 import wtf.casper.amethyst.core.obj.Pair;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.core.utils.ReflectionUtil;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
@@ -183,8 +180,8 @@ public interface StatelessFieldStorage<K, V> {
 
     /**
      * @param oldStorageSupplier supplier to provide the old storage
-     * @param config the config
-     * @param path the path to the storage
+     * @param config             the config
+     * @param path               the path to the storage
      * @return a future that will complete with a boolean that represents whether the migration was successful.
      */
     default CompletableFuture<Boolean> migrateFrom(Supplier<StatelessFieldStorage<K, V>> oldStorageSupplier, YamlDocument config, String path) {
@@ -217,7 +214,7 @@ public interface StatelessFieldStorage<K, V> {
     CompletableFuture<Collection<V>> allValues();
 
     /**
-     * @param field the field to search for.
+     * @param field       the field to search for.
      * @param sortingType the sorting type to use.
      * @return a future that will complete with a collection of all values in the storage that match the given field and value.
      */
@@ -392,10 +389,10 @@ public interface StatelessFieldStorage<K, V> {
         }
 
         /**
-         * @param object the object we are checking.
+         * @param object    the object we are checking.
          * @param fieldName the name of the field we are checking.
-         * @param value the value we are checking for.
-         * */
+         * @param value     the value we are checking for.
+         */
         public boolean passes(Object object, String fieldName, Object value) {
             if (value == null) {
                 return false;

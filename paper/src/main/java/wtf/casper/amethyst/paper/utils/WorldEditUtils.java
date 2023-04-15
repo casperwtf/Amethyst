@@ -9,7 +9,6 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.session.SessionManager;
 import com.sk89q.worldedit.world.World;
 import org.jetbrains.annotations.Nullable;
-import wtf.casper.amethyst.core.exceptions.AmethystException;
 import wtf.casper.amethyst.paper.AmethystPaper;
 
 public class WorldEditUtils {

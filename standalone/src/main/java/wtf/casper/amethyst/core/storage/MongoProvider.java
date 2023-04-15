@@ -13,8 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MongoProvider {
-    private static String defaultConnection;
     private static final Map<String, MongoClient> clients = new HashMap<>();
+    private static String defaultConnection;
 
     public static MongoClient getClient(String uri) {
         if (clients.containsKey(uri)) {

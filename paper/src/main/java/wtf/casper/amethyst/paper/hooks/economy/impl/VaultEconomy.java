@@ -3,7 +3,6 @@ package wtf.casper.amethyst.paper.hooks.economy.impl;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
-import wtf.casper.amethyst.paper.AmethystPaper;
 import wtf.casper.amethyst.paper.hooks.economy.IEconomy;
 
 import java.util.UUID;

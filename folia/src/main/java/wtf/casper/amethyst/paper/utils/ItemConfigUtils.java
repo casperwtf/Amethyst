@@ -19,7 +19,7 @@ public class ItemConfigUtils {
 
         if (!section.contains("material")) {
             try {
-                throw new AmethystException("Material is not defined in the config for "+ section.getRouteAsString());
+                throw new AmethystException("Material is not defined in the config for " + section.getRouteAsString());
             } catch (AmethystException e) {
                 throw new RuntimeException(e);
             }
@@ -27,7 +27,7 @@ public class ItemConfigUtils {
 
         if (!StringUtilsPaper.validateEnum(section.getString("material").toUpperCase(Locale.ROOT), Material.class)) {
             try {
-                throw new AmethystException("Material is not valid in the config for "+ section.getRouteAsString());
+                throw new AmethystException("Material is not valid in the config for " + section.getRouteAsString());
             } catch (AmethystException e) {
                 throw new RuntimeException(e);
             }

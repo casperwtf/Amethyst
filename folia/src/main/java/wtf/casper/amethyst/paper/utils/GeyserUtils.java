@@ -7,11 +7,9 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.geysermc.floodgate.api.FloodgateApi;
-import org.geysermc.floodgate.api.player.FloodgatePlayer;
 import org.jetbrains.annotations.Nullable;
 import wtf.casper.amethyst.core.storage.FieldStorage;
 import wtf.casper.amethyst.core.storage.id.Id;
-import wtf.casper.amethyst.core.storage.impl.fstorage.JsonFStorage;
 import wtf.casper.amethyst.paper.AmethystPlugin;
 import wtf.casper.amethyst.paper.geyser.GeyserJsonStorage;
 

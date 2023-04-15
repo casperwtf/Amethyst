@@ -43,15 +43,15 @@ import java.util.logging.Filter;
  */
 public class AmethystFolia extends AmethystPlugin {
 
-    // this is to prevent relocation from changing the package name here, which would break the relocation check
-    private final char[] DEFAULT_PACKAGE = new char[] {'w', 't', 'f', '.', 'c', 'a', 's', 'p', 'e', 'r', '.', 'a', 'm', 'e', 't', 'h', 'y', 's', 't', '.', 'p', 'a', 'p', 'e', 'r'};
-
     @Getter private static final Map<JavaPlugin, InventoryManager> inventoryManagers = new HashMap<>();
     @Getter private static Filter filter;
-    @Getter private YamlDocument amethystConfig;
-    private final boolean isLoadedFromPlugin;
     private static AmethystPlugin instance;
+    // this is to prevent relocation from changing the package name here, which would break the relocation check
+    private final char[] DEFAULT_PACKAGE = new char[]{'w', 't', 'f', '.', 'c', 'a', 's', 'p', 'e', 'r', '.', 'a', 'm', 'e', 't', 'h', 'y', 's', 't', '.', 'p', 'a', 'p', 'e', 'r'};
+    private final boolean isLoadedFromPlugin;
+    @Getter private YamlDocument amethystConfig;
     private GeyserUtils geyserUtils;
+
     /**
      * This constructor is used for loading Amethyst as a plugin
      * We load dependencies here because we need to load them before the plugin is enabled
@@ -68,6 +68,7 @@ public class AmethystFolia extends AmethystPlugin {
 
     /**
      * This constructor is used for shading purposes
+     *
      * @param plugin The plugin that is shading Amethyst
      */
     public AmethystFolia(AmethystPlugin plugin) {
@@ -84,6 +85,24 @@ public class AmethystFolia extends AmethystPlugin {
         initAmethyst(plugin);
     }
 
+    public static AmethystPlugin getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException("Amethyst is not loaded. Either install amethyst plugin or shade amethyst into your plugin. Initialize with AmethystPaper(AmethystPlugin)");
+        }
+        return instance;
+    }
+
+    public static InventoryManager getInventoryManager(JavaPlugin plugin) {
+        if (inventoryManagers.containsKey(plugin)) {
+            return inventoryManagers.get(plugin);
+        }
+
+        InventoryManager inventoryManager = new InventoryManager(plugin);
+        inventoryManagers.put(plugin, inventoryManager);
+        inventoryManager.invoke();
+        return inventoryManager;
+    }
+
     @Override
     public void disable() {
         disableAmethyst();
@@ -98,13 +117,6 @@ public class AmethystFolia extends AmethystPlugin {
     public void enable() {
         setPlayerPlacedBlockKey(new NamespacedKey(this, "PLAYER_PLACED_BLOCK"));
         initAmethyst(this);
-    }
-
-    public static AmethystPlugin getInstance() {
-        if (instance == null) {
-            throw new IllegalStateException("Amethyst is not loaded. Either install amethyst plugin or shade amethyst into your plugin. Initialize with AmethystPaper(AmethystPlugin)");
-        }
-        return instance;
     }
 
     public void initAmethyst(AmethystPlugin plugin) {
@@ -240,17 +252,6 @@ public class AmethystFolia extends AmethystPlugin {
     @Override
     public YamlDocument getYamlConfig() {
         return amethystConfig;
-    }
-
-    public static InventoryManager getInventoryManager(JavaPlugin plugin) {
-        if (inventoryManagers.containsKey(plugin)) {
-            return inventoryManagers.get(plugin);
-        }
-
-        InventoryManager inventoryManager = new InventoryManager(plugin);
-        inventoryManagers.put(plugin, inventoryManager);
-        inventoryManager.invoke();
-        return inventoryManager;
     }
 
     public void setupConfigOptions() {

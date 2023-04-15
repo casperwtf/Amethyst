@@ -162,22 +162,24 @@ public abstract class AmethystMenu implements InventoryProvider {
     }
 
     /**
-     * @deprecated Use {@link #open(JavaPlugin, Player...)} instead, just odd naming choice
      * @param plugin
      * @param targets
+     * @deprecated Use {@link #open(JavaPlugin, Player...)} instead, just odd naming choice
      */
-    @SneakyThrows @Deprecated
+    @SneakyThrows
+    @Deprecated
     public void openMenu(JavaPlugin plugin, Player... targets) {
         open(plugin, targets);
     }
 
     /**
-     * @deprecated Use {@link #open(JavaPlugin, PlaceholderReplacer, Player...)} instead, just odd naming choice
      * @param plugin
      * @param replacer
      * @param targets
+     * @deprecated Use {@link #open(JavaPlugin, PlaceholderReplacer, Player...)} instead, just odd naming choice
      */
-    @SneakyThrows @Deprecated
+    @SneakyThrows
+    @Deprecated
     public void openMenu(JavaPlugin plugin, PlaceholderReplacer replacer, Player... targets) {
         open(plugin, replacer, targets);
     }

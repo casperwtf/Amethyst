@@ -152,7 +152,7 @@
                                         <exclude>wtf/casper/amethyst/libs/lettuce/**</exclude>
                                         <exclude>wtf/casper/amethyst/libs/libby/**</exclude>
                                         <exclude>wtf/casper/amethyst/libs/mongodb/**</exclude>
-<!--                                        <exclude>wtf/casper/amethyst/libs/quartz/**</exclude>-->
+                                        <!--                                        <exclude>wtf/casper/amethyst/libs/quartz/**</exclude>-->
                                         <exclude>wtf/casper/amethyst/libs/reflections/**</exclude>
                                         <exclude>wtf/casper/amethyst/libs/javassist/**</exclude>
                                         <exclude>wtf/casper/amethyst/libs/crunch/**</exclude>

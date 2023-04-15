@@ -7,7 +7,6 @@ import wtf.casper.papertests.tests.StorageTest;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
-import java.util.logging.Level;
 
 public final class PaperAmethystTests extends AmethystPlugin {
 
@@ -33,12 +32,12 @@ public final class PaperAmethystTests extends AmethystPlugin {
     }
 
     private void test(Class<? extends Test> test) {
-        AmethystLogger.log("Testing: "+ test.getSimpleName());
+        AmethystLogger.log("Testing: " + test.getSimpleName());
         try {
             Test instance = test.getConstructor().newInstance();
 
             boolean b = instance.test();
-            AmethystLogger.log("Test: "+ test.getSimpleName() + " " + (b ? "passed" : "failed"));
+            AmethystLogger.log("Test: " + test.getSimpleName() + " " + (b ? "passed" : "failed"));
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
             throw new RuntimeException(e);

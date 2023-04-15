@@ -1,12 +1,19 @@
 # Amethyst
-Amethyst is a Java library that is based combines a varity of useful libraries into a single library. It is designed to be a simple and easy to use library that can be used in any project. Not all the code is written by me, some of it is from other libraries. I will try to give credit to the original author if I can find it. If you find any code that is not credited to the original author, please let me know.
+
+Amethyst is a Java library that is based combines a varity of useful libraries into a single library. It is designed to
+be a simple and easy to use library that can be used in any project. Not all the code is written by me, some of it is
+from other libraries. I will try to give credit to the original author if I can find it. If you find any code that is
+not credited to the original author, please let me know.
 
 ## Features
+
 * Storage System - Supports MongoDB, MySQL, MariaDB, SQLite and JSON under a single interface.
 * Command Wrapper - A simple command wrapper that allows you to easily create commands.
-* Various Utilities - A variety of utilities that can be used in any project. This includes a logger, discord webhook, math utils, string utils, pasting service utils and more.
+* Various Utilities - A variety of utilities that can be used in any project. This includes a logger, discord webhook,
+  math utils, string utils, pasting service utils and more.
 
 ## Used Libraries
+
 * [BoostedYAML](https://github.com/dejvokep/boosted-yaml)
 * [HikariCP](https://github.com/brettwooldridge/HikariCP)
 * [Caffeine](https://github.com/ben-manes/caffeine)

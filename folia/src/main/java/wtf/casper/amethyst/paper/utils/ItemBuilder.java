@@ -166,13 +166,13 @@ public class ItemBuilder {
         return this;
     }
 
+    public Material getMaterial() {
+        return stack.getType();
+    }
+
     public ItemBuilder setMaterial(Material material) {
         stack.setType(material);
         return this;
-    }
-
-    public Material getMaterial() {
-        return stack.getType();
     }
 
     public ItemBuilder setCustomModelData(int data) {

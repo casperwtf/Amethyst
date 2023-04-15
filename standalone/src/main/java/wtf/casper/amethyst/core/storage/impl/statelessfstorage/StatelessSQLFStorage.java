@@ -1,11 +1,8 @@
 package wtf.casper.amethyst.core.storage.impl.statelessfstorage;
 
-import com.github.benmanes.caffeine.cache.Caffeine;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.SneakyThrows;
 import wtf.casper.amethyst.core.AmethystCore;
-import wtf.casper.amethyst.core.cache.Cache;
-import wtf.casper.amethyst.core.cache.CaffeineCache;
 import wtf.casper.amethyst.core.storage.ConstructableValue;
 import wtf.casper.amethyst.core.storage.Credentials;
 import wtf.casper.amethyst.core.storage.StatelessFieldStorage;
@@ -20,11 +17,10 @@ import wtf.casper.amethyst.core.utils.ReflectionUtil;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
-import java.sql.*;
 import java.sql.Date;
+import java.sql.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, StatelessFieldStorage<K, V> {
 
@@ -32,6 +28,7 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
     private final Class<K> keyClass;
     private final Class<V> valueClass;
     private final String table;
+
     public StatelessSQLFStorage(final Class<K> keyClass, final Class<V> valueClass, final String table, final Credentials credentials) {
         this(keyClass, valueClass, table, credentials.getHost(), credentials.getPort(), credentials.getDatabase(), credentials.getUsername(), credentials.getPassword());
     }
@@ -94,7 +91,7 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
                     }
                     case STARTS_WITH -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " LIKE ?")) {
-                            setStatement(statement, 1, value + "%" );
+                            setStatement(statement, 1, value + "%");
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -350,7 +347,8 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
     }
 
     private void execute(final String statement) {
-        this.execute(statement, ps -> {});
+        this.execute(statement, ps -> {
+        });
     }
 
     private void execute(final String statement, final UnsafeConsumer<PreparedStatement> consumer) {
@@ -368,7 +366,8 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
     }
 
     private void executeQuery(final String statement) {
-        this.executeQuery(statement, ps -> {});
+        this.executeQuery(statement, ps -> {
+        });
     }
 
     private void executeQuery(final String statement, final UnsafeConsumer<PreparedStatement> consumer) {
@@ -385,7 +384,8 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
     }
 
     private void executeUpdate(final String statement) {
-        this.executeUpdate(statement, ps -> {});
+        this.executeUpdate(statement, ps -> {
+        });
     }
 
     private void executeUpdate(final String statement, final UnsafeConsumer<PreparedStatement> consumer) {
@@ -407,7 +407,7 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
 
     /**
      * Will scan the class for fields and add them to the database if they don't exist
-     * */
+     */
     private void scanForMissingColumns() {
         List<Field> fields = Arrays.stream(this.valueClass.getDeclaredFields())
                 .filter(field -> !field.isAnnotationPresent(Transient.class))
@@ -434,7 +434,7 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
 
     /**
      * Generate an SQL Script to create the table based on the class
-     * */
+     */
     private String createTableFromObject() {
         final StringBuilder builder = new StringBuilder();
 
@@ -479,7 +479,7 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
 
     /**
      * This takes an SQL Result Set and parses it into an object
-     * */
+     */
     @SneakyThrows
     private V construct(final ResultSet resultSet) {
         final V value = constructValue();
@@ -536,7 +536,7 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
 
     /**
      * Generates an SQL String for the columns associated with a value class.
-     * */
+     */
     private String getColumns() {
         final StringBuilder builder = new StringBuilder();
 
@@ -555,7 +555,7 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
 
     /**
      * Converts a Java class to an SQL type.
-     * */
+     */
     private String getType(Class<?> type) {
         return switch (type.getName()) {
             case "java.lang.String" -> "VARCHAR(255)";
@@ -574,7 +574,7 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
 
     /**
      * Generates an SQL String for inserting a value into the database.
-     * */
+     */
     private String getValues(V value) {
         final StringBuilder builder = new StringBuilder();
         int i = 0;
