@@ -51,6 +51,18 @@ import java.util.concurrent.CompletableFuture;
  */
 public final class NMSReflectionUtil {
 
+    /**
+     * We use reflection mainly to avoid writing a new class for version barrier.
+     * The version barrier is for NMS that uses the Minecraft version as the main package name.
+     * <p>
+     * E.g. EntityPlayer in 1.15 is in the class {@code net.minecraft.server.v1_15_R1}
+     * but in 1.14 it's in {@code net.minecraft.server.v1_14_R1}
+     * In order to maintain cross-version compatibility we cannot import these classes.
+     * <p>
+     * Performance is not a concern for these specific statically initialized values.
+     */
+    public static final String VERSION;
+
     static { // This needs to be right below VERSION because of initialization order.
         // This package loop is used to avoid implementation-dependant strings like Bukkit.getVersion() or Bukkit.getBukkitVersion()
         // which allows easier testing as well.
@@ -79,18 +91,6 @@ public final class NMSReflectionUtil {
             throw new IllegalArgumentException("Failed to parse server version. Could not find any package starting with name: 'org.bukkit.craftbukkit.v'");
         VERSION = found;
     }
-
-    /**
-     * We use reflection mainly to avoid writing a new class for version barrier.
-     * The version barrier is for NMS that uses the Minecraft version as the main package name.
-     * <p>
-     * E.g. EntityPlayer in 1.15 is in the class {@code net.minecraft.server.v1_15_R1}
-     * but in 1.14 it's in {@code net.minecraft.server.v1_14_R1}
-     * In order to maintain cross-version compatibility we cannot import these classes.
-     * <p>
-     * Performance is not a concern for these specific statically initialized values.
-     */
-    public static final String VERSION;
     /**
      * The raw minor version number.
      * E.g. {@code v1_17_R1} to {@code 17}
