@@ -10,9 +10,14 @@ import java.lang.reflect.Method;
 public final class IdUtils {
 
     @SneakyThrows
-    public static Object getId(final Class<?> type, final Object instance) {
+    public static Object getId(final Object instance) {
+        return getId(instance.getClass(), instance);
+    }
 
-        for (final Field field : type.getDeclaredFields()) {
+    @SneakyThrows
+    public static Object getId(final Class<?> clazz, final Object instance) {
+
+        for (final Field field : clazz.getDeclaredFields()) {
             field.setAccessible(true);
 
             if (!field.isAnnotationPresent(Id.class)) {
@@ -22,7 +27,7 @@ public final class IdUtils {
             return field.get(instance);
         }
 
-        final Method method = IdUtils.getIdMethod(type);
+        final Method method = IdUtils.getIdMethod(clazz);
 
         return method.invoke(instance);
     }

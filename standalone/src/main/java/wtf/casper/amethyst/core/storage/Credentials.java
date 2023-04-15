@@ -39,8 +39,49 @@ public final class Credentials {
                 section.getString("collection", null),
                 section.getString("table", null),
                 section.getString("uri", null),
-                section.getOptionalString("port").map(Integer::parseInt).orElse(section.getInt("port", 3306))
+                section.getOptionalString("port").map(s -> {
+                    try {
+                        return Integer.parseInt(s);
+                    } catch (NumberFormatException e) {
+                        return 3306;
+                    }
+                }).orElse(section.getInt("port", 3306))
         );
     }
 
+    public StorageType getType(StorageType defaultValue) {
+        return type == null ? defaultValue : type;
+    }
+
+    public String getHost(String defaultValue) {
+        return host == null ? defaultValue : host;
+    }
+
+    public String getUsername(String defaultValue) {
+        return username == null ? defaultValue : username;
+    }
+
+    public String getPassword(String defaultValue) {
+        return password == null ? defaultValue : password;
+    }
+
+    public String getDatabase(String defaultValue) {
+        return database == null ? defaultValue : database;
+    }
+
+    public String getCollection(String defaultValue) {
+        return collection == null ? defaultValue : collection;
+    }
+
+    public String getTable(String defaultValue) {
+        return table == null ? defaultValue : table;
+    }
+
+    public String getUri(String defaultValue) {
+        return uri == null ? defaultValue : uri;
+    }
+
+    public int getPort(int defaultValue) {
+        return port == 0 ? defaultValue : port;
+    }
 }

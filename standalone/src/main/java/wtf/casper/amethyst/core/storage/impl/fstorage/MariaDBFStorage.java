@@ -1,10 +1,11 @@
 package wtf.casper.amethyst.core.storage.impl.fstorage;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.SneakyThrows;
 import wtf.casper.amethyst.core.AmethystCore;
+import wtf.casper.amethyst.core.cache.Cache;
+import wtf.casper.amethyst.core.cache.CaffeineCache;
 import wtf.casper.amethyst.core.storage.ConstructableValue;
 import wtf.casper.amethyst.core.storage.Credentials;
 import wtf.casper.amethyst.core.storage.FieldStorage;
@@ -18,11 +19,9 @@ import wtf.casper.amethyst.core.utils.ReflectionUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -33,13 +32,19 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
     private final Class<K> keyClass;
     private final Class<V> valueClass;
     private final String table;
-    private Cache<K, V> cache = Caffeine.newBuilder()
+    private Cache<K, V> cache = new CaffeineCache<>(Caffeine.newBuilder()
             .expireAfterWrite(10, TimeUnit.MINUTES)
-            .build();
+            .build());
 
+    @Deprecated
     public MariaDBFStorage(final Class<K> keyClass, final Class<V> valueClass, final String table, final Credentials credentials) {
         this(keyClass, valueClass, table, credentials.getHost(), credentials.getPort(), credentials.getDatabase(), credentials.getUsername(), credentials.getPassword());
     }
+
+    public MariaDBFStorage(final Class<K> keyClass, final Class<V> valueClass, final Credentials credentials) {
+        this(keyClass, valueClass, credentials.getTable(), credentials.getHost(), credentials.getPort(), credentials.getDatabase(), credentials.getUsername(), credentials.getPassword());
+    }
+
 
     @SneakyThrows
     public MariaDBFStorage(final Class<K> keyClass, final Class<V> valueClass, final String table, final String host, final int port, final String database, final String username, final String password) {
@@ -52,7 +57,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
         this.ds.setJdbcUrl("jdbc:mariadb://" + host + ":" + port + "/" + database + "?allowPublicKeyRetrieval=true&autoReconnect=true&useSSL=false");
         this.ds.addDataSourceProperty("user", username);
         this.ds.addDataSourceProperty("password", password);
-        this.ds.setAutoCommit(false);
+        this.ds.setAutoCommit(true);
         this.execute(createTableFromObject());
         this.scanForMissingColumns();
     }
@@ -80,11 +85,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
                 switch (filterType) {
                     case EQUALS -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " = ?")) {
-                            if (value instanceof UUID) {
-                                statement.setString(1, value.toString());
-                            } else {
-                                statement.setObject(1, value);
-                            }
+                            setStatement(statement, 1, value);
 
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
@@ -98,7 +99,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
                     }
                     case CONTAINS -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " LIKE ?")) {
-                            statement.setObject(1, "%" + value + "%");
+                            setStatement(statement, 1, "%" + value + "%");
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -111,7 +112,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
                     }
                     case STARTS_WITH -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " LIKE ?")) {
-                            statement.setObject(1, value + "%");
+                            setStatement(statement, 1, value + "%");
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -123,7 +124,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
                     }
                     case ENDS_WITH -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " LIKE ?")) {
-                            statement.setObject(1, "%" + value);
+                            setStatement(statement, 1, "%" + value);
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -135,7 +136,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
                     }
                     case GREATER_THAN -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " > ?")) {
-                            statement.setObject(1, value);
+                            setStatement(statement, 1, value);
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -147,7 +148,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
                     }
                     case LESS_THAN -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " < ?")) {
-                            statement.setObject(1, value);
+                            setStatement(statement, 1, value);
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -159,7 +160,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
                     }
                     case GREATER_THAN_OR_EQUAL_TO -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " >= ?")) {
-                            statement.setObject(1, value);
+                            setStatement(statement, 1, value);
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -171,7 +172,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
                     }
                     case LESS_THAN_OR_EQUAL_TO -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " <= ?")) {
-                            statement.setObject(1, value);
+                            setStatement(statement, 1, value);
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -183,7 +184,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
                     }
                     case IN -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " IN (?)")) {
-                            statement.setObject(1, value);
+                            setStatement(statement, 1, value);
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -195,11 +196,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
                     }
                     case NOT_EQUALS -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " != ?")) {
-                            if (value instanceof UUID) {
-                                statement.setString(1, value.toString());
-                            } else {
-                                statement.setObject(1, value);
-                            }
+                            setStatement(statement, 1, value);
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -211,7 +208,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
                     }
                     case NOT_CONTAINS -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " NOT LIKE ?")) {
-                            statement.setObject(1, "%" + value + "%");
+                            setStatement(statement, 1, "%" + value + "%");
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -223,7 +220,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
                     }
                     case NOT_STARTS_WITH -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " NOT LIKE ?")) {
-                            statement.setObject(1, value + "%");
+                            setStatement(statement, 1, value + "%");
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -235,7 +232,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
                     }
                     case NOT_ENDS_WITH -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " NOT LIKE ?")) {
-                            statement.setObject(1, "%" + value);
+                            setStatement(statement, 1, "%" + value);
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -247,7 +244,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
                     }
                     case NOT_IN -> {
                         try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " NOT IN (?)")) {
-                            statement.setObject(1, value);
+                            setStatement(statement, 1, value);
                             final ResultSet resultSet = statement.executeQuery();
                             while (resultSet.next()) {
                                 values.add(this.construct(resultSet));
@@ -280,30 +277,31 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
 
     @Override
     public CompletableFuture<V> getFirst(String field, Object value, FilterType filterType) {
-        return CompletableFuture.supplyAsync(() -> {
-            return this.get(field, value, filterType, SortingType.NONE).join().stream().findFirst().orElse(null);
-        });
+        return CompletableFuture.supplyAsync(() ->
+                this.get(field, value, filterType, SortingType.NONE).join().stream().findFirst().orElse(null)
+        );
     }
 
     @Override
     public CompletableFuture<Void> save(final V value) {
         return CompletableFuture.runAsync(() -> {
             Object id = IdUtils.getId(valueClass, value);
-
             if (id == null) {
                 AmethystLogger.error("Could not find id field for " + keyClass.getSimpleName());
                 return;
             }
 
+            cache.put((K) id, value);
+
             String values = this.getValues(value);
-            this.execute("INSERT INTO " + this.table + " (" + this.getColumns() + ") VALUES (" + values + ") ON DUPLICATE KEY UPDATE " + getUpdateValues(value));
+            this.executeUpdate("INSERT INTO " + this.table + " (" + this.getColumns() + ") VALUES (" + values + ") ON DUPLICATE KEY UPDATE " + getUpdateValues());
         });
     }
 
     @Override
     public CompletableFuture<Void> remove(final V value) {
         return CompletableFuture.runAsync(() -> {
-            Field idField = null;
+            Field idField;
             try {
                 idField = IdUtils.getIdField(valueClass);
             } catch (IdNotFoundException e) {
@@ -385,6 +383,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
     }
 
     private void execute(final String statement, final UnsafeConsumer<PreparedStatement> consumer) {
+
         try (final Connection connection = this.ds.getConnection()) {
             try (final PreparedStatement prepared = connection.prepareStatement(statement)) {
                 consumer.accept(prepared);
@@ -397,6 +396,41 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
         }
     }
 
+    private void executeQuery(final String statement) {
+        this.executeQuery(statement, ps -> {
+        });
+    }
+
+    private void executeQuery(final String statement, final UnsafeConsumer<PreparedStatement> consumer) {
+        try (final Connection connection = this.ds.getConnection()) {
+            try (final PreparedStatement prepared = connection.prepareStatement(statement)) {
+                consumer.accept(prepared);
+                prepared.executeQuery();
+            } catch (final SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (final SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void executeUpdate(final String statement) {
+        this.executeUpdate(statement, ps -> {
+        });
+    }
+
+    private void executeUpdate(final String statement, final UnsafeConsumer<PreparedStatement> consumer) {
+        try (final Connection connection = this.ds.getConnection()) {
+            try (final PreparedStatement prepared = connection.prepareStatement(statement)) {
+                consumer.accept(prepared);
+                prepared.executeUpdate();
+            } catch (final SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (final SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void addColumn(final String column, final String type) {
         this.execute("ALTER TABLE " + this.table + " ADD " + column + " " + type + ";");
@@ -404,9 +438,8 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
 
     /**
      * Will scan the class for fields and add them to the database if they don't exist
-     * */
+     */
     private void scanForMissingColumns() {
-
         List<Field> fields = Arrays.stream(this.valueClass.getDeclaredFields())
                 .filter(field -> !field.isAnnotationPresent(Transient.class))
                 .filter(field -> !Modifier.isTransient(field.getModifiers()))
@@ -432,7 +465,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
 
     /**
      * Generate an SQL Script to create the table based on the class
-     * */
+     */
     private String createTableFromObject() {
         final StringBuilder builder = new StringBuilder();
 
@@ -456,10 +489,10 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
             String type = this.getType(declaredField.getType());
 
             if (declaredField.isAnnotationPresent(StorageSerialized.class)) {
-                type = "VARCHAR(255)";
+                type = "JSON";
             }
 
-            builder.append("`" + name + "`").append(" ").append(type);
+            builder.append("`").append(name).append("`").append(" ").append(type);
             if (name.equals(idName)) {
                 builder.append(" PRIMARY KEY");
             }
@@ -472,14 +505,12 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
 
         }
         builder.append(") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;");
-
-        AmethystLogger.debug("Generated SQL: " + builder);
         return builder.toString();
     }
 
     /**
      * This takes an SQL Result Set and parses it into an object
-     * */
+     */
     @SneakyThrows
     private V construct(final ResultSet resultSet) {
         final V value = constructValue();
@@ -493,6 +524,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
                 final String name = declaredField.getName();
                 final String string = resultSet.getString(name);
                 final Object object = AmethystCore.getGson().fromJson(string, declaredField.getType());
+                declaredField.setAccessible(true);
                 declaredField.set(value, object);
                 continue;
             }
@@ -500,13 +532,18 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
             final String name = declaredField.getName();
             final Object object = resultSet.getObject(name);
 
+            if (declaredField.getType() == UUID.class && object instanceof String) {
+                ReflectionUtil.setPrivateField(value, name, UUID.fromString((String) object));
+                continue;
+            }
+
             ReflectionUtil.setPrivateField(value, name, object);
         }
 
         return value;
     }
 
-    private String getUpdateValues(V value) {
+    private String getUpdateValues() {
         final StringBuilder builder = new StringBuilder();
         int i = 0;
 
@@ -530,7 +567,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
 
     /**
      * Generates an SQL String for the columns associated with a value class.
-     * */
+     */
     private String getColumns() {
         final StringBuilder builder = new StringBuilder();
 
@@ -549,7 +586,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
 
     /**
      * Converts a Java class to an SQL type.
-     * */
+     */
     private String getType(Class<?> type) {
         return switch (type.getName()) {
             case "java.lang.String" -> "VARCHAR(255)";
@@ -568,7 +605,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
 
     /**
      * Generates an SQL String for inserting a value into the database.
-     * */
+     */
     private String getValues(V value) {
         final StringBuilder builder = new StringBuilder();
         int i = 0;
@@ -582,7 +619,15 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
             if (field.isAnnotationPresent(StorageSerialized.class)) {
                 builder.append("'").append(AmethystCore.getGson().toJson(ReflectionUtil.getPrivateField(value, field.getName()))).append("'");
             } else {
-                builder.append("'").append(ReflectionUtil.getPrivateField(value, field.getName())).append("'");
+
+                boolean shouldHaveQuotes = shouldHaveQuotes(ReflectionUtil.getPrivateField(value, field.getName()));
+                if (shouldHaveQuotes) {
+                    builder.append("'");
+                }
+                builder.append(ReflectionUtil.getPrivateField(value, field.getName()));
+                if (shouldHaveQuotes) {
+                    builder.append("'");
+                }
             }
             if (i != fields.size() - 1) {
                 builder.append(", ");
@@ -593,14 +638,176 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
         return builder.toString();
     }
 
-    /**
-     * Sanitizes an object to be used in an SQL statement.
-     * This is to prevent SQL injection.
-     * */
-    private Object sanitize(Object object) {
-        if (object instanceof String) {
-            return ((String) object).replace("'", "''");
+    private boolean shouldHaveQuotes(Object value) {
+        return switch (value.getClass().getName()) {
+            case "java.lang.String", "java.util.UUID" -> true;
+            default -> false;
+        };
+    }
+
+    private void setStatement(PreparedStatement statement, int i, Object value) {
+        switch (value.getClass().getSimpleName()) {
+            case "String" -> {
+                try {
+                    statement.setString(i, (String) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Integer", "int" -> {
+                try {
+                    statement.setInt(i, (Integer) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Long", "long" -> {
+                try {
+                    statement.setLong(i, (Long) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Boolean", "boolean" -> {
+                try {
+                    statement.setBoolean(i, (Boolean) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Double", "double" -> {
+                try {
+                    statement.setDouble(i, (Double) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Float", "float" -> {
+                try {
+                    statement.setFloat(i, (Float) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Short", "short" -> {
+                try {
+                    statement.setShort(i, (Short) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Byte", "byte" -> {
+                try {
+                    statement.setByte(i, (Byte) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Character", "char" -> {
+                try {
+                    statement.setString(i, String.valueOf(value));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "UUID" -> {
+                try {
+                    statement.setString(i, value.toString());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Timestamp" -> {
+                try {
+                    statement.setTimestamp(i, (Timestamp) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Date" -> {
+                try {
+                    statement.setDate(i, (Date) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Time" -> {
+                try {
+                    statement.setTime(i, (Time) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "BigDecimal" -> {
+                try {
+                    statement.setBigDecimal(i, (BigDecimal) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Blob" -> {
+                try {
+                    statement.setBlob(i, (Blob) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Clob" -> {
+                try {
+                    statement.setClob(i, (Clob) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Array" -> {
+                try {
+                    statement.setArray(i, (Array) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "Ref" -> {
+                try {
+                    statement.setRef(i, (Ref) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "NClob" -> {
+                try {
+                    statement.setNClob(i, (NClob) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "NString" -> {
+                try {
+                    statement.setNString(i, (String) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "RowId" -> {
+                try {
+                    statement.setRowId(i, (RowId) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            case "SQLXML" -> {
+                try {
+                    statement.setSQLXML(i, (SQLXML) value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            default -> {
+                try {
+                    statement.setObject(i, value);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
-        return object;
     }
 }

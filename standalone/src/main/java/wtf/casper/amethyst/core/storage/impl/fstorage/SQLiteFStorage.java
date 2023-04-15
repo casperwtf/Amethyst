@@ -1,9 +1,10 @@
 package wtf.casper.amethyst.core.storage.impl.fstorage;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.SneakyThrows;
 import wtf.casper.amethyst.core.AmethystCore;
+import wtf.casper.amethyst.core.cache.Cache;
+import wtf.casper.amethyst.core.cache.CaffeineCache;
 import wtf.casper.amethyst.core.storage.ConstructableValue;
 import wtf.casper.amethyst.core.storage.FieldStorage;
 import wtf.casper.amethyst.core.storage.id.StorageSerialized;
@@ -28,9 +29,9 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
     private final Class<K> keyClass;
     private final Class<V> valueClass;
     private final String table;
-    private Cache<K, V> cache = Caffeine.newBuilder()
+    private Cache<K, V> cache = new CaffeineCache<>(Caffeine.newBuilder()
             .expireAfterWrite(10, TimeUnit.MINUTES)
-            .build();
+            .build());
 
     @SneakyThrows
     public SQLiteFStorage(final Class<K> keyClass, final Class<V> valueClass, final File file, String table) {
@@ -242,6 +243,9 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
 
     @Override
     public CompletableFuture<V> get(K key) {
+        if (cache.getIfPresent(key) != null) {
+            return CompletableFuture.completedFuture(cache.getIfPresent(key));
+        }
         return getFirst(IdUtils.getIdName(this.valueClass), key);
     }
 
@@ -261,21 +265,23 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
                 return;
             }
 
+            this.cache.put((K) id, value);
             String values = this.getValues(value);
-            this.execute("INSERT OR REPLACE INTO " + this.table + " (" + this.getColumns() + ") VALUES (" + values + ")");
+            this.execute("INSERT OR REPLACE INTO " + this.table + " (" + this.getColumns() + ") VALUES (" + values + ");");
         });
     }
 
     @Override
     public CompletableFuture<Void> remove(final V value) {
         return CompletableFuture.runAsync(() -> {
-            Field idField = null;
+            Field idField;
             try {
                 idField = IdUtils.getIdField(valueClass);
             } catch (IdNotFoundException e) {
                 throw new RuntimeException(e);
             }
             String field = idField.getName();
+            this.cache.invalidate((K) IdUtils.getId(this.valueClass, value));
             this.execute("DELETE FROM " + this.table + " WHERE " + field + " = ?;", statement -> {
                 statement.setString(1, IdUtils.getId(this.valueClass, value).toString());
             });
@@ -354,11 +360,19 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
         });
     }
 
-    private void execute(final String statement, final UnsafeConsumer<PreparedStatement> consumer) {
-        try (final PreparedStatement prepared = this.connection.prepareStatement(statement)) {
-            consumer.accept(prepared);
-            prepared.executeUpdate();
-        } catch (final SQLException e) {
+    private void execute(String statement, final UnsafeConsumer<PreparedStatement> consumer) {
+        try {
+            if (this.connection.isClosed()) {
+                AmethystLogger.log("Connection is closed, cannot execute statement: " + statement);
+                return;
+            }
+            try (final PreparedStatement prepared = this.connection.prepareStatement(statement)) {
+                consumer.accept(prepared);
+                prepared.executeUpdate();
+            } catch (final SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -388,7 +402,7 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
             for (final Field field : fields) {
                 final String name = field.getName();
                 if (!columns.contains(name)) {
-                    this.addColumn(name, this.getType(field.getType()));
+                    this.addColumn(name, this.getType(field));
                 }
             }
         } catch (final SQLException e) {
@@ -419,13 +433,9 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
         for (Field declaredField : fields) {
 
             final String name = declaredField.getName();
-            String type = this.getType(declaredField.getType());
+            String type = this.getType(declaredField);
 
-            if (declaredField.isAnnotationPresent(StorageSerialized.class)) {
-                type = "VARCHAR(255)";
-            }
-
-            builder.append("`" + name + "`").append(" ").append(type);
+            builder.append("`").append(name).append("`").append(" ").append(type);
             if (name.equals(idName)) {
                 builder.append(" PRIMARY KEY");
             }
@@ -437,9 +447,7 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
             }
 
         }
-        builder.append(");");
-
-        AmethystLogger.debug("Generated SQL: " + builder);
+        builder.append(")");
         return builder.toString();
     }
 
@@ -452,10 +460,14 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
         final Field[] declaredFields = this.valueClass.getDeclaredFields();
 
         for (Field declaredField : declaredFields) {
+            if (declaredField.isAnnotationPresent(Transient.class)) {
+                continue;
+            }
             if (declaredField.isAnnotationPresent(StorageSerialized.class)) {
                 final String name = declaredField.getName();
                 final String string = resultSet.getString(name);
                 final Object object = AmethystCore.getGson().fromJson(string, declaredField.getType());
+                declaredField.setAccessible(true);
                 declaredField.set(value, object);
                 continue;
             }
@@ -463,13 +475,18 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
             final String name = declaredField.getName();
             final Object object = resultSet.getObject(name);
 
+            if (declaredField.getType() == UUID.class && object instanceof String) {
+                ReflectionUtil.setPrivateField(value, name, UUID.fromString((String) object));
+                continue;
+            }
+
             ReflectionUtil.setPrivateField(value, name, object);
         }
 
         return value;
     }
 
-    /*
+    /**
      * Generates an SQL String for the columns associated with a value class.
      * */
     private String getColumns() {
@@ -478,17 +495,20 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
             if (field.isAnnotationPresent(Transient.class)) {
                 continue;
             }
-            builder.append(field.getName()).append(",");
+            builder.append("`").append(field.getName()).append("`").append(",");
         }
         return builder.substring(0, builder.length() - 1);
     }
 
 
-    /*
+    /**
      * Converts a Java class to an SQL type.
      * */
-    private String getType(Class<?> type) {
-        return switch (type.getName()) {
+    private String getType(Field field) {
+        if (field.isAnnotationPresent(StorageSerialized.class)) {
+            return "VARCHAR(255)";
+        }
+        return switch (field.getType().getName()) {
             case "java.lang.String" -> "VARCHAR(255)";
             case "java.lang.Integer", "int" -> "INT";
             case "java.lang.Long", "long" -> "BIGINT";
@@ -503,38 +523,44 @@ public abstract class SQLiteFStorage<K, V> implements ConstructableValue<K, V>, 
         };
     }
 
-    /*
+    /**
      * Generates an SQL String for inserting a value into the database.
      * */
     private String getValues(V value) {
         final StringBuilder builder = new StringBuilder();
         int i = 0;
-        Field[] fields = ReflectionUtil.getAllFields(valueClass);
+
+        List<Field> fields = Arrays.stream(this.valueClass.getDeclaredFields())
+                .filter(field -> !field.isAnnotationPresent(Transient.class))
+                .filter(field -> !Modifier.isTransient(field.getModifiers()))
+                .toList();
+
         for (final Field field : fields) {
-            if (field.isAnnotationPresent(Transient.class)) {
-                continue;
-            }
             if (field.isAnnotationPresent(StorageSerialized.class)) {
-                builder.append("'").append(sanitize(AmethystCore.getGson().toJson(ReflectionUtil.getPrivateField(value, field.getName())))).append("'");
+                builder.append("'").append(AmethystCore.getGson().toJson(ReflectionUtil.getPrivateField(value, field.getName()))).append("'");
             } else {
-                builder.append("'").append(sanitize(ReflectionUtil.getPrivateField(value, field.getName()))).append("'");
+                boolean shouldHaveQuotes = shouldHaveQuotes(ReflectionUtil.getPrivateField(value, field.getName()));
+                if (shouldHaveQuotes) {
+                    builder.append("'");
+                }
+                builder.append(ReflectionUtil.getPrivateField(value, field.getName()));
+                if (shouldHaveQuotes) {
+                    builder.append("'");
+                }
             }
-            if (i != fields.length - 1) {
+            if (i != fields.size() - 1) {
                 builder.append(", ");
             }
             i++;
         }
-        return builder.substring(0, builder.length() - 1);
+
+        return builder.toString();
     }
 
-    /**
-     * Sanitizes an object to be used in an SQL statement.
-     * This is to prevent SQL injection.
-     * */
-    private Object sanitize(Object object) {
-        if (object instanceof String) {
-            return ((String) object).replace("'", "''");
-        }
-        return object;
+    private boolean shouldHaveQuotes(Object value) {
+        return switch (value.getClass().getName()) {
+            case "java.lang.String", "java.util.UUID" -> true;
+            default -> false;
+        };
     }
 }

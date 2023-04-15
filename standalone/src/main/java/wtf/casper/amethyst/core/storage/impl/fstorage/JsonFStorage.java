@@ -1,10 +1,11 @@
 package wtf.casper.amethyst.core.storage.impl.fstorage;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.Nullable;
 import wtf.casper.amethyst.core.AmethystCore;
+import wtf.casper.amethyst.core.cache.Cache;
+import wtf.casper.amethyst.core.cache.CaffeineCache;
 import wtf.casper.amethyst.core.storage.ConstructableValue;
 import wtf.casper.amethyst.core.storage.FieldStorage;
 import wtf.casper.amethyst.core.storage.id.utils.IdUtils;
@@ -23,7 +24,7 @@ public abstract class JsonFStorage<K, V> implements FieldStorage<K, V>, Construc
 
     private final File file;
     private final Class<V> type;
-    private Cache<K, V> cache = Caffeine.newBuilder().build();
+    private Cache<K, V> cache = new CaffeineCache<>(Caffeine.newBuilder().build());
 
     @SneakyThrows
     public JsonFStorage(final File file, final Class<V> type) {

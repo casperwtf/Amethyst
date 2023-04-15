@@ -20,6 +20,7 @@ import wtf.casper.amethyst.paper.hooks.economy.EconomyManager;
 import wtf.casper.amethyst.paper.hooks.protection.ProtectionManager;
 import wtf.casper.amethyst.paper.hooks.stacker.StackerManager;
 import wtf.casper.amethyst.paper.hooks.vanish.VanishManager;
+import wtf.casper.amethyst.paper.listeners.PlayerBlockListener;
 import wtf.casper.amethyst.paper.listeners.LoggerListener;
 import wtf.casper.amethyst.paper.serialized.SerializableItem;
 import wtf.casper.amethyst.paper.serialized.SerializableItemTypeAdapter;
@@ -28,6 +29,8 @@ import wtf.casper.amethyst.paper.tracker.PlayerTracker;
 import wtf.casper.amethyst.paper.tracker.PlayerTrackerListener;
 import wtf.casper.amethyst.paper.utils.ArmorstandUtils;
 import wtf.casper.amethyst.paper.utils.GeneralUtils;
+import wtf.casper.amethyst.paper.utils.GeyserUtils;
+import wtf.casper.amethyst.paper.utils.ServerLock;
 
 import java.awt.Color;
 import java.io.File;
@@ -48,12 +51,12 @@ public class AmethystPaper extends AmethystPlugin {
     @Getter private static Filter filter;
     @Getter private YamlDocument amethystConfig;
     private final boolean isLoadedFromPlugin;
-    @Getter private static AmethystPlugin instance;
-
+    private static AmethystPlugin instance;
+    private GeyserUtils geyserUtils;
     /**
      * This constructor is used for loading Amethyst as a plugin
      * We load dependencies here because we need to load them before the plugin is enabled
-     * This is because the onLoad for plugins does not call in order of depends in plugin.yml
+     * This is because the onLoad for plugins does not call in order of depends within plugin.yml
      */
     public AmethystPaper() {
         super();
@@ -78,14 +81,13 @@ public class AmethystPaper extends AmethystPlugin {
         dependencyManager.loadDependencies();
 
         checkRelocation();
+
+        initAmethyst(plugin);
     }
 
     @Override
     public void disable() {
-        EconomyManager.disable();
-        VanishManager.disable();
-        CombatManager.disable();
-        ProtectionManager.disable();
+        disableAmethyst();
     }
 
     @Override
@@ -111,6 +113,10 @@ public class AmethystPaper extends AmethystPlugin {
         this.amethystConfig = getYamlDocument("amethyst-config.yml");
 
         CustomBlockData.registerListener(plugin);
+        new PlayerBlockListener(plugin);
+
+        new ServerLock(plugin);
+        geyserUtils = new GeyserUtils(plugin);
 
         filter = record -> {
 
@@ -179,15 +185,12 @@ public class AmethystPaper extends AmethystPlugin {
 
         if (isLoadedFromPlugin) {
             getLogger().setFilter(filter);
+            new LoggerListener(this);
         } else {
             plugin.getLogger().setFilter(filter);
         }
         Bukkit.getLogger().setFilter(filter);
         AmethystLogger.getLogger().setFilter(filter);
-
-        if (isLoadedFromPlugin) {
-            new LoggerListener(this);
-        }
 
         new PlayerTrackerListener(plugin);
         getServer().getScheduler().runTaskTimer(plugin, new PlayerTracker(), 0L, 1L);
@@ -221,6 +224,15 @@ public class AmethystPaper extends AmethystPlugin {
                     "Please disable debug mode in the amethyst-config.yml if you do not need it."
             );
         }
+    }
+
+    public void disableAmethyst() {
+        EconomyManager.disable();
+        VanishManager.disable();
+        CombatManager.disable();
+        ProtectionManager.disable();
+        geyserUtils.getGeyserStorage().write().join();
+        geyserUtils.getGeyserStorage().close().join();
     }
 
     @NotNull

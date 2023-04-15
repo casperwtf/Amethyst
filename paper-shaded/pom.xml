@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>wtf.casper</groupId>
-        <artifactId>amethyst</artifactId>
-        <version>1.0.0</version>
-    </parent>
-
 
     <groupId>wtf.casper.amethyst</groupId>
     <artifactId>paper-shaded</artifactId>
-    <version>1.0.0</version>
+    <version>${amethyst.version}</version>
 
     <build>
         <finalName>${project.artifactId}-amethyst-${project.version}</finalName>
@@ -35,8 +29,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.10.1</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -116,8 +110,16 @@
                                     <shadedPattern>wtf.casper.amethyst.libs.reflections</shadedPattern>
                                 </relocation>
                                 <relocation>
+                                    <pattern>javassist</pattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.javassist</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>com.iridium.iridiumcolorapi</pattern>
                                     <shadedPattern>wtf.casper.amethyst.libs.iridiumcolorapi</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.zaxxer.hikari</pattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.hikari</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>
@@ -157,13 +159,14 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <amethyst.version>1.0.2</amethyst.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>wtf.casper.amethyst</groupId>
             <artifactId>paper</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${amethyst.version}</version>
         </dependency>
         <dependency>
             <groupId>fr.mrmicky</groupId>
@@ -243,6 +246,12 @@
             <artifactId>IridiumColorAPI</artifactId>
             <version>1.0.6</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.26</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

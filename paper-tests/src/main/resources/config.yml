@@ -1,0 +1,10 @@
+storage-test:
+  type: JSON # JSON, SQLITE, MONGODB, MARIADB, SQL
+  uri: "mongodb://mongodb0.example.com:27017" # URI for Mongo
+  database: "dev" # Database for Mongo & SQL
+  table: "test" # Table for SQL
+  collection: "test" # Collection for Mongo
+  host: "127.0.0.1" # Host for SQL
+  username: "user" # Username for SQL
+  password: "pass123" # Password for SQL
+  port: "3306" # Port for SQL

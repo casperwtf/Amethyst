@@ -5,6 +5,7 @@ import io.github.rysefoxx.inventory.plugin.animator.SlideAnimation;
 import io.github.rysefoxx.inventory.plugin.content.IntelligentItem;
 import io.github.rysefoxx.inventory.plugin.content.InventoryContents;
 import io.github.rysefoxx.inventory.plugin.content.InventoryProvider;
+import io.github.rysefoxx.inventory.plugin.enums.InventoryOpenerType;
 import io.github.rysefoxx.inventory.plugin.enums.TimeSetting;
 import io.github.rysefoxx.inventory.plugin.pagination.RyseAnvil;
 import io.github.rysefoxx.inventory.plugin.pagination.RyseInventory;
@@ -160,27 +161,28 @@ public abstract class AmethystMenu implements InventoryProvider {
         this.title = title;
     }
 
-    @SneakyThrows @Deprecated
+    /**
+     * @param plugin
+     * @param targets
+     * @deprecated Use {@link #open(JavaPlugin, Player...)} instead, just odd naming choice
+     */
+    @SneakyThrows
+    @Deprecated
     public void openMenu(JavaPlugin plugin, Player... targets) {
         open(plugin, targets);
     }
 
     /**
-     * @deprecated Use {@link #open(JavaPlugin, PlaceholderReplacer, Player...)} instead, just odd naming choice
      * @param plugin
      * @param replacer
      * @param targets
+     * @deprecated Use {@link #open(JavaPlugin, PlaceholderReplacer, Player...)} instead, just odd naming choice
      */
-    @SneakyThrows @Deprecated
+    @SneakyThrows
+    @Deprecated
     public void openMenu(JavaPlugin plugin, PlaceholderReplacer replacer, Player... targets) {
         open(plugin, replacer, targets);
     }
-
-    /**
-     * @deprecated Use {@link #open(JavaPlugin, Player...)} instead, just odd naming choice
-     * @param plugin
-     * @param targets
-     */
 
     @SneakyThrows
     public void open(JavaPlugin plugin, Player... targets) {
@@ -198,6 +200,12 @@ public abstract class AmethystMenu implements InventoryProvider {
         for (Player target : targets) {
             inventory.open(target);
         }
+    }
+
+    public void openAnvil(JavaPlugin plugin, Player player, PlaceholderReplacer replacer, String title) {
+        RyseInventory ryseInventory = MenuUtil.getInventory(plugin, this, slots, replacer.parse(title), InventoryOpenerType.ANVIL);
+        this.inventory = ryseInventory;
+        ryseInventory.open(player);
     }
 
     protected void disableUpdating() {

@@ -11,7 +11,6 @@ import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
-import lombok.Data;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
@@ -31,9 +30,9 @@ import java.nio.file.Path;
 @Getter
 public class AmethystVelocity {
 
+    private final Path dataDirectory;
     private Logger logger;
     private ProxyServer proxy;
-    private final Path dataDirectory;
     private YamlDocument config;
     private RedisManager redisManager;
 
