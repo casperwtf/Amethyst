@@ -8,7 +8,7 @@
     <version>${amethyst.version}</version>
 
     <properties>
-        <amethyst.version>1.0.1</amethyst.version>
+        <amethyst.version>1.0.2</amethyst.version>
     </properties>
 
 
