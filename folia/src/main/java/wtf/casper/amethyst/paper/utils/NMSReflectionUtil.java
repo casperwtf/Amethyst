@@ -62,37 +62,6 @@ public final class NMSReflectionUtil {
      * Performance is not a concern for these specific statically initialized values.
      */
     public static final String VERSION;
-    /**
-     * The raw minor version number.
-     * E.g. {@code v1_17_R1} to {@code 17}
-     *
-     * @since 4.0.0
-     */
-    public static final int VER = Integer.parseInt(VERSION.substring(1).split("_")[1]);
-    /**
-     * Mojang remapped their NMS in 1.17 https://www.spigotmc.org/threads/spigot-bungeecord-1-17.510208/#post-4184317
-     */
-    public static final String
-            CRAFTBUKKIT = "org.bukkit.craftbukkit." + VERSION + '.',
-            NMS = v(17, "net.minecraft.").orElse("net.minecraft.server." + VERSION + '.');
-    /**
-     * A nullable public accessible field only available in {@code EntityPlayer}.
-     * This can be null if the player is offline.
-     */
-    private static final MethodHandle PLAYER_CONNECTION;
-    /**
-     * Responsible for getting the NMS handler {@code EntityPlayer} object for the player.
-     * {@code CraftPlayer} is simply a wrapper for {@code EntityPlayer}.
-     * Used mainly for handling packet related operations.
-     * <p>
-     * This is also where the famous player {@code ping} field comes from!
-     */
-    private static final MethodHandle GET_HANDLE;
-    /**
-     * Sends a packet to the player's client through a {@code NetworkManager} which
-     * is where {@code ProtocolLib} controls packets by injecting channels!
-     */
-    private static final MethodHandle SEND_PACKET;
 
     static { // This needs to be right below VERSION because of initialization order.
         // This package loop is used to avoid implementation-dependant strings like Bukkit.getVersion() or Bukkit.getBukkitVersion()
@@ -146,6 +115,38 @@ public final class NMSReflectionUtil {
         SEND_PACKET = sendPacket;
         GET_HANDLE = getHandle;
     }
+
+    /**
+     * The raw minor version number.
+     * E.g. {@code v1_17_R1} to {@code 17}
+     *
+     * @since 4.0.0
+     */
+    public static final int VER = Integer.parseInt(VERSION.substring(1).split("_")[1]);
+    /**
+     * Mojang remapped their NMS in 1.17 https://www.spigotmc.org/threads/spigot-bungeecord-1-17.510208/#post-4184317
+     */
+    public static final String
+            CRAFTBUKKIT = "org.bukkit.craftbukkit." + VERSION + '.',
+            NMS = v(17, "net.minecraft.").orElse("net.minecraft.server." + VERSION + '.');
+    /**
+     * A nullable public accessible field only available in {@code EntityPlayer}.
+     * This can be null if the player is offline.
+     */
+    private static final MethodHandle PLAYER_CONNECTION;
+    /**
+     * Responsible for getting the NMS handler {@code EntityPlayer} object for the player.
+     * {@code CraftPlayer} is simply a wrapper for {@code EntityPlayer}.
+     * Used mainly for handling packet related operations.
+     * <p>
+     * This is also where the famous player {@code ping} field comes from!
+     */
+    private static final MethodHandle GET_HANDLE;
+    /**
+     * Sends a packet to the player's client through a {@code NetworkManager} which
+     * is where {@code ProtocolLib} controls packets by injecting channels!
+     */
+    private static final MethodHandle SEND_PACKET;
 
     private NMSReflectionUtil() {
     }
