@@ -14,6 +14,7 @@
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <amethyst.version>1.0.2</amethyst.version>
     </properties>
 
     <build>
@@ -85,7 +86,7 @@
         <dependency>
             <groupId>wtf.casper.amethyst</groupId>
             <artifactId>paper-shaded</artifactId>
-            <version>1.0.1</version>
+            <version>${amethyst.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

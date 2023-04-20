@@ -8,7 +8,6 @@ import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
-import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -18,7 +17,6 @@ import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.core.utils.ReflectionUtil;
 
 import java.io.File;
-import java.util.Optional;
 
 public abstract class AmethystPlugin extends JavaPlugin {
 
