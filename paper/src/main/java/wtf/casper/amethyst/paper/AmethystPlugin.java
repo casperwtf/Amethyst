@@ -127,4 +127,15 @@ public abstract class AmethystPlugin extends JavaPlugin {
         }
         return null;
     }
+
+    public JavaPlugin getCallingJavaPlugin() {
+        Exception ex = new Exception();
+        try {
+            Class<?> clazz = Class.forName(ex.getStackTrace()[2].getClassName());
+            return JavaPlugin.getProvidingPlugin(clazz);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

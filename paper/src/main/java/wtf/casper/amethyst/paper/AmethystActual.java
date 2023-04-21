@@ -5,12 +5,7 @@ public final class AmethystActual extends AmethystPlugin {
     private final AmethystPaper amethystPaper;
 
     public AmethystActual() {
-        amethystPaper = new AmethystPaper(this, true);
-    }
-
-    @Override
-    public void enable() {
-        amethystPaper.enable();
+        amethystPaper = new AmethystPaper(this, false);
     }
 
     @Override

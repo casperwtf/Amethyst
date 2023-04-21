@@ -50,57 +50,29 @@ public class AmethystPaper {
     @Getter private static final Map<JavaPlugin, InventoryManager> inventoryManagers = new HashMap<>();
     @Getter private static Filter filter;
     @Getter private YamlDocument amethystConfig;
-    private final boolean isLoadedFromPlugin;
     private static AmethystPlugin instance;
-    private GeyserUtils geyserUtils;
+
     /**
-     * This constructor is used for shading Amethyst into a plugin
+     * This constructor is used for loading Amethyst as a plugin
+     * We load dependencies here because we need to load them before the plugin is enabled
+     * This is because the onLoad for plugins does not call in order of depends within plugin.yml
+     * @param plugin The plugin that is shading Amethyst
+     * @param relocationCheck Whether to check if the plugin is relocated
      */
-    public AmethystPaper(AmethystPlugin plugin) {
-        this.isLoadedFromPlugin = false;
+    public AmethystPaper(AmethystPlugin plugin, boolean relocationCheck) {
+        if (relocationCheck) {
+            checkRelocation();
+        }
 
         instance = plugin;
+
         plugin.setPlayerPlacedBlockKey(new NamespacedKey(plugin, "PLAYER_PLACED_BLOCK"));
 
         DependencyManager dependencyManager = new DependencyManager(plugin);
         dependencyManager.loadDependencies();
 
-        checkRelocation();
 
         initAmethyst(plugin);
-    }
-
-    /**
-     * **DO NOT USE THIS CONSTRUCTOR** This constructor is used for loading Amethyst as a plugin
-     * This constructor is used for loading Amethyst as a plugin
-     * We load dependencies here because we need to load them before the plugin is enabled
-     * This is because the onLoad for plugins does not call in order of depends within plugin.yml
-     * @param plugin The plugin that is shading Amethyst
-     * @param isLoadedFromPlugin true if not shaded in, false if shaded in
-     */
-    public AmethystPaper(AmethystPlugin plugin, boolean isLoadedFromPlugin) {
-        this.isLoadedFromPlugin = isLoadedFromPlugin;
-
-        instance = plugin;
-
-        if (isLoadedFromPlugin){
-            DependencyManager dependencyManager = new DependencyManager(instance);
-            dependencyManager.loadDependencies();
-        } else {
-            plugin.setPlayerPlacedBlockKey(new NamespacedKey(plugin, "PLAYER_PLACED_BLOCK"));
-
-            DependencyManager dependencyManager = new DependencyManager(plugin);
-            dependencyManager.loadDependencies();
-
-            checkRelocation();
-
-            initAmethyst(plugin);
-        }
-    }
-
-    public void enable() {
-        instance.setPlayerPlacedBlockKey(new NamespacedKey(instance, "PLAYER_PLACED_BLOCK"));
-        initAmethyst(instance);
     }
 
     public static AmethystPlugin getInstance() {
@@ -118,7 +90,7 @@ public class AmethystPaper {
         new PlayerBlockListener(plugin);
 
         new ServerLock(plugin);
-        geyserUtils = new GeyserUtils(plugin);
+        new GeyserUtils(plugin);
 
         filter = record -> {
 
@@ -185,12 +157,11 @@ public class AmethystPaper {
             return true;
         };
 
-        if (isLoadedFromPlugin) {
-            instance.getLogger().setFilter(filter);
+        plugin.getLogger().setFilter(filter);
+        if (plugin.getDescription().getName().equals("Amethyst")) {
             new LoggerListener(instance);
-        } else {
-            plugin.getLogger().setFilter(filter);
         }
+
         Bukkit.getLogger().setFilter(filter);
         AmethystLogger.getLogger().setFilter(filter);
 
@@ -270,12 +241,9 @@ public class AmethystPaper {
     }
 
     private void checkRelocation() {
-        if (isLoadedFromPlugin) {
-            return;
-        }
         if (AmethystPaper.class.getPackage().getName().equals(new String(DEFAULT_PACKAGE))) {
-            AmethystLogger.error("Amethyst is not relocated, please relocate it to prevent conflicts with other plugins.");
             Bukkit.getPluginManager().disablePlugin(instance);
+            throw new RuntimeException("Amethyst is not relocated, please relocate it to prevent conflicts with other plugins.");
         }
     }
 }
