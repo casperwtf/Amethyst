@@ -42,7 +42,7 @@ import java.util.logging.Filter;
 /**
  * This class is the main class for AmethystPaper
  */
-public class AmethystPaper extends AmethystPlugin {
+public class AmethystPaper {
 
     // this is to prevent relocation from changing the package name here, which would break the relocation check
     private final char[] DEFAULT_PACKAGE = new char[] {'w', 't', 'f', '.', 'c', 'a', 's', 'p', 'e', 'r', '.', 'a', 'm', 'e', 't', 'h', 'y', 's', 't', '.', 'p', 'a', 'p', 'e', 'r'};
@@ -54,28 +54,13 @@ public class AmethystPaper extends AmethystPlugin {
     private static AmethystPlugin instance;
     private GeyserUtils geyserUtils;
     /**
-     * This constructor is used for loading Amethyst as a plugin
-     * We load dependencies here because we need to load them before the plugin is enabled
-     * This is because the onLoad for plugins does not call in order of depends within plugin.yml
-     */
-    public AmethystPaper() {
-        super();
-
-        this.isLoadedFromPlugin = true;
-
-        DependencyManager dependencyManager = new DependencyManager(this);
-        dependencyManager.loadDependencies();
-    }
-
-    /**
-     * This constructor is used for shading purposes
-     * @param plugin The plugin that is shading Amethyst
+     * This constructor is used for shading Amethyst into a plugin
      */
     public AmethystPaper(AmethystPlugin plugin) {
         this.isLoadedFromPlugin = false;
-        instance = plugin;
 
-        setPlayerPlacedBlockKey(new NamespacedKey(plugin, "PLAYER_PLACED_BLOCK"));
+        instance = plugin;
+        plugin.setPlayerPlacedBlockKey(new NamespacedKey(plugin, "PLAYER_PLACED_BLOCK"));
 
         DependencyManager dependencyManager = new DependencyManager(plugin);
         dependencyManager.loadDependencies();
@@ -85,20 +70,37 @@ public class AmethystPaper extends AmethystPlugin {
         initAmethyst(plugin);
     }
 
-    @Override
-    public void disable() {
-        disableAmethyst();
+    /**
+     * **DO NOT USE THIS CONSTRUCTOR** This constructor is used for loading Amethyst as a plugin
+     * This constructor is used for loading Amethyst as a plugin
+     * We load dependencies here because we need to load them before the plugin is enabled
+     * This is because the onLoad for plugins does not call in order of depends within plugin.yml
+     * @param plugin The plugin that is shading Amethyst
+     * @param isLoadedFromPlugin true if not shaded in, false if shaded in
+     */
+    public AmethystPaper(AmethystPlugin plugin, boolean isLoadedFromPlugin) {
+        this.isLoadedFromPlugin = isLoadedFromPlugin;
+
+        instance = plugin;
+
+        if (isLoadedFromPlugin){
+            DependencyManager dependencyManager = new DependencyManager(instance);
+            dependencyManager.loadDependencies();
+        } else {
+            plugin.setPlayerPlacedBlockKey(new NamespacedKey(plugin, "PLAYER_PLACED_BLOCK"));
+
+            DependencyManager dependencyManager = new DependencyManager(plugin);
+            dependencyManager.loadDependencies();
+
+            checkRelocation();
+
+            initAmethyst(plugin);
+        }
     }
 
-    @Override
-    public void load() {
-        instance = this;
-    }
-
-    @Override
     public void enable() {
-        setPlayerPlacedBlockKey(new NamespacedKey(this, "PLAYER_PLACED_BLOCK"));
-        initAmethyst(this);
+        instance.setPlayerPlacedBlockKey(new NamespacedKey(instance, "PLAYER_PLACED_BLOCK"));
+        initAmethyst(instance);
     }
 
     public static AmethystPlugin getInstance() {
@@ -110,7 +112,7 @@ public class AmethystPaper extends AmethystPlugin {
 
     public void initAmethyst(AmethystPlugin plugin) {
         AmethystCore.init();
-        this.amethystConfig = getYamlDocument("amethyst-config.yml");
+        this.amethystConfig = instance.getYamlDocument("amethyst-config.yml");
 
         CustomBlockData.registerListener(plugin);
         new PlayerBlockListener(plugin);
@@ -184,8 +186,8 @@ public class AmethystPaper extends AmethystPlugin {
         };
 
         if (isLoadedFromPlugin) {
-            getLogger().setFilter(filter);
-            new LoggerListener(this);
+            instance.getLogger().setFilter(filter);
+            new LoggerListener(instance);
         } else {
             plugin.getLogger().setFilter(filter);
         }
@@ -193,7 +195,7 @@ public class AmethystPaper extends AmethystPlugin {
         AmethystLogger.getLogger().setFilter(filter);
 
         new PlayerTrackerListener(plugin);
-        getServer().getScheduler().runTaskTimer(plugin, new PlayerTracker(), 0L, 1L);
+        instance.getServer().getScheduler().runTaskTimer(plugin, new PlayerTracker(), 0L, 1L);
 
         new ArmorstandUtils(plugin);
 
@@ -231,12 +233,11 @@ public class AmethystPaper extends AmethystPlugin {
         VanishManager.disable();
         CombatManager.disable();
         ProtectionManager.disable();
-        geyserUtils.getGeyserStorage().write().join();
-        geyserUtils.getGeyserStorage().close().join();
+        GeyserUtils.getGeyserStorage().write().join();
+        GeyserUtils.getGeyserStorage().close().join();
     }
 
     @NotNull
-    @Override
     public YamlDocument getYamlConfig() {
         return amethystConfig;
     }

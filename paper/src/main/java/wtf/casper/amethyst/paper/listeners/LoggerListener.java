@@ -3,11 +3,12 @@ package wtf.casper.amethyst.paper.listeners;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.server.PluginEnableEvent;
 import wtf.casper.amethyst.paper.AmethystPaper;
+import wtf.casper.amethyst.paper.AmethystPlugin;
 import wtf.casper.amethyst.paper.utils.AmethystListener;
 
-public class LoggerListener extends AmethystListener<AmethystPaper> {
+public class LoggerListener extends AmethystListener<AmethystPlugin> {
 
-    public LoggerListener(AmethystPaper plugin) {
+    public LoggerListener(AmethystPlugin plugin) {
         super(plugin);
     }
 
