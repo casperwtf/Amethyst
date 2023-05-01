@@ -2,7 +2,6 @@ package wtf.casper.amethyst.paper.utils;
 
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import wtf.casper.amethyst.core.distributedworkload.WorkloadRunnable;
 import wtf.casper.amethyst.paper.AmethystFolia;

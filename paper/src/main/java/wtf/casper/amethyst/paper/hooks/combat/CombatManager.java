@@ -10,10 +10,9 @@ import java.util.List;
 
 public class CombatManager {
 
-    private static final List<ICombat> combatHandlers;
+    private static final List<ICombat> combatHandlers = new ArrayList<>();
 
-    static {
-        combatHandlers = new ArrayList<>();
+    public CombatManager() {
         registerCombatHandler(new ICombatDefault());
         registerCombatHandler(new ICombatDeluxeCombat());
     }

@@ -5,18 +5,22 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import wtf.casper.amethyst.paper.AmethystPlugin;
+import org.bukkit.plugin.java.JavaPlugin;
+import wtf.casper.amethyst.paper.AmethystPaper;
 import wtf.casper.amethyst.paper.utils.AmethystListener;
 
-public class PlayerBlockListener extends AmethystListener<AmethystPlugin> {
+public class PlayerBlockListener extends AmethystListener<JavaPlugin> {
 
-    public PlayerBlockListener(AmethystPlugin plugin) {
+    private final AmethystPaper amethystPaper;
+
+    public PlayerBlockListener(JavaPlugin plugin, AmethystPaper amethystPaper) {
         super(plugin);
+        this.amethystPaper = amethystPaper;
     }
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
         PersistentDataContainer customBlockData = new CustomBlockData(event.getBlock(), getPlugin());
-        customBlockData.set(getPlugin().getPlayerPlacedBlockKey(), PersistentDataType.BYTE, (byte) 1);
+        customBlockData.set(amethystPaper.getPlayerPlacedBlockKey(), PersistentDataType.BYTE, (byte) 1);
     }
 }

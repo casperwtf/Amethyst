@@ -1,7 +1,9 @@
 package wtf.casper.amethyst.bungee.listener;
 
 import net.md_5.bungee.api.config.ServerInfo;
-import net.md_5.bungee.api.event.*;
+import net.md_5.bungee.api.event.PlayerDisconnectEvent;
+import net.md_5.bungee.api.event.ServerConnectEvent;
+import net.md_5.bungee.api.event.ServerSwitchEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import wtf.casper.amethyst.bungee.AmethystBungee;

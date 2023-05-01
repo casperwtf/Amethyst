@@ -12,10 +12,9 @@ import java.util.List;
 public class VanishManager {
 
     @Getter
-    private static final List<IVanish> vanishes;
+    private static final List<IVanish> vanishes = new ArrayList<>();
 
-    static {
-        vanishes = new ArrayList<>();
+    public VanishManager() {
         for (IVanish iVanish : List.of(new AdvancedVanishImpl(), new DefaultVanishImpl())) {
             if (iVanish.canEnable()) {
                 iVanish.enable();

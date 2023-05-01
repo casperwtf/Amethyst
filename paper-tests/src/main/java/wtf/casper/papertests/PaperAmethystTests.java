@@ -19,6 +19,7 @@ public final class PaperAmethystTests extends AmethystPlugin {
 
         // reflection doesnt work idk why
         tests.add(StorageTest.class);
+        tests.add(ColorPerfTest.class);
 
         Reflections reflections = new Reflections("wtf.casper.papertests.tests");
         tests.addAll(reflections.getSubTypesOf(Test.class));

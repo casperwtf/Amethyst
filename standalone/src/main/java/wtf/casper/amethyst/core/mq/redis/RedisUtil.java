@@ -5,7 +5,6 @@ import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 
 @Deprecated
 public class RedisUtil {
-
     public static RedisClient createRedisClient(String uri) {
         return RedisClient.create(uri);
     }

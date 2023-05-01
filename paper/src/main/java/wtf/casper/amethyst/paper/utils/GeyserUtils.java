@@ -6,23 +6,23 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.geysermc.floodgate.api.FloodgateApi;
 import org.jetbrains.annotations.Nullable;
 import wtf.casper.amethyst.core.storage.FieldStorage;
 import wtf.casper.amethyst.core.storage.id.Id;
-import wtf.casper.amethyst.paper.AmethystPlugin;
 import wtf.casper.amethyst.paper.geyser.GeyserJsonStorage;
 
 import java.io.File;
 import java.util.Optional;
 import java.util.UUID;
 
-public class GeyserUtils extends AmethystListener<AmethystPlugin> {
+public class GeyserUtils extends AmethystListener<JavaPlugin> {
 
     @Getter
     private static FieldStorage<UUID, GeyserPlayer> geyserStorage;
 
-    public GeyserUtils(AmethystPlugin plugin) {
+    public GeyserUtils(JavaPlugin plugin) {
         super(plugin);
         GeyserUtils.geyserStorage = new GeyserJsonStorage(new File(plugin.getDataFolder(), "geyser.json"), GeyserPlayer.class);
     }

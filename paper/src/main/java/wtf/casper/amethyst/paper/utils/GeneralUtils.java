@@ -82,6 +82,6 @@ public class GeneralUtils {
 
     public static boolean isBlockPlacedByPlayer(Block block) {
         PersistentDataContainer customBlockData = new CustomBlockData(block, AmethystPaper.getInstance());
-        return customBlockData.has(AmethystPaper.getInstance().getPlayerPlacedBlockKey(), PersistentDataType.BYTE);
+        return customBlockData.has(AmethystPaper.getPlayerPlacedBlockKey(), PersistentDataType.BYTE);
     }
 }

@@ -3,7 +3,6 @@ package wtf.casper.amethyst.paper.hooks.vanish.impl;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.plugin.Plugin;
 import wtf.casper.amethyst.paper.AmethystPaper;
 import wtf.casper.amethyst.paper.hooks.vanish.IVanish;
 

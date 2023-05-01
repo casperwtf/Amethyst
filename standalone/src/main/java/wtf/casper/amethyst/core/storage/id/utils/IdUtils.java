@@ -6,6 +6,9 @@ import wtf.casper.amethyst.core.storage.id.exceptions.IdNotFoundException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.List;
 
 public final class IdUtils {
 
@@ -17,7 +20,11 @@ public final class IdUtils {
     @SneakyThrows
     public static Object getId(final Class<?> clazz, final Object instance) {
 
-        for (final Field field : clazz.getDeclaredFields()) {
+        final List<Field> fields = Arrays.stream(clazz.getDeclaredFields())
+                .filter(field -> !Modifier.isStatic(field.getModifiers()))
+                .toList();
+
+        for (final Field field : fields) {
             field.setAccessible(true);
 
             if (!field.isAnnotationPresent(Id.class)) {
@@ -35,7 +42,11 @@ public final class IdUtils {
     @SneakyThrows
     public static String getIdName(final Class<?> type) {
 
-        for (final Field field : type.getDeclaredFields()) {
+        final List<Field> fields = Arrays.stream(type.getDeclaredFields())
+                .filter(field -> !Modifier.isStatic(field.getModifiers()))
+                .toList();
+
+        for (final Field field : fields) {
             field.setAccessible(true);
 
             if (!field.isAnnotationPresent(Id.class)) {
@@ -57,7 +68,11 @@ public final class IdUtils {
     @SneakyThrows
     public static Class<?> getIdClass(final Class<?> type) {
 
-        for (final Field field : type.getDeclaredFields()) {
+        final List<Field> fields = Arrays.stream(type.getDeclaredFields())
+                .filter(field -> !Modifier.isStatic(field.getModifiers()))
+                .toList();
+
+        for (final Field field : fields) {
             field.setAccessible(true);
 
             if (!field.isAnnotationPresent(Id.class)) {
@@ -79,7 +94,11 @@ public final class IdUtils {
 
     private static Method getIdMethod(final Class<?> type) throws IdNotFoundException {
 
-        for (final Method method : type.getDeclaredMethods()) {
+        final List<Method> methods = Arrays.stream(type.getDeclaredMethods())
+                .filter(method -> !Modifier.isStatic(method.getModifiers()))
+                .toList();
+
+        for (final Method method : methods) {
             method.setAccessible(true);
 
             if (!method.isAnnotationPresent(Id.class)) {
@@ -94,7 +113,11 @@ public final class IdUtils {
 
     public static Field getIdField(final Class<?> type) throws IdNotFoundException {
 
-        for (final Field field : type.getDeclaredFields()) {
+        final List<Field> fields = Arrays.stream(type.getDeclaredFields())
+                .filter(field -> !Modifier.isStatic(field.getModifiers()))
+                .toList();
+
+        for (final Field field : fields) {
             field.setAccessible(true);
 
             if (!field.isAnnotationPresent(Id.class)) {

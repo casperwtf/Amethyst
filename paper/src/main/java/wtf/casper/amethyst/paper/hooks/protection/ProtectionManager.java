@@ -3,6 +3,7 @@ package wtf.casper.amethyst.paper.hooks.protection;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.paper.hooks.protection.protections.CrashClaimProtection;
 import wtf.casper.amethyst.paper.hooks.protection.protections.GriefPreventionProtection;
 import wtf.casper.amethyst.paper.hooks.protection.protections.LandsProtection;
@@ -14,7 +15,7 @@ import java.util.List;
 public class ProtectionManager {
     @Getter private static List<IProtection> protections;
 
-    static {
+    public ProtectionManager() {
         protections = new ArrayList<>();
 
         for (IProtection iProtection : List.of(
@@ -26,8 +27,15 @@ public class ProtectionManager {
 
             if (iProtection.canEnable()) {
                 iProtection.enable();
+                AmethystLogger.log("Protection hook enabled: " + iProtection.getClass().getSimpleName());
                 protections.add(iProtection);
+            } else {
+                AmethystLogger.log("Protection hook disabled: " + iProtection.getClass().getSimpleName());
             }
+        }
+
+        if (protections.isEmpty()) {
+            AmethystLogger.log("No protection hooks enabled.");
         }
     }
 

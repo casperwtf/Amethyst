@@ -3,17 +3,18 @@ package wtf.casper.amethyst.paper.utils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 import wtf.casper.amethyst.paper.AmethystPlugin;
 
 import java.util.*;
 
-public class ServerLock extends AmethystListener<AmethystPlugin> {
+public class ServerLock extends AmethystListener<JavaPlugin> {
 
-    private final static List<AmethystPlugin> lockingPlugins = new ArrayList<>();
+    private final static List<JavaPlugin> lockingPlugins = new ArrayList<>();
     private static boolean locked = false;
     private static Map<String, String> reason = new HashMap<>();
 
-    public ServerLock(AmethystPlugin plugin) {
+    public ServerLock(JavaPlugin plugin) {
         super(plugin);
     }
 

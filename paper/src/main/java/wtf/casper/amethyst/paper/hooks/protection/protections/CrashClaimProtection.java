@@ -12,30 +12,30 @@ public class CrashClaimProtection implements IProtection {
 
     @Override
     public boolean canBuild(Player player, Location location) {
-        return PermissionHelper.getPermissionHelper().getBypassManager().isBypass(player.getUniqueId())
-                || CrashClaim.getPlugin().getApi().getClaim(location) == null
-                || PermissionHelper.getPermissionHelper().hasPermission(player.getUniqueId(), location, PermissionRoute.BUILD);
+        return !isClaimed(location)
+                || PermissionHelper.getPermissionHelper().hasPermission(player.getUniqueId(), location, location.getBlock().getType())
+                && PermissionHelper.getPermissionHelper().hasPermission(player.getUniqueId(), location, PermissionRoute.BUILD);
     }
 
     @Override
     public boolean canBreak(Player player, Location location) {
-        return PermissionHelper.getPermissionHelper().getBypassManager().isBypass(player.getUniqueId())
-                || CrashClaim.getPlugin().getApi().getClaim(location) == null
-                || PermissionHelper.getPermissionHelper().hasPermission(player.getUniqueId(), location, PermissionRoute.BUILD);
+        return !isClaimed(location)
+                || PermissionHelper.getPermissionHelper().hasPermission(player.getUniqueId(), location, location.getBlock().getType())
+                && PermissionHelper.getPermissionHelper().hasPermission(player.getUniqueId(), location, PermissionRoute.BUILD);
     }
 
     @Override
     public boolean canInteract(Player player, Location location) {
-        return PermissionHelper.getPermissionHelper().getBypassManager().isBypass(player.getUniqueId())
-                || CrashClaim.getPlugin().getApi().getClaim(location) == null
-                || PermissionHelper.getPermissionHelper().hasPermission(player.getUniqueId(), location, PermissionRoute.INTERACTIONS);
+        return !isClaimed(location)
+                || PermissionHelper.getPermissionHelper().hasPermission(player.getUniqueId(), location, location.getBlock().getType())
+                && PermissionHelper.getPermissionHelper().hasPermission(player.getUniqueId(), location, PermissionRoute.INTERACTIONS);
     }
 
     @Override
     public boolean canAttack(Player player, Location location) {
-        return PermissionHelper.getPermissionHelper().getBypassManager().isBypass(player.getUniqueId())
-                || CrashClaim.getPlugin().getApi().getClaim(location) == null
-                || PermissionHelper.getPermissionHelper().hasPermission(player.getUniqueId(), location, PermissionRoute.INTERACTIONS);
+        return !isClaimed(location)
+                || PermissionHelper.getPermissionHelper().hasPermission(player.getUniqueId(), location, location.getBlock().getType())
+                && PermissionHelper.getPermissionHelper().hasPermission(player.getUniqueId(), location, PermissionRoute.ENTITIES);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class CrashClaimProtection implements IProtection {
 
     @Override
     public boolean canEnable() {
-        return Bukkit.getServer().getPluginManager().isPluginEnabled("CrashClaims");
+        return Bukkit.getServer().getPluginManager().isPluginEnabled("CrashClaim");
     }
 
     @Override

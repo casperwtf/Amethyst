@@ -260,7 +260,7 @@ public abstract class MariaDBFStorage<K, V> implements ConstructableValue<K, V>,
             }
 
             for (V v : values) {
-                cache.put((K) IdUtils.getId(keyClass, v), v);
+                cache.put((K) IdUtils.getId(valueClass, v), v);
             }
 
             return values;

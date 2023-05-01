@@ -256,7 +256,7 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
             }
 
             for (V v : values) {
-                cache.put((K) IdUtils.getId(keyClass, v), v);
+                cache.put((K) IdUtils.getId(valueClass, v), v);
             }
 
             return values;
@@ -438,6 +438,7 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
         List<Field> fields = Arrays.stream(this.valueClass.getDeclaredFields())
                 .filter(field -> !field.isAnnotationPresent(Transient.class))
                 .filter(field -> !Modifier.isTransient(field.getModifiers()))
+                .filter(filter -> !Modifier.isStatic(filter.getModifiers()))
                 .toList();
 
         for (Field declaredField : fields) {
@@ -467,6 +468,7 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
         List<Field> fields = Arrays.stream(this.valueClass.getDeclaredFields())
                 .filter(field -> !field.isAnnotationPresent(Transient.class))
                 .filter(field -> !Modifier.isTransient(field.getModifiers()))
+                .filter(filter -> !Modifier.isStatic(filter.getModifiers()))
                 .toList();
 
         if (fields.size() == 0) {
@@ -509,12 +511,14 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
     @SneakyThrows
     private V construct(final ResultSet resultSet) {
         final V value = constructValue();
-        List<Field> declaredFields = Arrays.stream(this.valueClass.getDeclaredFields())
+        List<Field> fields = Arrays.stream(this.valueClass.getDeclaredFields())
                 .filter(field -> !field.isAnnotationPresent(Transient.class))
                 .filter(field -> !Modifier.isTransient(field.getModifiers()))
+                .filter(filter -> !Modifier.isStatic(filter.getModifiers()))
                 .toList();
 
-        for (Field declaredField : declaredFields) {
+
+        for (Field declaredField : fields) {
             if (declaredField.isAnnotationPresent(StorageSerialized.class)) {
                 final String name = declaredField.getName();
                 final String string = resultSet.getString(name);
@@ -545,6 +549,7 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
         List<Field> fields = Arrays.stream(this.valueClass.getDeclaredFields())
                 .filter(field -> !field.isAnnotationPresent(Transient.class))
                 .filter(field -> !Modifier.isTransient(field.getModifiers()))
+                .filter(filter -> !Modifier.isStatic(filter.getModifiers()))
                 .toList();
 
         for (final Field field : fields) {
@@ -569,6 +574,7 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
         List<Field> fields = Arrays.stream(this.valueClass.getDeclaredFields())
                 .filter(field -> !field.isAnnotationPresent(Transient.class))
                 .filter(field -> !Modifier.isTransient(field.getModifiers()))
+                .filter(filter -> !Modifier.isStatic(filter.getModifiers()))
                 .toList();
 
         for (final Field field : fields) {
@@ -619,7 +625,11 @@ public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, Fie
                 if (shouldHaveQuotes) {
                     builder.append("'");
                 }
-                builder.append(ReflectionUtil.getPrivateField(value, field.getName()));
+                Object privateField = ReflectionUtil.getPrivateField(value, field.getName());
+                if (privateField instanceof UUID) {
+                    privateField = privateField.toString();
+                }
+                builder.append(privateField);
                 if (shouldHaveQuotes) {
                     builder.append("'");
                 }

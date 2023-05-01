@@ -125,6 +125,10 @@
                                     <pattern>com.zaxxer.hikari</pattern>
                                     <shadedPattern>wtf.casper.amethyst.libs.hikari</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>org.mariadb.jdbc</pattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.mariadb</shadedPattern>
+                                </relocation>
                             </relocations>
                             <filters>
                                 <filter>
@@ -265,7 +269,7 @@
         <dependency>
             <groupId>com.github.WhipDevelopment</groupId>
             <artifactId>CrashClaim</artifactId>
-            <version>ccecd8e779</version>
+            <version>344ef20be5</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

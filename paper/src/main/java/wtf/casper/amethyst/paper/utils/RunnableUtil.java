@@ -1,5 +1,6 @@
 package wtf.casper.amethyst.paper.utils;
 
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import wtf.casper.amethyst.core.distributedworkload.WorkloadRunnable;
@@ -20,7 +21,7 @@ public class RunnableUtil {
     public static BukkitRunnable runSync(Consumer<BukkitRunnable> task) {
         if (!isEnabled()) {
             BukkitRunnable runnable = createSimpleTask(task);
-            AmethystPlugin plugin = AmethystPaper.getInstance().getCallingPlugin();
+            JavaPlugin plugin = AmethystPaper.getCallingPlugin();
             if (plugin == null) {
                 runnable.runTask(AmethystPaper.getInstance());
                 return runnable;
@@ -38,7 +39,7 @@ public class RunnableUtil {
     public static BukkitRunnable runAsync(Consumer<BukkitRunnable> task) {
         if (!isEnabled()) {
             BukkitRunnable runnable = createSimpleTask(task);
-            AmethystPlugin plugin = AmethystPaper.getInstance().getCallingPlugin();
+            JavaPlugin plugin = AmethystPaper.getCallingPlugin();
             if (plugin == null) {
                 runnable.runTaskAsynchronously(AmethystPaper.getInstance());
                 return runnable;
@@ -56,7 +57,7 @@ public class RunnableUtil {
     public static BukkitRunnable delay(Consumer<BukkitRunnable> task, long delay) {
         if (!isEnabled()) {
             BukkitRunnable runnable = createSimpleTask(task);
-            AmethystPlugin plugin = AmethystPaper.getInstance().getCallingPlugin();
+            JavaPlugin plugin = AmethystPaper.getCallingPlugin();
             if (plugin == null) {
                 runnable.runTaskLater(AmethystPaper.getInstance(), delay);
                 return runnable;
@@ -74,7 +75,7 @@ public class RunnableUtil {
     public static BukkitRunnable delayAsync(Consumer<BukkitRunnable> task, long delay) {
         if (!isEnabled()) {
             BukkitRunnable runnable = createSimpleTask(task);
-            AmethystPlugin plugin = AmethystPaper.getInstance().getCallingPlugin();
+            JavaPlugin plugin = AmethystPaper.getCallingPlugin();
             if (plugin == null) {
                 runnable.runTaskLaterAsynchronously(AmethystPaper.getInstance(), delay);
                 return runnable;
@@ -92,7 +93,7 @@ public class RunnableUtil {
     public static BukkitRunnable repeat(Consumer<BukkitRunnable> task, long initialDelay, long repeatDelay) {
         if (!isEnabled()) {
             BukkitRunnable runnable = createSimpleTask(task);
-            AmethystPlugin plugin = AmethystPaper.getInstance().getCallingPlugin();
+            JavaPlugin plugin = AmethystPaper.getCallingPlugin();
             if (plugin == null) {
                 runnable.runTaskTimer(AmethystPaper.getInstance(), initialDelay, repeatDelay);
                 return runnable;
@@ -124,7 +125,7 @@ public class RunnableUtil {
                 }
             };
 
-            runnable.runTaskTimer(AmethystPaper.getInstance().getCallingPlugin(), initialDelay, repeatDelay);
+            runnable.runTaskTimer(AmethystPaper.getCallingPlugin(), initialDelay, repeatDelay);
             return runnable;
         }
 
@@ -149,7 +150,7 @@ public class RunnableUtil {
     public static BukkitRunnable repeatAsync(Consumer<BukkitRunnable> task, long initialDelay, long repeatDelay) {
         if (!isEnabled()) {
             BukkitRunnable runnable = createSimpleTask(task);
-            runnable.runTaskTimerAsynchronously(AmethystPaper.getInstance().getCallingPlugin(), initialDelay, repeatDelay);
+            runnable.runTaskTimerAsynchronously(AmethystPaper.getCallingPlugin(), initialDelay, repeatDelay);
             return runnable;
         }
 
@@ -175,7 +176,7 @@ public class RunnableUtil {
                 }
             };
 
-            runnable.runTaskTimerAsynchronously(AmethystPaper.getInstance().getCallingPlugin(), initialDelay, repeatDelay);
+            runnable.runTaskTimerAsynchronously(AmethystPaper.getCallingPlugin(), initialDelay, repeatDelay);
             return runnable;
         }
 

@@ -5,7 +5,6 @@ import com.google.gson.JsonSyntaxException;
 import com.velocitypowered.api.proxy.Player;
 import io.lettuce.core.pubsub.RedisPubSubListener;
 import wtf.casper.amethyst.core.AmethystCore;
-import wtf.casper.amethyst.core.mq.redis.RedisListener;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.minecraft.mq.messages.ProxyMoveServerRequest;
 import wtf.casper.amethyst.velocity.AmethystVelocity;

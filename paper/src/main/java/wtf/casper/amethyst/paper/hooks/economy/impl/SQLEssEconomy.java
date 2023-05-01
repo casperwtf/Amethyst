@@ -4,12 +4,10 @@ import net.craftersland.essentials.mysql.EMS;
 import net.craftersland.essentials.mysql.storage.MysqlSetup;
 import net.craftersland.essentials.mysql.storage.StorageHandler;
 import org.bukkit.Bukkit;
-import org.geysermc.floodgate.api.FloodgateApi;
 import wtf.casper.amethyst.paper.hooks.economy.IEconomy;
 import wtf.casper.amethyst.paper.utils.GeyserUtils;
 
 import java.lang.reflect.Field;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 

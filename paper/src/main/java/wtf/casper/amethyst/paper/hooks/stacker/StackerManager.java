@@ -11,7 +11,7 @@ public class StackerManager {
     @Getter
     private static IStacker stacker;
 
-    static {
+    public StackerManager() {
         List<IStacker> stackers = List.of(
                 new RoseStackStacker()
         );

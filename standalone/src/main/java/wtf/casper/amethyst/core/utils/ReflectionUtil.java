@@ -71,13 +71,7 @@ public class ReflectionUtil {
     }
 
     public static Collection<Class<?>> getClassesWithAnnotation(Class<? extends Annotation> annotation) {
-        List<Class<?>> classes = new ArrayList<>();
-        for (Class<?> clazz : getClasses("wtf.casper", Object.class)) {
-            if (clazz.isAnnotationPresent(annotation)) {
-                classes.add(clazz);
-            }
-        }
-        return classes;
+        return getClassesWithAnnotation("wtf.casper", annotation);
     }
 
     public static <T> Class<T>[] getClasses(Class<T> clazz) {
@@ -88,7 +82,6 @@ public class ReflectionUtil {
         Reflections reflections = new Reflections(packagePath);
         Set<Class<? extends T>> subTypesOf = reflections.getSubTypesOf(clazz);
         return subTypesOf.toArray(new Class[0]);
-
     }
 
     /**
@@ -103,7 +96,7 @@ public class ReflectionUtil {
             return method;
         }
 
-        throw new IllegalStateException("Can't find method " + clazz.getName() + "." + name + "");
+        throw new IllegalStateException("Can't find method " + clazz.getName() + "." + name);
     }
 
     /**
@@ -151,7 +144,7 @@ public class ReflectionUtil {
         return createInstance(valueClass, paramTypes, params);
     }
 
-    /*
+    /**
      * Get the generic type of class (e.g. List<String> -> String)
      * @param clazz the class to get the generic type from
      * @param index the index of the generic type

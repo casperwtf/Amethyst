@@ -25,7 +25,7 @@ public class PlaceholderReplacer {
     public String parse(String args) {
         for (Map.Entry<String, String> entry : placeholders.entrySet()) {
             if (entry.getKey() == null || entry.getValue() == null) {
-                AmethystLogger.debug("PlaceholderReplacer", "Key or value is null, skipping");
+                AmethystLogger.debug("Key or value is null, skipping");
                 continue;
             }
             args = args.replace(entry.getKey(), entry.getValue());

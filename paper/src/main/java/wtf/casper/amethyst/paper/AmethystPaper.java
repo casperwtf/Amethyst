@@ -2,9 +2,15 @@ package wtf.casper.amethyst.paper;
 
 import com.jeff_media.customblockdata.CustomBlockData;
 import dev.dejvokep.boostedyaml.YamlDocument;
+import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
+import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
+import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
+import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import gg.optimalgames.hologrambridge.HologramBridge;
 import io.github.rysefoxx.inventory.plugin.pagination.InventoryManager;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.SneakyThrows;
 import org.bukkit.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,8 +26,8 @@ import wtf.casper.amethyst.paper.hooks.economy.EconomyManager;
 import wtf.casper.amethyst.paper.hooks.protection.ProtectionManager;
 import wtf.casper.amethyst.paper.hooks.stacker.StackerManager;
 import wtf.casper.amethyst.paper.hooks.vanish.VanishManager;
-import wtf.casper.amethyst.paper.listeners.PlayerBlockListener;
 import wtf.casper.amethyst.paper.listeners.LoggerListener;
+import wtf.casper.amethyst.paper.listeners.PlayerBlockListener;
 import wtf.casper.amethyst.paper.serialized.SerializableItem;
 import wtf.casper.amethyst.paper.serialized.SerializableItemTypeAdapter;
 import wtf.casper.amethyst.paper.serialized.serializer.*;
@@ -49,8 +55,9 @@ public class AmethystPaper {
 
     @Getter private static final Map<JavaPlugin, InventoryManager> inventoryManagers = new HashMap<>();
     @Getter private static Filter filter;
+    @Getter @Setter private static NamespacedKey playerPlacedBlockKey;
     @Getter private YamlDocument amethystConfig;
-    private static AmethystPlugin instance;
+    private static JavaPlugin instance;
 
     /**
      * This constructor is used for loading Amethyst as a plugin
@@ -59,35 +66,32 @@ public class AmethystPaper {
      * @param plugin The plugin that is shading Amethyst
      * @param relocationCheck Whether to check if the plugin is relocated
      */
-    public AmethystPaper(AmethystPlugin plugin, boolean relocationCheck) {
+    public AmethystPaper(JavaPlugin plugin, boolean relocationCheck) {
         if (relocationCheck) {
             checkRelocation();
         }
 
         instance = plugin;
 
-        plugin.setPlayerPlacedBlockKey(new NamespacedKey(plugin, "PLAYER_PLACED_BLOCK"));
+        setPlayerPlacedBlockKey(new NamespacedKey(plugin, "PLAYER_PLACED_BLOCK"));
 
         DependencyManager dependencyManager = new DependencyManager(plugin);
         dependencyManager.loadDependencies();
-
-
-        initAmethyst(plugin);
     }
 
-    public static AmethystPlugin getInstance() {
+    public static JavaPlugin getInstance() {
         if (instance == null) {
             throw new IllegalStateException("Amethyst is not loaded. Either install amethyst plugin or shade amethyst into your plugin. Initialize with AmethystPaper(AmethystPlugin)");
         }
         return instance;
     }
 
-    public void initAmethyst(AmethystPlugin plugin) {
+    public void initAmethyst(JavaPlugin plugin) {
         AmethystCore.init();
-        this.amethystConfig = instance.getYamlDocument("amethyst-config.yml");
+        this.amethystConfig = getYamlDocument(plugin, "amethyst-config.yml");
 
         CustomBlockData.registerListener(plugin);
-        new PlayerBlockListener(plugin);
+        new PlayerBlockListener(plugin, this);
 
         new ServerLock(plugin);
         new GeyserUtils(plugin);
@@ -163,7 +167,7 @@ public class AmethystPaper {
         }
 
         Bukkit.getLogger().setFilter(filter);
-        AmethystLogger.getLogger().setFilter(filter);
+        AmethystLogger.setFilter(filter);
 
         new PlayerTrackerListener(plugin);
         instance.getServer().getScheduler().runTaskTimer(plugin, new PlayerTracker(), 0L, 1L);
@@ -244,6 +248,32 @@ public class AmethystPaper {
         if (AmethystPaper.class.getPackage().getName().equals(new String(DEFAULT_PACKAGE))) {
             Bukkit.getPluginManager().disablePlugin(instance);
             throw new RuntimeException("Amethyst is not relocated, please relocate it to prevent conflicts with other plugins.");
+        }
+    }
+
+    @SneakyThrows
+    public YamlDocument getYamlDocument(JavaPlugin plugin, String path) {
+        return getYamlDocument(plugin, path, GeneralSettings.builder().setUseDefaults(false).build(), LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
+    }
+
+    @SneakyThrows
+    public YamlDocument getYamlDocument(JavaPlugin plugin, String path, GeneralSettings generalSettings, LoaderSettings loaderSettings, DumperSettings dumperSettings, UpdaterSettings updaterSettings) {
+        return YamlDocument.create(new File(plugin.getDataFolder(), path),
+                plugin.getResource(path),
+                generalSettings,
+                loaderSettings,
+                dumperSettings,
+                updaterSettings);
+    }
+
+    public static JavaPlugin getCallingPlugin() {
+        Exception ex = new Exception();
+        try {
+            Class<?> clazz = Class.forName(ex.getStackTrace()[2].getClassName());
+            return JavaPlugin.getProvidingPlugin(clazz);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

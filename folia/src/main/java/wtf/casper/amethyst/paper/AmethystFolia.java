@@ -199,7 +199,7 @@ public class AmethystFolia extends AmethystPlugin {
             plugin.getLogger().setFilter(filter);
         }
         Bukkit.getLogger().setFilter(filter);
-        AmethystLogger.getLogger().setFilter(filter);
+        AmethystLogger.setFilter(filter);
 
         if (isLoadedFromPlugin) {
             new LoggerListener(this);

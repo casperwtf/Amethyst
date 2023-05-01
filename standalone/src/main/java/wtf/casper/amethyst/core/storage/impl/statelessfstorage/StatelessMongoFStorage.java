@@ -1,20 +1,14 @@
 package wtf.casper.amethyst.core.storage.impl.statelessfstorage;
 
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.mongodb.*;
+import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
 import lombok.Getter;
 import org.bson.Document;
-import org.bson.UuidRepresentation;
-import org.bson.codecs.configuration.CodecRegistries;
-import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.conversions.Bson;
 import wtf.casper.amethyst.core.AmethystCore;
-import wtf.casper.amethyst.core.cache.Cache;
-import wtf.casper.amethyst.core.cache.CaffeineCache;
 import wtf.casper.amethyst.core.storage.ConstructableValue;
 import wtf.casper.amethyst.core.storage.Credentials;
 import wtf.casper.amethyst.core.storage.MongoProvider;
@@ -24,7 +18,6 @@ import wtf.casper.amethyst.core.utils.AmethystLogger;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 public class StatelessMongoFStorage<K, V> implements StatelessFieldStorage<K, V>, ConstructableValue<K, V> {
 

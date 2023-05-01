@@ -8,13 +8,13 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
 import org.bukkit.persistence.PersistentDataType;
-import wtf.casper.amethyst.paper.AmethystPlugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
-public class ArmorstandUtils extends AmethystListener<AmethystPlugin> {
+public class ArmorstandUtils extends AmethystListener<JavaPlugin> {
 
     private static final NamespacedKey armorstandKey = new NamespacedKey("amethyst", "amethyst_armorstand");
 
-    public ArmorstandUtils(AmethystPlugin plugin) {
+    public ArmorstandUtils(JavaPlugin plugin) {
         super(plugin);
     }
 
