@@ -67,7 +67,7 @@ public class LandsProtection implements IProtection {
 
     @Override
     public boolean canEnable() {
-        return Bukkit.getServer().getPluginManager().isPluginEnabled("Lands");
+        return Bukkit.getServer().getPluginManager().getPlugin("Lands") != null;
     }
 
     @Override

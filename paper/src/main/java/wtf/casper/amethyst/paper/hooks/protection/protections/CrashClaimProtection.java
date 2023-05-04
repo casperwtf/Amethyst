@@ -45,7 +45,7 @@ public class CrashClaimProtection implements IProtection {
 
     @Override
     public boolean canEnable() {
-        return Bukkit.getServer().getPluginManager().isPluginEnabled("CrashClaim");
+        return Bukkit.getServer().getPluginManager().getPlugin("CrashClaim") != null;
     }
 
     @Override

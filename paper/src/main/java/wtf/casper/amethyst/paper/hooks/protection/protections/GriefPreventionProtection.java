@@ -51,7 +51,7 @@ public class GriefPreventionProtection implements IProtection {
 
     @Override
     public boolean canEnable() {
-        return Bukkit.getServer().getPluginManager().isPluginEnabled("GriefPrevention");
+        return Bukkit.getServer().getPluginManager().getPlugin("GriefPrevention") != null;
     }
 
     @Override

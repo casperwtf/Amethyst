@@ -11,7 +11,7 @@ import wtf.casper.amethyst.paper.hooks.protection.IProtection;
 public class TownyProtection implements IProtection {
     @Override
     public boolean canEnable() {
-        return Bukkit.getPluginManager().isPluginEnabled("Towny");
+        return Bukkit.getPluginManager().getPlugin("Towny") != null;
     }
 
     @Override
