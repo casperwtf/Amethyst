@@ -9,6 +9,7 @@ import wtf.casper.amethyst.paper.AmethystPlugin;
 
 import java.util.function.Consumer;
 
+@Deprecated(forRemoval = true)
 public class RunnableUtil {
 
     public static WorkloadRunnable getWorkload(AmethystPlugin plugin) {
