@@ -3,6 +3,7 @@ package wtf.casper.amethyst.core.storage.impl.statelessfstorage;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.SneakyThrows;
 import wtf.casper.amethyst.core.AmethystCore;
+import wtf.casper.amethyst.core.cache.Cache;
 import wtf.casper.amethyst.core.storage.ConstructableValue;
 import wtf.casper.amethyst.core.storage.Credentials;
 import wtf.casper.amethyst.core.storage.StatelessFieldStorage;
@@ -60,182 +61,21 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
                 return values;
             }
 
-            try (final Connection connection = this.ds.getConnection()) {
-                switch (filterType) {
-                    case EQUALS -> {
-                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " = ?")) {
-                            setStatement(statement, 1, value);
-
-                            final ResultSet resultSet = statement.executeQuery();
-                            while (resultSet.next()) {
-                                values.add(this.construct(resultSet));
-                            }
-
-                            resultSet.close();
-                        } catch (final SQLException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    case CONTAINS -> {
-                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " LIKE ?")) {
-                            setStatement(statement, 1, "%" + value + "%");
-                            final ResultSet resultSet = statement.executeQuery();
-                            while (resultSet.next()) {
-                                values.add(this.construct(resultSet));
-                            }
-
-                            resultSet.close();
-                        } catch (final SQLException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    case STARTS_WITH -> {
-                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " LIKE ?")) {
-                            setStatement(statement, 1, value + "%");
-                            final ResultSet resultSet = statement.executeQuery();
-                            while (resultSet.next()) {
-                                values.add(this.construct(resultSet));
-                            }
-                            resultSet.close();
-                        } catch (final SQLException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    case ENDS_WITH -> {
-                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " LIKE ?")) {
-                            setStatement(statement, 1, "%" + value);
-                            final ResultSet resultSet = statement.executeQuery();
-                            while (resultSet.next()) {
-                                values.add(this.construct(resultSet));
-                            }
-                            resultSet.close();
-                        } catch (final SQLException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    case GREATER_THAN -> {
-                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " > ?")) {
-                            setStatement(statement, 1, value);
-                            final ResultSet resultSet = statement.executeQuery();
-                            while (resultSet.next()) {
-                                values.add(this.construct(resultSet));
-                            }
-                            resultSet.close();
-                        } catch (final SQLException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    case LESS_THAN -> {
-                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " < ?")) {
-                            setStatement(statement, 1, value);
-                            final ResultSet resultSet = statement.executeQuery();
-                            while (resultSet.next()) {
-                                values.add(this.construct(resultSet));
-                            }
-                            resultSet.close();
-                        } catch (final SQLException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    case GREATER_THAN_OR_EQUAL_TO -> {
-                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " >= ?")) {
-                            setStatement(statement, 1, value);
-                            final ResultSet resultSet = statement.executeQuery();
-                            while (resultSet.next()) {
-                                values.add(this.construct(resultSet));
-                            }
-                            resultSet.close();
-                        } catch (final SQLException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    case LESS_THAN_OR_EQUAL_TO -> {
-                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " <= ?")) {
-                            setStatement(statement, 1, value);
-                            final ResultSet resultSet = statement.executeQuery();
-                            while (resultSet.next()) {
-                                values.add(this.construct(resultSet));
-                            }
-                            resultSet.close();
-                        } catch (final SQLException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    case IN -> {
-                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " IN (?)")) {
-                            setStatement(statement, 1, value);
-                            final ResultSet resultSet = statement.executeQuery();
-                            while (resultSet.next()) {
-                                values.add(this.construct(resultSet));
-                            }
-                            resultSet.close();
-                        } catch (final SQLException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    case NOT_EQUALS -> {
-                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " != ?")) {
-                            setStatement(statement, 1, value);
-                            final ResultSet resultSet = statement.executeQuery();
-                            while (resultSet.next()) {
-                                values.add(this.construct(resultSet));
-                            }
-                            resultSet.close();
-                        } catch (final SQLException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    case NOT_CONTAINS -> {
-                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " NOT LIKE ?")) {
-                            setStatement(statement, 1, "%" + value + "%");
-                            final ResultSet resultSet = statement.executeQuery();
-                            while (resultSet.next()) {
-                                values.add(this.construct(resultSet));
-                            }
-                            resultSet.close();
-                        } catch (final SQLException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    case NOT_STARTS_WITH -> {
-                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " NOT LIKE ?")) {
-                            setStatement(statement, 1, value + "%");
-                            final ResultSet resultSet = statement.executeQuery();
-                            while (resultSet.next()) {
-                                values.add(this.construct(resultSet));
-                            }
-                            resultSet.close();
-                        } catch (final SQLException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    case NOT_ENDS_WITH -> {
-                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " NOT LIKE ?")) {
-                            setStatement(statement, 1, "%" + value);
-                            final ResultSet resultSet = statement.executeQuery();
-                            while (resultSet.next()) {
-                                values.add(this.construct(resultSet));
-                            }
-                            resultSet.close();
-                        } catch (final SQLException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    case NOT_IN -> {
-                        try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table + " WHERE " + field + " NOT IN (?)")) {
-                            setStatement(statement, 1, value);
-                            final ResultSet resultSet = statement.executeQuery();
-                            while (resultSet.next()) {
-                                values.add(this.construct(resultSet));
-                            }
-                            resultSet.close();
-                        } catch (final SQLException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            } catch (final SQLException e) {
-                e.printStackTrace();
+            switch (filterType) {
+                case EQUALS -> this._equals(field, value, values);
+                case CONTAINS -> this._contains(field, value, values);
+                case STARTS_WITH -> this.startsWith(field, value, values);
+                case ENDS_WITH -> this.endsWith(field, value, values);
+                case GREATER_THAN -> this.greaterThan(field, value, values);
+                case LESS_THAN -> this.lessThan(field, value, values);
+                case GREATER_THAN_OR_EQUAL_TO -> this.greaterThanOrEqualTo(field, value, values);
+                case LESS_THAN_OR_EQUAL_TO -> this.lessThanOrEqualTo(field, value, values);
+                case IN -> this.in(field, value, values);
+                case NOT_EQUALS -> this.notEquals(field, value, values);
+                case NOT_CONTAINS -> this.notContains(field, value, values);
+                case NOT_STARTS_WITH -> this.notStartsWIth(field, value, values);
+                case NOT_ENDS_WITH -> this.notEndsWith(field, value, values);
+                case NOT_IN -> this.notIn(field, value, values);
             }
 
             return values;
@@ -257,6 +97,10 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
     @Override
     public CompletableFuture<Void> save(final V value) {
         return CompletableFuture.runAsync(() -> {
+            if (this.ds.isClosed()) {
+                return;
+            }
+
             Object id = IdUtils.getId(valueClass, value);
             if (id == null) {
                 AmethystLogger.error("Could not find id field for " + keyClass.getSimpleName());
@@ -287,7 +131,6 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
     @Override
     @SneakyThrows
     public CompletableFuture<Void> write() {
-        // Doesn't need to do anything
         return CompletableFuture.runAsync(() -> {
         });
     }
@@ -307,19 +150,18 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
     public CompletableFuture<Collection<V>> allValues() {
         return CompletableFuture.supplyAsync(() -> {
             final List<V> values = new ArrayList<>();
-            try (final Connection connection = this.ds.getConnection()) {
-                try (final PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + this.table)) {
-                    final ResultSet resultSet = statement.executeQuery();
+            query("SELECT * FROM " + this.table, statement -> {
+            }, resultSet -> {
+                try {
                     while (resultSet.next()) {
                         values.add(this.construct(resultSet));
                     }
                 } catch (final SQLException e) {
                     e.printStackTrace();
                 }
-                return values;
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+            });
+
+            return values;
         });
     }
 
@@ -332,9 +174,11 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
                     result.accept(resultSet);
                     return resultSet;
                 } catch (final SQLException e) {
+                    AmethystLogger.error("Error while executing query: " + query);
                     e.printStackTrace();
                 }
             } catch (final SQLException e) {
+                AmethystLogger.error("Error while executing query: " + query);
                 e.printStackTrace();
             }
             return null;
@@ -352,15 +196,17 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
     }
 
     private void execute(final String statement, final UnsafeConsumer<PreparedStatement> consumer) {
-        AmethystLogger.debug("Executing statement: " + statement);
+
         try (final Connection connection = this.ds.getConnection()) {
             try (final PreparedStatement prepared = connection.prepareStatement(statement)) {
                 consumer.accept(prepared);
                 prepared.execute();
             } catch (final SQLException e) {
+                AmethystLogger.error("Error while executing query: " + statement);
                 e.printStackTrace();
             }
         } catch (final SQLException e) {
+            AmethystLogger.error("Error while executing query: " + statement);
             e.printStackTrace();
         }
     }
@@ -376,9 +222,11 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
                 consumer.accept(prepared);
                 prepared.executeQuery();
             } catch (final SQLException e) {
+                AmethystLogger.error("Error while executing query: " + statement);
                 e.printStackTrace();
             }
         } catch (final SQLException e) {
+            AmethystLogger.error("Error while executing query: " + statement);
             e.printStackTrace();
         }
     }
@@ -394,9 +242,11 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
                 consumer.accept(prepared);
                 prepared.executeUpdate();
             } catch (final SQLException e) {
+                AmethystLogger.error("Error while executing query: " + statement);
                 e.printStackTrace();
             }
         } catch (final SQLException e) {
+            AmethystLogger.error("Error while executing query: " + statement);
             e.printStackTrace();
         }
     }
@@ -504,6 +354,10 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
             if (declaredField.getType() == UUID.class && object instanceof String) {
                 ReflectionUtil.setPrivateField(value, name, UUID.fromString((String) object));
                 continue;
+            } else if (declaredField.getType().isEnum() && object instanceof String) {
+                Enum<?> enumValue = Enum.valueOf((Class<? extends Enum>) declaredField.getType(), (String) object);
+                ReflectionUtil.setPrivateField(value, name, enumValue);
+                continue;
             }
 
             ReflectionUtil.setPrivateField(value, name, object);
@@ -585,15 +439,27 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
                 .toList();
 
         for (final Field field : fields) {
+            Object privateField = ReflectionUtil.getPrivateField(value, field.getName());
             if (field.isAnnotationPresent(StorageSerialized.class)) {
-                builder.append("'").append(AmethystCore.getGson().toJson(ReflectionUtil.getPrivateField(value, field.getName()))).append("'");
+                builder.append("'").append(AmethystCore.getGson().toJson(privateField)).append("'");
             } else {
 
-                boolean shouldHaveQuotes = shouldHaveQuotes(ReflectionUtil.getPrivateField(value, field.getName()));
+                boolean shouldHaveQuotes = shouldHaveQuotes(privateField);
                 if (shouldHaveQuotes) {
                     builder.append("'");
                 }
-                builder.append(ReflectionUtil.getPrivateField(value, field.getName()));
+                if (privateField instanceof Map<?,?> map) {
+                    if (map.isEmpty()) {
+                        builder.append("NULL");
+                    }
+                } else if (privateField instanceof List<?> list) {
+                    if (list.isEmpty()) {
+                        builder.append("''");
+                    }
+                } else {
+                    builder.append(privateField);
+                }
+
                 if (shouldHaveQuotes) {
                     builder.append("'");
                 }
@@ -608,6 +474,9 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
     }
 
     private boolean shouldHaveQuotes(Object value) {
+        if (value instanceof Enum<?>) {
+            return true;
+        }
         return switch (value.getClass().getName()) {
             case "java.lang.String", "java.util.UUID" -> true;
             default -> false;
@@ -778,5 +647,159 @@ public class StatelessSQLFStorage<K, V> implements ConstructableValue<K, V>, Sta
                 }
             }
         }
+    }
+
+    private void _equals(String field, Object value, List<V> values) {
+        this.query("SELECT * FROM " + this.table + " WHERE " + field + " = ?", preparedStatement -> {
+            setStatement(preparedStatement, 1, value);
+        }, resultSet -> {
+            while (resultSet.next()) {
+                values.add(this.construct(resultSet));
+            }
+            resultSet.close();
+        }).join();
+    }
+
+    private void _contains(String field, Object value, List<V> values) {
+        this.query("SELECT * FROM " + this.table + " WHERE " + field + " LIKE ?", preparedStatement -> {
+            setStatement(preparedStatement, 1, "%" + value + "%");
+        }, resultSet -> {
+            while (resultSet.next()) {
+                values.add(this.construct(resultSet));
+            }
+            resultSet.close();
+        }).join();
+    }
+
+    private void startsWith(String field, Object value, List<V> values) {
+        this.query("SELECT * FROM " + this.table + " WHERE " + field + " LIKE ?", preparedStatement -> {
+            setStatement(preparedStatement, 1, value + "%");
+        }, resultSet -> {
+            while (resultSet.next()) {
+                values.add(this.construct(resultSet));
+            }
+            resultSet.close();
+        }).join();
+    }
+
+    private void endsWith(String field, Object value, List<V> values) {
+        this.query("SELECT * FROM " + this.table + " WHERE " + field + " LIKE ?", preparedStatement -> {
+            setStatement(preparedStatement, 1, "%" + value);
+        }, resultSet -> {
+            while (resultSet.next()) {
+                values.add(this.construct(resultSet));
+            }
+            resultSet.close();
+        }).join();
+    }
+
+    private void greaterThan(String field, Object value, List<V> values) {
+        this.query("SELECT * FROM " + this.table + " WHERE " + field + " > ?", preparedStatement -> {
+            setStatement(preparedStatement, 1, value);
+        }, resultSet -> {
+            while (resultSet.next()) {
+                values.add(this.construct(resultSet));
+            }
+            resultSet.close();
+        }).join();
+    }
+
+    private void lessThan(String field, Object value, List<V> values) {
+        this.query("SELECT * FROM " + this.table + " WHERE " + field + " < ?", preparedStatement -> {
+            setStatement(preparedStatement, 1, value);
+        }, resultSet -> {
+            while (resultSet.next()) {
+                values.add(this.construct(resultSet));
+            }
+            resultSet.close();
+        }).join();
+    }
+
+    private void greaterThanOrEqualTo(String field, Object value, List<V> values) {
+        this.query("SELECT * FROM " + this.table + " WHERE " + field + " >= ?", preparedStatement -> {
+            setStatement(preparedStatement, 1, value);
+        }, resultSet -> {
+            while (resultSet.next()) {
+                values.add(this.construct(resultSet));
+            }
+            resultSet.close();
+        }).join();
+    }
+
+    private void lessThanOrEqualTo(String field, Object value, List<V> values) {
+        this.query("SELECT * FROM " + this.table + " WHERE " + field + " <= ?", preparedStatement -> {
+            setStatement(preparedStatement, 1, value);
+        }, resultSet -> {
+            while (resultSet.next()) {
+                values.add(this.construct(resultSet));
+            }
+            resultSet.close();
+        }).join();
+    }
+
+    private void in(String field, Object value, List<V> values) {
+        this.query("SELECT * FROM " + this.table + " WHERE " + field + " IN (?)", preparedStatement -> {
+            setStatement(preparedStatement, 1, value);
+        }, resultSet -> {
+            while (resultSet.next()) {
+                values.add(this.construct(resultSet));
+            }
+            resultSet.close();
+        }).join();
+    }
+
+    private void notEquals(String field, Object value, List<V> values) {
+        this.query("SELECT * FROM " + this.table + " WHERE " + field + " != ?", preparedStatement -> {
+            setStatement(preparedStatement, 1, value);
+        }, resultSet -> {
+            while (resultSet.next()) {
+                values.add(this.construct(resultSet));
+            }
+            resultSet.close();
+        }).join();
+    }
+
+    private void notContains(String field, Object value, List<V> values) {
+        this.query("SELECT * FROM " + this.table + " WHERE " + field + " NOT LIKE ?", preparedStatement -> {
+            setStatement(preparedStatement, 1, "%" + value + "%");
+        }, resultSet -> {
+            while (resultSet.next()) {
+                values.add(this.construct(resultSet));
+            }
+            resultSet.close();
+        }).join();
+    }
+
+    private void notStartsWIth(String field, Object value, List<V> values) {
+        this.query("SELECT * FROM " + this.table + " WHERE " + field + " NOT LIKE ?", preparedStatement -> {
+            setStatement(preparedStatement, 1, value + "%");
+        }, resultSet -> {
+            while (resultSet.next()) {
+                values.add(this.construct(resultSet));
+            }
+            resultSet.close();
+        }).join();
+    }
+
+    private void notEndsWith(String field, Object value, List<V> values) {
+        this.query("SELECT * FROM " + this.table + " WHERE " + field + " NOT LIKE ?", preparedStatement -> {
+            setStatement(preparedStatement, 1, "%" + value);
+        }, resultSet -> {
+            while (resultSet.next()) {
+                values.add(this.construct(resultSet));
+            }
+            resultSet.close();
+        }).join();
+    }
+
+    private void notIn(String field, Object value, List<V> values) {
+        this.query("SELECT * FROM " + this.table + " WHERE " + field + " NOT IN (?)", preparedStatement -> {
+            setStatement(preparedStatement, 1, value);
+        }, resultSet -> {
+            while (resultSet.next()) {
+                values.add(this.construct(resultSet));
+            }
+            resultSet.close();
+        }).join();
     }
 }

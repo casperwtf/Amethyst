@@ -35,7 +35,7 @@ public abstract class AmethystCommand extends BukkitCommand {
     private String consoleOnlyMessage = null;
     private String noPermissionMessage = null;
     private Section noPermissionMessageSection = null;
-    private PlaceholderReplacer noPermissionMessageReplacer = null;
+    private PlaceholderReplacer noPermissionMessageReplacer = new PlaceholderReplacer();
 
     public AmethystCommand(@NotNull String name) {
         super(name);

@@ -26,6 +26,18 @@ public class MathUtils {
         return ThreadLocalRandom.current().nextInt(min, max);
     }
 
+    public static int gaussianRandomInt(int mean, int stdDev) {
+        return (int) (ThreadLocalRandom.current().nextGaussian() * stdDev + mean);
+    }
+
+    public static int gaussianRandomInt(int mean, int stdDev, int min, int max) {
+        int value;
+        do {
+            value = (int) (ThreadLocalRandom.current().nextGaussian() * stdDev + mean);
+        } while (value < min || value > max);
+        return value;
+    }
+
     public static double randomDouble(double min, double max) {
         if (min == max) {
             return min;
@@ -34,6 +46,18 @@ public class MathUtils {
             return ThreadLocalRandom.current().nextDouble(max, min);
         }
         return ThreadLocalRandom.current().nextDouble(min, max);
+    }
+
+    public static double gaussianRandomDouble(double mean, double stdDev) {
+        return ThreadLocalRandom.current().nextGaussian() * stdDev + mean;
+    }
+
+    public static double gaussianRandomDouble(double mean, double stdDev, double min, double max) {
+        double value;
+        do {
+            value = ThreadLocalRandom.current().nextGaussian() * stdDev + mean;
+        } while (value < min || value > max);
+        return value;
     }
 
     public static boolean validateInt(String input) {
@@ -61,6 +85,29 @@ public class MathUtils {
         } catch (Exception ignored) {
             return false;
         }
+    }
+
+    /**
+     * Linear interpolation
+     * @param a The start value
+     * @param b The end value
+     * @param f The fraction
+     */
+    public static double lerp(double a, double b, double f) {
+        return a + f * (b - a);
+    }
+
+    /**
+     * <a href="https://www.desmos.com/calculator/cahqdxeshd">Cubic Bézier Curves...</a>
+     * Also see <a href="https://en.wikipedia.org/wiki/B%C3%A9zier_curve">Bézier curve</a> and <a href="https://create.roblox.com/docs/mechanics/bezier-curves">the lua version</a>
+     * @param t The time, between 0 and 1
+     * @param p0 The start point
+     * @param p1 The first control point
+     * @param p2 The second control point
+     * @param p3 The end point
+     */
+    public static double bezier(double t, double p0, double p1, double p2, double p3) {
+        return Math.pow(1 - t, 3) * p0 + 3 * Math.pow(1 - t, 2) * t * p1 + 3 * (1 - t) * Math.pow(t, 2) * p2 + Math.pow(t, 3) * p3;
     }
 
     public static int clamp(int value, int min, int max) {

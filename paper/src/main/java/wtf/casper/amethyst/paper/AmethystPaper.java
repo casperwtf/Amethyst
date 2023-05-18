@@ -28,6 +28,7 @@ import wtf.casper.amethyst.paper.hooks.stacker.StackerManager;
 import wtf.casper.amethyst.paper.hooks.vanish.VanishManager;
 import wtf.casper.amethyst.paper.listeners.LoggerListener;
 import wtf.casper.amethyst.paper.listeners.PlayerBlockListener;
+import wtf.casper.amethyst.paper.listeners.PlayerSmeltItemEventListener;
 import wtf.casper.amethyst.paper.serialized.SerializableItem;
 import wtf.casper.amethyst.paper.serialized.SerializableItemTypeAdapter;
 import wtf.casper.amethyst.paper.serialized.serializer.*;
@@ -56,6 +57,7 @@ public class AmethystPaper {
     @Getter private static final Map<JavaPlugin, InventoryManager> inventoryManagers = new HashMap<>();
     @Getter private static Filter filter;
     @Getter @Setter private static NamespacedKey playerPlacedBlockKey;
+    @Getter @Setter private static NamespacedKey playerSmeltItemKey;
     @Getter private YamlDocument amethystConfig;
     private static JavaPlugin instance;
 
@@ -74,6 +76,7 @@ public class AmethystPaper {
         instance = plugin;
 
         setPlayerPlacedBlockKey(new NamespacedKey(plugin, "PLAYER_PLACED_BLOCK"));
+        setPlayerSmeltItemKey(new NamespacedKey(plugin, "PLAYER_SMELT_ITEM"));
 
         DependencyManager dependencyManager = new DependencyManager(plugin);
         dependencyManager.loadDependencies();
@@ -92,6 +95,7 @@ public class AmethystPaper {
 
         CustomBlockData.registerListener(plugin);
         new PlayerBlockListener(plugin, this);
+        new PlayerSmeltItemEventListener(plugin);;
 
         new ServerLock(plugin);
         new GeyserUtils(plugin);
