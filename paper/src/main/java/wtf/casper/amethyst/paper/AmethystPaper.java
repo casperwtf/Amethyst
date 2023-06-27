@@ -98,7 +98,6 @@ public class AmethystPaper {
         new PlayerSmeltItemEventListener(plugin);;
 
         new ServerLock(plugin);
-        new GeyserUtils(plugin);
 
         filter = record -> {
 
@@ -189,6 +188,7 @@ public class AmethystPaper {
 
         if (Bukkit.getPluginManager().isPluginEnabled("Floodgate") && Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new GeyserExpansion().register();
+            new GeyserUtils(plugin);
         }
 
         new HologramBridge(plugin, true);
@@ -212,8 +212,10 @@ public class AmethystPaper {
         VanishManager.disable();
         CombatManager.disable();
         ProtectionManager.disable();
-        GeyserUtils.getGeyserStorage().write().join();
-        GeyserUtils.getGeyserStorage().close().join();
+        if (Bukkit.getPluginManager().isPluginEnabled("Floodgate") && Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            GeyserUtils.getGeyserStorage().write().join();
+            GeyserUtils.getGeyserStorage().close().join();
+        }
     }
 
     @NotNull
@@ -262,12 +264,14 @@ public class AmethystPaper {
 
     @SneakyThrows
     public YamlDocument getYamlDocument(JavaPlugin plugin, String path, GeneralSettings generalSettings, LoaderSettings loaderSettings, DumperSettings dumperSettings, UpdaterSettings updaterSettings) {
-        return YamlDocument.create(new File(plugin.getDataFolder(), path),
+        return YamlDocument.create(
+                new File(plugin.getDataFolder(), path),
                 plugin.getResource(path),
                 generalSettings,
                 loaderSettings,
                 dumperSettings,
-                updaterSettings);
+                updaterSettings
+        );
     }
 
     public static JavaPlugin getCallingPlugin() {

@@ -29,8 +29,8 @@ import java.util.concurrent.TimeUnit;
 public abstract class SQLFStorage<K, V> implements ConstructableValue<K, V>, FieldStorage<K, V> {
 
     private final HikariDataSource ds;
-    private final Class<K> keyClass;
-    private final Class<V> valueClass;
+    protected final Class<K> keyClass;
+    protected final Class<V> valueClass;
     private final String table;
     private Cache<K, V> cache = new CaffeineCache<>(Caffeine.newBuilder()
             .expireAfterWrite(10, TimeUnit.MINUTES)

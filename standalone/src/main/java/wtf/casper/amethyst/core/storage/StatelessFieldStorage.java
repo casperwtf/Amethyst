@@ -9,6 +9,7 @@ import wtf.casper.amethyst.core.utils.ReflectionUtil;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -51,16 +52,42 @@ public interface StatelessFieldStorage<K, V> {
     default CompletableFuture<Collection<V>> get(FilterType filterType, SortingType sortingType, Pair<String, Object>... fields) {
         return CompletableFuture.supplyAsync(() -> {
             Collection<V> values = new ArrayList<>();
+            if (fields == null || fields.length == 0) {
+                return values;
+            }
             get(fields[0].getFirst(), fields[0].getSecond(), filterType, sortingType).thenAccept(values::addAll).join();
             if (values.isEmpty()) {
+                return values;
+            }
+
+            if (fields.length == 1) {
                 return values;
             }
 
             for (int i = 1; i < fields.length; i++) {
                 final int index = i;
                 values.removeIf((v) -> {
-                    Optional<Object> optional = ReflectionUtil.getFieldValue(v, fields[index].getFirst());
-                    return optional.isEmpty() || !optional.get().equals(fields[index].getSecond());
+                    String[] allFields = fields[index].getFirst().split("\\.");
+                    if (allFields.length == 1) {
+                        Optional<Object> optional = ReflectionUtil.getFieldValue(v, allFields[0]);
+                        return optional.isEmpty() || filterType.passes(optional.get(), allFields[0], fields[index].getSecond());
+                    }
+
+                    Iterator<String> iterator = Arrays.stream(allFields).iterator();
+                    Object object = v;
+                    while (iterator.hasNext()) {
+                        String field = iterator.next();
+                        Optional<Object> optional = ReflectionUtil.getFieldValue(object, field);
+                        if (optional.isEmpty()) {
+                            return true;
+                        }
+                        object = optional.get();
+                        if (!iterator.hasNext()) {
+                            return filterType.passes(object, field, fields[index].getSecond());
+                        }
+                    }
+
+                    return true;
                 });
             }
 
@@ -86,7 +113,7 @@ public interface StatelessFieldStorage<K, V> {
                 return v;
             }
 
-            if (getClass().isAssignableFrom(ConstructableValue.class)) {
+            if (this instanceof ConstructableValue<?, ?>) {
                 v = ((ConstructableValue<K, V>) this).constructValue(key);
                 if (v == null) {
                     throw new RuntimeException("Failed to create default value for " + v.getClass().getSimpleName() + " with key " + key
@@ -95,13 +122,43 @@ public interface StatelessFieldStorage<K, V> {
                 return v;
             }
 
-            Class<V> aClass = (Class<V>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[1];
-            try {
-                return ReflectionUtil.createInstance(aClass, key);
-            } catch (final Exception e) {
-                throw new RuntimeException("Failed to create default value for " + aClass.getSimpleName() + " with key " + key + ". " +
-                        "Please create a constructor in " + aClass.getSimpleName() + " for only the key.", e);
+            if (this instanceof KeyValue<?,?>) {
+                KeyValue<K, V> keyValueGetter = (KeyValue<K, V>) this;
+                try {
+                    return ReflectionUtil.createInstance(keyValueGetter.value(), key);
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    throw new RuntimeException("Failed to create default value for " + v.getClass().getSimpleName() + " with key " + key + ". " +
+                            "Please create a constructor in " + v.getClass().getSimpleName() + " for only the key.", e);
+                }
             }
+
+            try {
+                if (getClass().getGenericSuperclass() instanceof ParameterizedType parameterizedType) {
+                    Type type = parameterizedType.getActualTypeArguments()[1];
+                    System.out.println(type.getTypeName());
+                    Class<V> aClass = (Class<V>) Class.forName(type.getTypeName());
+                    return ReflectionUtil.createInstance(aClass, key);
+                }
+
+                throw new RuntimeException("Failed to create default value for " + v.getClass().getSimpleName() + " with key " + key + ". " +
+                        "Please create a constructor in " + v.getClass().getSimpleName() + " for only the key.");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException("Failed to create default value for " + v.getClass().getSimpleName() + " with key " + key + ". " +
+                        "Please create a constructor in " + v.getClass().getSimpleName() + " for only the key.");
+            }
+
+//            try {
+//                Type[] arguments = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments();
+//                Class<V> aClass = (Class<V>) arguments[1];
+//                return ReflectionUtil.createInstance(aClass, key);
+//            } catch (final Exception e) {
+//                e.printStackTrace();
+//                throw new RuntimeException("Failed to create default value for " + v.getClass().getSimpleName() + " with key " + key + ". " +
+//                        "Please create a constructor in " + v.getClass().getSimpleName() + " for only the key.", e);
+//            }
         });
     }
 

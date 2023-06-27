@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableValue<K, V> {
 
-    private final Class<V> type;
+    protected final Class<V> valueClass;
     private final String idFieldName;
     private final MongoClient mongoClient;
     @Getter
@@ -38,8 +38,8 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
     }
 
     public MongoFStorage(final String uri, final String database, final String collection, final Class<V> type) {
-        this.type = type;
-        this.idFieldName = IdUtils.getIdName(this.type);
+        this.valueClass = type;
+        this.idFieldName = IdUtils.getIdName(this.valueClass);
         try {
             AmethystLogger.debug("Connecting to MongoDB...");
             mongoClient = MongoProvider.getClient(uri);
@@ -77,7 +77,7 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
             List<Document> into = getCollection().find(filter).into(new ArrayList<>());
 
             for (Document document : into) {
-                V obj = AmethystCore.getGson().fromJson(document.toJson(AmethystCore.getJsonWriterSettings()), type);
+                V obj = AmethystCore.getGson().fromJson(document.toJson(AmethystCore.getJsonWriterSettings()), valueClass);
                 collection.add(obj);
             }
 
@@ -99,7 +99,7 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
                 return null;
             }
 
-            V obj = AmethystCore.getGson().fromJson(document.toJson(AmethystCore.getJsonWriterSettings()), type);
+            V obj = AmethystCore.getGson().fromJson(document.toJson(AmethystCore.getJsonWriterSettings()), valueClass);
             cache.asMap().putIfAbsent(key, obj);
             return obj;
         });
@@ -123,8 +123,8 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
                 return null;
             }
 
-            V obj = AmethystCore.getGson().fromJson(document.toJson(AmethystCore.getJsonWriterSettings()), type);
-            K key = (K) IdUtils.getId(type, obj);
+            V obj = AmethystCore.getGson().fromJson(document.toJson(AmethystCore.getJsonWriterSettings()), valueClass);
+            K key = (K) IdUtils.getId(valueClass, obj);
             cache.asMap().putIfAbsent(key, obj);
             return obj;
         });
@@ -133,7 +133,7 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
     @Override
     public CompletableFuture<Void> save(V value) {
         return CompletableFuture.runAsync(() -> {
-            K key = (K) IdUtils.getId(type, value);
+            K key = (K) IdUtils.getId(valueClass, value);
             cache.asMap().putIfAbsent(key, value);
             getCollection().replaceOne(
                     new Document(idFieldName, convertUUIDtoString(key)),
@@ -147,7 +147,7 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
     public CompletableFuture<Void> remove(V key) {
         return CompletableFuture.runAsync(() -> {
             try {
-                K id = (K) IdUtils.getId(type, key);
+                K id = (K) IdUtils.getId(valueClass, key);
                 cache.invalidate(id);
                 getCollection().deleteMany(getDocument(FilterType.EQUALS, idFieldName, convertUUIDtoString(id)));
             } catch (Exception e) {
@@ -176,7 +176,7 @@ public class MongoFStorage<K, V> implements FieldStorage<K, V>, ConstructableVal
             List<V> collection = new ArrayList<>();
 
             for (Document document : into) {
-                V obj = AmethystCore.getGson().fromJson(document.toJson(AmethystCore.getJsonWriterSettings()), type);
+                V obj = AmethystCore.getGson().fromJson(document.toJson(AmethystCore.getJsonWriterSettings()), valueClass);
                 collection.add(obj);
             }
 

@@ -1,6 +1,7 @@
 package wtf.casper.amethyst.paper.listeners;
 
 import com.jeff_media.customblockdata.CustomBlockData;
+import org.bson.io.BsonOutput;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -13,10 +14,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.paper.AmethystPaper;
 import wtf.casper.amethyst.paper.events.PlayerSmeltItemEvent;
+import wtf.casper.amethyst.paper.scheduler.SchedulerUtil;
 import wtf.casper.amethyst.paper.utils.AmethystListener;
-import wtf.casper.amethyst.paper.utils.RunnableUtil;
 
 import java.util.UUID;
 
@@ -71,8 +73,16 @@ public class PlayerSmeltItemEventListener extends AmethystListener<JavaPlugin> {
             return;
         }
 
-        RunnableUtil.runSync(bukkitRunnable -> {
+        SchedulerUtil.run(() -> {
+            AmethystLogger.debug("--------------------");
+            AmethystLogger.debug("Cursor " + event.getCursor());
+            AmethystLogger.debug("Current " + event.getCurrentItem());
+            AmethystLogger.debug("Slot " + event.getSlot());
+            AmethystLogger.debug("Slot Type " + event.getSlotType());
+            AmethystLogger.debug("Action " + event.getAction());
+            AmethystLogger.debug("Hotbar Button " + event.getHotbarButton());
             ItemStack smelted = furnaceInventory.getItem(0);
+            AmethystLogger.debug("Smelted " + smelted);
             setItem(smelted, player, furnaceInventory);
         });
     }

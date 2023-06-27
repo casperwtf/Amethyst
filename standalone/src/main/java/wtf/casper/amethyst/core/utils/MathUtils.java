@@ -4,6 +4,9 @@ import redempt.crunch.Crunch;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class MathUtils {
@@ -84,6 +87,102 @@ public class MathUtils {
             return true;
         } catch (Exception ignored) {
             return false;
+        }
+    }
+
+    public static List<Double> getOutliers(Double[] input) {
+        List<Double> output = new ArrayList<>();
+        Double[] data1 = new Double[]{};
+        Double[] data2 = new Double[]{};
+
+        if (input.length % 2 == 0) {
+            for (int i = 0; i < input.length; i++) {
+                if (i < input.length / 2) {
+                    data1 = Arrays.copyOf(data1, data1.length + 1);
+                    data1[data1.length - 1] = input[i];
+                } else {
+                    data2 = Arrays.copyOf(data2, data2.length + 1);
+                    data2[data2.length - 1] = input[i];
+                }
+            }
+        } else {
+            for (int i = 0; i < input.length; i++) {
+                if (i < input.length / 2 + 1) {
+                    data1 = Arrays.copyOf(data1, data1.length + 1);
+                    data1[data1.length - 1] = input[i];
+                } else if (i > input.length / 2 + 1) {
+                    data2 = Arrays.copyOf(data2, data2.length + 1);
+                    data2[data2.length - 1] = input[i];
+                }
+            }
+        }
+        double q1 = getMedian(data1);
+        double q3 = getMedian(data2);
+
+        double iqr = q3 - q1;
+        double lowerFence = q1 - 1.5 * iqr;
+        double upperFence = q3 + 1.5 * iqr;
+        for (Double aDouble : input) {
+            if (aDouble < lowerFence || aDouble > upperFence) {
+                output.add(aDouble);
+            }
+        }
+        return output;
+    }
+
+    public static List<Integer> getOutliers(Integer[] input) {
+        List<Integer> output = new ArrayList<>();
+        Integer[] data1 = new Integer[]{};
+        Integer[] data2 = new Integer[]{};
+
+        if (input.length % 2 == 0) {
+            for (int i = 0; i < input.length; i++) {
+                if (i < input.length / 2) {
+                    data1 = Arrays.copyOf(data1, data1.length + 1);
+                    data1[data1.length - 1] = input[i];
+                } else {
+                    data2 = Arrays.copyOf(data2, data2.length + 1);
+                    data2[data2.length - 1] = input[i];
+                }
+            }
+        } else {
+            for (int i = 0; i < input.length; i++) {
+                if (i < input.length / 2 + 1) {
+                    data1 = Arrays.copyOf(data1, data1.length + 1);
+                    data1[data1.length - 1] = input[i];
+                } else if (i > input.length / 2 + 1) {
+                    data2 = Arrays.copyOf(data2, data2.length + 1);
+                    data2[data2.length - 1] = input[i];
+                }
+            }
+        }
+        double q1 = getMedian(data1);
+        double q3 = getMedian(data2);
+
+        double iqr = q3 - q1;
+        double lowerFence = q1 - 1.5 * iqr;
+        double upperFence = q3 + 1.5 * iqr;
+        for (Integer aDouble : input) {
+            if (aDouble < lowerFence || aDouble > upperFence) {
+                output.add(aDouble);
+            }
+        }
+        return output;
+    }
+
+    public static double getMedian(Double[] data) {
+        if (data.length % 2 == 0) {
+            return (data[data.length / 2] + data[data.length / 2 - 1]) / 2;
+        } else {
+            return data[data.length / 2];
+        }
+    }
+
+    public static int getMedian(Integer[] data) {
+        if (data.length % 2 == 0) {
+            return (data[data.length / 2] + data[data.length / 2 - 1]) / 2;
+        } else {
+            return data[data.length / 2];
         }
     }
 
