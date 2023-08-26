@@ -8,7 +8,7 @@
     <version>${amethyst.version}</version>
 
     <properties>
-        <amethyst.version>1.0.3</amethyst.version>
+        <amethyst.version>2.0.0</amethyst.version>
     </properties>
 
 
@@ -129,6 +129,18 @@
                                     <pattern>org.mariadb.jdbc</pattern>
                                     <shadedPattern>wtf.casper.amethyst.libs.mariadb</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>com.github.retrooper.packetevents</pattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.packetevents.api</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>io.github.retrooper.packetevents</pattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.packetevents.impl</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>net.kyori</pattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.packetevents.kyori</shadedPattern>
+                                </relocation>
                             </relocations>
                             <filters>
                                 <filter>
@@ -227,7 +239,7 @@
         <dependency>
             <groupId>io.github.rysefoxx.inventory</groupId>
             <artifactId>RyseInventory-Plugin</artifactId>
-            <version>1.5.7</version>
+            <version>1.6.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -372,6 +384,12 @@
             <version>1.18.26</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.retrooper.packetevents</groupId>
+            <artifactId>spigot</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <pluginRepositories>
@@ -448,6 +466,10 @@
         <repository>
             <id>iridiumdevelopment</id>
             <url>https://nexus.iridiumdevelopment.net/repository/maven-releases/</url>
+        </repository>
+        <repository>
+            <id>codemc-snapshots</id>
+            <url>https://repo.codemc.io/repository/maven-snapshots/</url>
         </repository>
     </repositories>
 

@@ -10,7 +10,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <amethyst.version>1.0.3</amethyst.version>
+        <amethyst.version>2.0.0</amethyst.version>
     </properties>
 
     <build>

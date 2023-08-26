@@ -13,43 +13,43 @@ public class AmethystFoliaScheduler extends AmethystScheduler {
     private Object scheduler;
 
     @Override
-    public AmethystScheduler run(Runnable runnable) {
+    public AmethystScheduler run(Runnable runnable, Object subject) {
         scheduler = FoliaReflections.dummyGlobalRegionSchedulerRun(AmethystPaper.getInstance(), o -> runnable.run());
         return this;
     }
 
     @Override
-    public AmethystScheduler runAsync(Runnable runnable) {
+    public AmethystScheduler runAsync(Runnable runnable, Object subject) {
         scheduler = FoliaReflections.dummyAsyncSchedulerRunNow(AmethystPaper.getInstance(), o -> runnable.run());
         return this;
     }
 
     @Override
-    public AmethystScheduler runLater(Runnable runnable, long ticks) {
+    public AmethystScheduler runLater(Runnable runnable, Object subject, long ticks) {
         scheduler = FoliaReflections.dummyGlobalRegionSchedulerRunDelayed(AmethystPaper.getInstance(), o -> runnable.run(), ticks);
         return this;
     }
 
     @Override
-    public AmethystScheduler runLaterAsync(Runnable runnable, long ticks) {
+    public AmethystScheduler runLaterAsync(Runnable runnable, Object subject, long ticks) {
         scheduler = FoliaReflections.dummyAsyncSchedulerRunDelayed(AmethystPaper.getInstance(), o -> runnable.run(), ticks * 50, TimeUnit.MILLISECONDS);
         return this;
     }
 
     @Override
-    public AmethystScheduler runDelayedTimer(Runnable runnable, long delay, long ticks) {
+    public AmethystScheduler runDelayedTimer(Runnable runnable, Object subject, long delay, long ticks) {
         scheduler = FoliaReflections.dummyGlobalRegionSchedulerRunAtFixedRate(AmethystPaper.getInstance(), o -> runnable.run(), delay, ticks);
         return this;
     }
 
     @Override
-    public AmethystScheduler runDelayedTimerAsync(Runnable runnable, long delay, long ticks) {
+    public AmethystScheduler runDelayedTimerAsync(Runnable runnable, Object subject, long delay, long ticks) {
         scheduler = FoliaReflections.dummyAsyncSchedulerRunAtFixedRate(AmethystPaper.getInstance(), o -> runnable.run(), delay * 50, ticks * 50, TimeUnit.MILLISECONDS);
         return this;
     }
 
     @Override
-    public AmethystScheduler runDelayedRepeatedTimer(Runnable runnable, long delay, long ticks, long repeats) {
+    public AmethystScheduler runDelayedRepeatedTimer(Runnable runnable, Object subject, long delay, long ticks, long repeats) {
         AtomicLong counter = new AtomicLong(0);
         scheduler = FoliaReflections.dummyGlobalRegionSchedulerRunAtFixedRate(AmethystPaper.getInstance(), o -> {
             runnable.run();
@@ -61,7 +61,7 @@ public class AmethystFoliaScheduler extends AmethystScheduler {
     }
 
     @Override
-    public AmethystScheduler runDelayedRepeatedTimerAsync(Runnable runnable, long delay, long ticks, long repeats) {
+    public AmethystScheduler runDelayedRepeatedTimerAsync(Runnable runnable, Object subject, long delay, long ticks, long repeats) {
         AtomicLong counter = new AtomicLong(0);
         scheduler = FoliaReflections.dummyAsyncSchedulerRunAtFixedRate(AmethystPaper.getInstance(), o -> {
             runnable.run();

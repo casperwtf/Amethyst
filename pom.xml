@@ -12,7 +12,7 @@
     <properties>
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <amethyst.version>1.0.3</amethyst.version>
+        <amethyst.version>2.0.0</amethyst.version>
     </properties>
 
     <modules>
@@ -20,7 +20,6 @@
         <module>minecraft</module>
         <module>paper</module>
         <module>paper-shaded</module>
-        <module>paper-tests</module>
         <module>bungee</module>
         <module>velocity</module>
     </modules>

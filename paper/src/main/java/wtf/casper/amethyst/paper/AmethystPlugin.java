@@ -13,11 +13,10 @@ import org.jetbrains.annotations.NotNull;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.core.utils.ReflectionUtil;
 
-import java.io.File;
-
 public abstract class AmethystPlugin extends JavaPlugin {
 
     private YamlDocument config;
+    private ConfigProvider configProvider;
 
     // this is weird, there is no reason to have it but its more of a pain to remove it.
     @Override
@@ -89,23 +88,22 @@ public abstract class AmethystPlugin extends JavaPlugin {
         loadConfig();
     }
 
-    @SneakyThrows
     public void loadConfig() {
         config = getYamlDocument("config.yml");
     }
 
-    @SneakyThrows
-    public YamlDocument getYamlDocument(String path) {
-        return getYamlDocument(path, GeneralSettings.builder().setUseDefaults(false).build(), LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
+    public YamlDocument getYamlDocument(String name) {
+        if (configProvider == null) configProvider = new ConfigProvider(this);
+        return configProvider.getYamlDocument(name);
     }
 
-    @SneakyThrows
+    public YamlDocument getYamlDocumentVersioned(String name) {
+        if (configProvider == null) configProvider = new ConfigProvider(this);
+        return configProvider.getYamlDocumentVersioned(name);
+    }
+
     public YamlDocument getYamlDocument(String path, GeneralSettings generalSettings, LoaderSettings loaderSettings, DumperSettings dumperSettings, UpdaterSettings updaterSettings) {
-        return YamlDocument.create(new File(getDataFolder(), path),
-                getResource(path),
-                generalSettings,
-                loaderSettings,
-                dumperSettings,
-                updaterSettings);
+        if (configProvider == null) configProvider = new ConfigProvider(this);
+        return configProvider.getYamlDocument(path, generalSettings, loaderSettings, dumperSettings, updaterSettings);
     }
 }

@@ -1,13 +1,13 @@
 package wtf.casper.amethyst.paper.menu;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
+import io.github.rysefoxx.inventory.anvilgui.AnvilGUI;
 import io.github.rysefoxx.inventory.plugin.animator.SlideAnimation;
 import io.github.rysefoxx.inventory.plugin.content.IntelligentItem;
 import io.github.rysefoxx.inventory.plugin.content.InventoryContents;
 import io.github.rysefoxx.inventory.plugin.content.InventoryProvider;
 import io.github.rysefoxx.inventory.plugin.enums.InventoryOpenerType;
 import io.github.rysefoxx.inventory.plugin.enums.TimeSetting;
-import io.github.rysefoxx.inventory.plugin.pagination.RyseAnvil;
 import io.github.rysefoxx.inventory.plugin.pagination.RyseInventory;
 import lombok.Getter;
 import lombok.Setter;
@@ -77,7 +77,7 @@ public abstract class AmethystMenu implements InventoryProvider {
     }
 
     @Override
-    public void anvil(Player player, RyseAnvil anvil) {
+    public void anvil(Player player, AnvilGUI.Builder anvil) {
         if (isBedrock(player.getUniqueId()) && getFloodgateApi() != null) {
             anvilBedrock(player, anvil);
         } else {
@@ -107,7 +107,7 @@ public abstract class AmethystMenu implements InventoryProvider {
     }
 
     // Override if needed
-    public void anvilJava(Player player, RyseAnvil anvil) {
+    public void anvilJava(Player player, AnvilGUI.Builder anvil) {
     }
 
     // Override if needed
@@ -131,7 +131,7 @@ public abstract class AmethystMenu implements InventoryProvider {
     }
 
     // Override if needed
-    public void anvilBedrock(Player player, RyseAnvil anvil) {
+    public void anvilBedrock(Player player, AnvilGUI.Builder anvil) {
         anvilJava(player, anvil);
     }
 
@@ -222,6 +222,14 @@ public abstract class AmethystMenu implements InventoryProvider {
             return;
         }
         inventory.updatePeriod(time, timeSetting);
+    }
+
+    protected int calcPageStart(int page, int slotsPerPage) {
+        return (page - 1) * slotsPerPage;
+    }
+
+    protected int calcPageEnd(int page, int slotsPerPage, int totalIndexes) {
+        return Math.min(calcPageStart(page, slotsPerPage) + slotsPerPage, totalIndexes);
     }
 
     protected void placeItem(Section section,

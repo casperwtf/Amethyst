@@ -84,7 +84,7 @@ public class PlayerSmeltItemEventListener extends AmethystListener<JavaPlugin> {
             ItemStack smelted = furnaceInventory.getItem(0);
             AmethystLogger.debug("Smelted " + smelted);
             setItem(smelted, player, furnaceInventory);
-        });
+        }, null);
     }
 
 

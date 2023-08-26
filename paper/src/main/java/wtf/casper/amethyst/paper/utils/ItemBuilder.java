@@ -240,6 +240,7 @@ public class ItemBuilder {
         return this;
     }
 
+    @Override
     public ItemBuilder clone() {
         return new ItemBuilder(this.stack);
     }

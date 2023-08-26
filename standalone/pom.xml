@@ -10,7 +10,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <amethyst.version>1.0.3</amethyst.version>
+        <amethyst.version>2.0.0</amethyst.version>
     </properties>
 
     <build>
@@ -100,6 +100,10 @@
                             <pattern>javaassist</pattern>
                             <shadedPattern>wtf.casper.amethyst.libs.javaassist</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>wtf.casper.storageapi</pattern>
+                            <shadedPattern>wtf.casper.amethyst.libs.storageapi</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
             </plugin>
@@ -187,6 +191,12 @@
             <artifactId>lombok</artifactId>
             <version>1.18.26</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>wtf.casper.storageapi</groupId>
+            <artifactId>storageapi</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

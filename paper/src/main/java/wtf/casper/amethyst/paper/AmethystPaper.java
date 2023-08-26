@@ -1,5 +1,7 @@
 package wtf.casper.amethyst.paper;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.util.TimeStampMode;
 import com.jeff_media.customblockdata.CustomBlockData;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
@@ -198,6 +200,9 @@ public class AmethystPaper {
         new ProtectionManager();
         new StackerManager();
         new VanishManager();
+
+        PacketEvents.getAPI().getSettings().debug(false).bStats(false).checkForUpdates(true).timeStampMode(TimeStampMode.MILLIS).reEncodeByDefault(true);
+        PacketEvents.getAPI().init();
 
         if (getYamlConfig().getBoolean("debug", false)) {
             AmethystLogger.debug(

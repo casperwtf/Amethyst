@@ -1,7 +1,7 @@
 package wtf.casper.amethyst.paper.geyser;
 
-import wtf.casper.amethyst.core.storage.impl.fstorage.JsonFStorage;
 import wtf.casper.amethyst.paper.utils.GeyserUtils;
+import wtf.casper.storageapi.impl.fstorage.JsonFStorage;
 
 import java.io.File;
 import java.util.UUID;

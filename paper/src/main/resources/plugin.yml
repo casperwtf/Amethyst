@@ -18,3 +18,9 @@ softdepend:
   - RoseStacker
   - WorldEdit
   - Towny
+  - ProtocolLib
+  - ProtocolSupport
+  - ViaVersion
+  - ViaBackwards
+  - ViaRewind
+  - Geyser-Spigot

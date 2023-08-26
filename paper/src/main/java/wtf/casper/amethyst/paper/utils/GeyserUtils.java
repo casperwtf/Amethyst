@@ -9,9 +9,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.geysermc.floodgate.api.FloodgateApi;
 import org.jetbrains.annotations.Nullable;
-import wtf.casper.amethyst.core.storage.FieldStorage;
-import wtf.casper.amethyst.core.storage.id.Id;
 import wtf.casper.amethyst.paper.geyser.GeyserJsonStorage;
+import wtf.casper.storageapi.FieldStorage;
+import wtf.casper.storageapi.id.Id;
 
 import java.io.File;
 import java.util.Optional;

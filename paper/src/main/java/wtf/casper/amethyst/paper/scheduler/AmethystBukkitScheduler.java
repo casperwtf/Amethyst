@@ -17,49 +17,49 @@ public class AmethystBukkitScheduler extends AmethystScheduler {
     }
 
     @Override
-    public AmethystScheduler run(Runnable runnable) {
+    public AmethystScheduler run(Runnable runnable, Object subject) {
         task = bukkitScheduler.runTask(AmethystPaper.getInstance(), runnable);
         return this;
     }
 
     @Override
-    public AmethystScheduler runAsync(Runnable runnable) {
+    public AmethystScheduler runAsync(Runnable runnable, Object subject) {
         task = bukkitScheduler.runTaskAsynchronously(AmethystPaper.getInstance(), runnable);
         return this;
     }
 
     @Override
-    public AmethystScheduler runLater(Runnable runnable, long ticks) {
+    public AmethystScheduler runLater(Runnable runnable, Object subject, long ticks) {
         task = bukkitScheduler.runTaskLater(AmethystPaper.getInstance(), runnable, ticks);
         return this;
     }
 
     @Override
-    public AmethystScheduler runLaterAsync(Runnable runnable, long ticks) {
+    public AmethystScheduler runLaterAsync(Runnable runnable, Object subject, long ticks) {
         task = bukkitScheduler.runTaskLaterAsynchronously(AmethystPaper.getInstance(), runnable, ticks);
         return this;
     }
 
     @Override
-    public AmethystScheduler runDelayedTimer(Runnable runnable, long delay, long ticks) {
+    public AmethystScheduler runDelayedTimer(Runnable runnable, Object subject, long delay, long ticks) {
         task = bukkitScheduler.runTaskTimer(AmethystPaper.getInstance(), runnable, delay, ticks);
         return this;
     }
 
     @Override
-    public AmethystScheduler runDelayedTimerAsync(Runnable runnable, long delay, long ticks) {
+    public AmethystScheduler runDelayedTimerAsync(Runnable runnable, Object subject, long delay, long ticks) {
         task = bukkitScheduler.runTaskTimerAsynchronously(AmethystPaper.getInstance(), runnable, delay, ticks);
         return this;
     }
 
     @Override
-    public AmethystScheduler runDelayedRepeatedTimer(Runnable runnable, long delay, long ticks, long repeats) {
+    public AmethystScheduler runDelayedRepeatedTimer(Runnable runnable, Object subject, long delay, long ticks, long repeats) {
         task = bukkitScheduler.runTaskTimer(AmethystPaper.getInstance(), repeatedRunnable(runnable, repeats), delay, ticks);
         return this;
     }
 
     @Override
-    public AmethystScheduler runDelayedRepeatedTimerAsync(Runnable runnable, long delay, long ticks, long repeats) {
+    public AmethystScheduler runDelayedRepeatedTimerAsync(Runnable runnable, Object subject, long delay, long ticks, long repeats) {
         task = bukkitScheduler.runTaskTimerAsynchronously(AmethystPaper.getInstance(), repeatedRunnable(runnable, repeats), delay, ticks);
         return this;
     }

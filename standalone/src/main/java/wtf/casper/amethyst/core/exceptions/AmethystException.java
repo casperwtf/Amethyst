@@ -1,6 +1,6 @@
 package wtf.casper.amethyst.core.exceptions;
 
-public class AmethystException extends Exception {
+public class AmethystException extends RuntimeException {
 
     public AmethystException(String message) {
         super(message);

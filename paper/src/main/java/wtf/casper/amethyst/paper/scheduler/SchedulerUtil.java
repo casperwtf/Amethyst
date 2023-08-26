@@ -4,77 +4,76 @@ import org.jetbrains.annotations.ApiStatus;
 import wtf.casper.amethyst.core.scheduler.AmethystScheduler;
 import wtf.casper.amethyst.paper.utils.FoliaUtil;
 
-@ApiStatus.Experimental
 public class SchedulerUtil {
 
-    public static AmethystScheduler run(Runnable runnable) {
+    public static AmethystScheduler run(Runnable runnable, Object subject) {
         if (FoliaUtil.isFolia()) {
-            return new AmethystFoliaScheduler().run(runnable);
+            return new AmethystFoliaScheduler().run(runnable, subject);
         } else {
-            return new AmethystBukkitScheduler().run(runnable);
+            return new AmethystBukkitScheduler().run(runnable, subject);
         }
     }
 
     
-    public static AmethystScheduler runAsync(Runnable runnable) {
+    public static AmethystScheduler runAsync(Runnable runnable, Object subject) {
         if (FoliaUtil.isFolia()) {
-            return new AmethystFoliaScheduler().runAsync(runnable);
+            return new AmethystFoliaScheduler().runAsync(runnable, subject);
         } else {
-            return new AmethystBukkitScheduler().runAsync(runnable);
+            return new AmethystBukkitScheduler().runAsync(runnable, subject);
         }
     }
 
     
-    public static AmethystScheduler runLater(Runnable runnable, long ticks) {
+    public static AmethystScheduler runLater(Runnable runnable, Object subject, long ticks) {
         if (FoliaUtil.isFolia()) {
-            return new AmethystFoliaScheduler().runLater(runnable, ticks);
+            return new AmethystFoliaScheduler().runLater(runnable, subject, ticks);
         } else {
-            return new AmethystBukkitScheduler().runLater(runnable, ticks);
+            return new AmethystBukkitScheduler().runLater(runnable, subject, ticks);
         }
     }
 
     
-    public static AmethystScheduler runLaterAsync(Runnable runnable, long ticks) {
+    public static AmethystScheduler runLaterAsync(Runnable runnable, Object subject, long ticks) {
         if (FoliaUtil.isFolia()) {
-            return new AmethystFoliaScheduler().runLaterAsync(runnable, ticks);
+            return new AmethystFoliaScheduler().runLaterAsync(runnable, subject, ticks);
         } else {
-            return new AmethystBukkitScheduler().runLaterAsync(runnable, ticks);
+            return new AmethystBukkitScheduler().runLaterAsync(runnable, subject, ticks);
         }
     }
 
     
-    public static AmethystScheduler runDelayedTimer(Runnable runnable, long delay, long ticks) {
+    public static AmethystScheduler runDelayedTimer(Runnable runnable, Object subject, long delay, long ticks) {
         if (FoliaUtil.isFolia()) {
-            return new AmethystFoliaScheduler().runDelayedTimer(runnable, delay, ticks);
+            return new AmethystFoliaScheduler().runDelayedTimer(runnable, subject, delay, ticks);
         } else {
-            return new AmethystBukkitScheduler().runDelayedTimer(runnable, delay, ticks);
+            return new AmethystBukkitScheduler().runDelayedTimer(runnable, subject, delay, ticks);
         }
     }
 
     
-    public static AmethystScheduler runDelayedTimerAsync(Runnable runnable, long delay, long ticks) {
+    public static AmethystScheduler runDelayedTimerAsync(Runnable runnable, Object subject, long delay, long ticks) {
         if (FoliaUtil.isFolia()) {
-            return new AmethystFoliaScheduler().runDelayedTimerAsync(runnable, delay, ticks);
+            return new AmethystFoliaScheduler().runDelayedTimerAsync(runnable, subject, delay, ticks);
         } else {
-            return new AmethystBukkitScheduler().runDelayedTimerAsync(runnable, delay, ticks);
+            return new AmethystBukkitScheduler().runDelayedTimerAsync(runnable, subject, delay, ticks);
         }
     }
 
     
-    public AmethystScheduler runDelayedRepeatedTimer(Runnable runnable, long delay, long ticks, long repeats) {
+    public AmethystScheduler runDelayedRepeatedTimer(Runnable runnable, Object subject, long delay, long ticks, long repeats) {
         if (FoliaUtil.isFolia()) {
-            return new AmethystFoliaScheduler().runDelayedRepeatedTimer(runnable, delay, ticks, repeats);
+            return new AmethystFoliaScheduler().runDelayedRepeatedTimer(runnable, subject, delay, ticks, repeats);
         } else {
-            return new AmethystBukkitScheduler().runDelayedRepeatedTimer(runnable, delay, ticks, repeats);
+            return new AmethystBukkitScheduler().runDelayedRepeatedTimer(runnable, subject, delay, ticks, repeats);
         }
     }
 
     
-    public AmethystScheduler runDelayedRepeatedTimerAsync(Runnable runnable, long delay, long ticks, long repeats) {
+    public AmethystScheduler runDelayedRepeatedTimerAsync(Runnable runnable, Object subject, long delay, long ticks, long repeats) {
         if (FoliaUtil.isFolia()) {
-            return new AmethystFoliaScheduler().runDelayedRepeatedTimerAsync(runnable, delay, ticks, repeats);
+            return new AmethystFoliaScheduler().runDelayedRepeatedTimerAsync(runnable, subject, delay, ticks, repeats);
         } else {
-            return new AmethystBukkitScheduler().runDelayedRepeatedTimerAsync(runnable, delay, ticks, repeats);
+            return new AmethystBukkitScheduler().runDelayedRepeatedTimerAsync(runnable, subject, delay, ticks, repeats);
         }
     }
 }

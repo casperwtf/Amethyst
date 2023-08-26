@@ -2,7 +2,11 @@ package wtf.casper.amethyst.core.utils;
 
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.Nullable;
+import org.reflections.Configuration;
 import org.reflections.Reflections;
+import org.reflections.scanners.Scanners;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.util.ConfigurationBuilder;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
@@ -68,6 +72,16 @@ public class ReflectionUtil {
             }
         }
         return classes;
+    }
+
+    public static Set<Class<?>> findClasses(String packageName) {
+        Reflections reflections = new Reflections(ConfigurationBuilder.build().addScanners(Scanners.SubTypes).forPackages(packageName));
+        return reflections.getSubTypesOf(Object.class);
+    }
+
+    public <T> Set<Class<? extends T>> findClasses(String packageName, Class<T> type) {
+        Reflections reflections = new Reflections(ConfigurationBuilder.build().addScanners(Scanners.SubTypes).forPackages(packageName));
+        return reflections.getSubTypesOf(type);
     }
 
     public static Collection<Class<?>> getClassesWithAnnotation(Class<? extends Annotation> annotation) {

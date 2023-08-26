@@ -9,9 +9,9 @@ import lombok.Setter;
 import org.bson.json.JsonWriterSettings;
 import wtf.casper.amethyst.core.gson.UUIDTypeAdapter;
 import wtf.casper.amethyst.core.mq.Message;
-import wtf.casper.amethyst.core.storage.id.Transient;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.core.utils.RuntimeTypeAdapterFactory;
+import wtf.casper.storageapi.id.Transient;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
