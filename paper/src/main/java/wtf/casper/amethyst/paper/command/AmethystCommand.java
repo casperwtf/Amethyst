@@ -197,13 +197,6 @@ public abstract class AmethystCommand extends BukkitCommand {
     }
 
     @Deprecated
-    public void registerSubCommand(AmethystSubCommand subCommand) {
-        AmethystCommand e = subCommand.toAmethystCommand();
-        e.setPlugin(plugin);
-        subCommands.add(e);
-    }
-
-    @Deprecated
     public void setRequiredPermission(@NotNull String permission) {
         setPermission(permission);
     }

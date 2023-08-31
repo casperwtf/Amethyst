@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public class GeyserJsonStorage extends JsonFStorage<UUID, GeyserUtils.GeyserPlayer> {
     public GeyserJsonStorage(File file, Class<GeyserUtils.GeyserPlayer> type) {
-        super(file, type);
+        super(file, UUID.class, type);
     }
 
     @Override

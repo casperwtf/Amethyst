@@ -9,6 +9,7 @@ import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import gg.optimalgames.hologrambridge.HologramBridge;
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import io.github.rysefoxx.inventory.plugin.pagination.InventoryManager;
 import lombok.Getter;
 import lombok.Setter;
@@ -62,6 +63,7 @@ public class AmethystPaper {
     @Getter @Setter private static NamespacedKey playerSmeltItemKey;
     @Getter private YamlDocument amethystConfig;
     private static JavaPlugin instance;
+    @Getter private CloudCommandHandler cloudCommandHandler;
 
     /**
      * This constructor is used for loading Amethyst as a plugin
@@ -84,11 +86,20 @@ public class AmethystPaper {
         dependencyManager.loadDependencies();
     }
 
+    public AmethystPaper(JavaPlugin plugin) {
+        this(plugin, true);
+    }
+
     public static JavaPlugin getInstance() {
         if (instance == null) {
             throw new IllegalStateException("Amethyst is not loaded. Either install amethyst plugin or shade amethyst into your plugin. Initialize with AmethystPaper(AmethystPlugin)");
         }
         return instance;
+    }
+
+    public void loadAmethyst(JavaPlugin plugin) {
+        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(plugin));
+        PacketEvents.getAPI().load();
     }
 
     public void initAmethyst(JavaPlugin plugin) {
@@ -169,6 +180,8 @@ public class AmethystPaper {
         plugin.getLogger().setFilter(filter);
         if (plugin.getDescription().getName().equals("Amethyst")) {
             new LoggerListener(instance);
+        } else {
+            plugin.getLogger().setFilter(AmethystPaper.getFilter());
         }
 
         Bukkit.getLogger().setFilter(filter);
@@ -203,6 +216,9 @@ public class AmethystPaper {
 
         PacketEvents.getAPI().getSettings().debug(false).bStats(false).checkForUpdates(true).timeStampMode(TimeStampMode.MILLIS).reEncodeByDefault(true);
         PacketEvents.getAPI().init();
+
+        this.cloudCommandHandler = new CloudCommandHandler();
+        this.cloudCommandHandler.setup(plugin);
 
         if (getYamlConfig().getBoolean("debug", false)) {
             AmethystLogger.debug(

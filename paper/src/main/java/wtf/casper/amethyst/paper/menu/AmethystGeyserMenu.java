@@ -59,5 +59,4 @@ public class AmethystGeyserMenu {
     public static void sendForm(Form form, UUID target) {
         FloodgateApi.getInstance().sendForm(target, form);
     }
-
 }

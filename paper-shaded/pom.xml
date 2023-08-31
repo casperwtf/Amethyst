@@ -121,24 +121,31 @@
                                     <pattern>com.zaxxer.hikari</pattern>
                                     <shadedPattern>wtf.casper.amethyst.libs.hikari</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>org.mariadb.jdbc</pattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.mariadb</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.github.retrooper.packetevents</pattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.packetevents.api</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>io.github.retrooper.packetevents</pattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.packetevents.impl</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>net.kyori</pattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.packetevents.kyori</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>cloud.commandframework</pattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.libs.cloud.commandframework</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>io.leangen.geantyref</pattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.libs.geantyref</shadedPattern>
+                                </relocation>
                             </relocations>
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                        <exclude>META-INF/maven/**</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
-                                    <artifact>io.github.rysefoxx.inventory</artifact>
-                                    <excludes>
-                                        <exclude>plugin.yml</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                         </configuration>
                     </execution>
@@ -166,12 +173,31 @@
         <dependency>
             <groupId>wtf.casper.amethyst</groupId>
             <artifactId>paper</artifactId>
-            <version>${amethyst.version}</version>
+            <version>2.0.0</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>fr.mrmicky</groupId>
             <artifactId>fastboard</artifactId>
             <version>1.2.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.byteflux</groupId>
+            <artifactId>libby-bukkit</artifactId>
+            <version>1.1.5</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.iridium</groupId>
+            <artifactId>IridiumColorAPI</artifactId>
+            <version>1.0.6</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>wtf.casper.amethyst</groupId>
+            <artifactId>minecraft</artifactId>
+            <version>${amethyst.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -183,7 +209,7 @@
         <dependency>
             <groupId>io.github.rysefoxx.inventory</groupId>
             <artifactId>RyseInventory-Plugin</artifactId>
-            <version>1.5.7</version>
+            <version>1.6.4</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -205,6 +231,12 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>dev.rosewood</groupId>
+            <artifactId>rosestacker</artifactId>
+            <version>1.5.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
             <version>2.3.2</version>
@@ -216,6 +248,19 @@
             <version>3.12.11</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.WhipDevelopment</groupId>
+            <artifactId>CrashClaim</artifactId>
+            <version>344ef20be5</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.TownyAdvanced</groupId>
+            <artifactId>Towny</artifactId>
+            <version>0.98.6.1</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/com.mojang/authlib -->
         <dependency>
             <groupId>com.mojang</groupId>
@@ -224,10 +269,78 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>cloud.commandframework</groupId>
+            <artifactId>cloud-paper</artifactId>
+            <version>1.8.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>cloud.commandframework</groupId>
+            <artifactId>cloud-annotations</artifactId>
+            <version>1.8.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>1.20.1-R0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>de.tr7zw</groupId>
             <artifactId>item-nbt-api-plugin</artifactId>
             <version>2.11.1</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.geysermc.floodgate</groupId>
+            <artifactId>api</artifactId>
+            <version>2.2.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.MilkBowl</groupId>
+            <artifactId>VaultAPI</artifactId>
+            <version>1.7</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.TechFortress</groupId>
+            <artifactId>GriefPrevention</artifactId>
+            <version>16.17.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.angeschossen</groupId>
+            <artifactId>LandsAPI</artifactId>
+            <version>5.15.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.10.11</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.quantiom</groupId>
+            <artifactId>advancedvanish</artifactId>
+            <version>1.2.4</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>nl.marido.deluxecombat</groupId>
+            <artifactId>api</artifactId>
+            <version>1.40.4</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../paper/libs/DeluxeCombat-API.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>net.craftersland.essentials</groupId>
+            <artifactId>mysql</artifactId>
+            <version>1.25.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../paper/libs/EssentialsMysqlStorage-API.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.jeff_media</groupId>
@@ -242,24 +355,26 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.iridium</groupId>
-            <artifactId>IridiumColorAPI</artifactId>
-            <version>1.0.6</version>
+            <groupId>com.sk89q.worldedit</groupId>
+            <artifactId>worldedit-bukkit</artifactId>
+            <version>7.2.7</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.26</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.retrooper.packetevents</groupId>
+            <artifactId>spigot</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
     <repositories>
-        <repository>
-            <id>codemc-snapshots</id>
-            <url>https://repo.codemc.io/repository/maven-snapshots/</url>
-        </repository>
         <repository>
             <id>rosewood</id>
             <url>https://repo.rosewooddev.io/repository/public</url>
@@ -282,8 +397,8 @@
             <url>https://repo1.maven.org/maven2/</url>
         </repository>
         <repository>
-            <id>opencollab-releases</id>
-            <url>https://repo.opencollab.dev/maven-releases/</url>
+            <id>opencollab-snapshot</id>
+            <url>https://repo.opencollab.dev/maven-snapshots/</url>
         </repository>
         <repository>
             <id>sonatype</id>
@@ -322,6 +437,15 @@
         <repository>
             <id>iridiumdevelopment</id>
             <url>https://nexus.iridiumdevelopment.net/repository/maven-releases/</url>
+        </repository>
+        <repository>
+            <id>codemc-snapshots</id>
+            <url>https://repo.codemc.io/repository/maven-snapshots/</url>
+        </repository>
+        <!-- For snapshot builds -->
+        <repository>
+            <id>sonatype-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
     </repositories>
 </project>

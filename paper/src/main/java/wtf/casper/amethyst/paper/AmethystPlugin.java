@@ -1,5 +1,6 @@
 package wtf.casper.amethyst.paper;
 
+import cloud.commandframework.CommandManager;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
@@ -7,11 +8,15 @@ import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import lombok.SneakyThrows;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.core.utils.ReflectionUtil;
+import wtf.casper.amethyst.core.utils.ServiceUtil;
+import wtf.casper.amethyst.paper.command.CloudCommandProvider;
+import wtf.casper.amethyst.paper.utils.AmethystListener;
 
 public abstract class AmethystPlugin extends JavaPlugin {
 
@@ -70,6 +75,21 @@ public abstract class AmethystPlugin extends JavaPlugin {
         return config;
     }
 
+    public void registerCommands() {
+        registerCommands(getClassLoader());
+    }
+
+    public void registerCommands(ClassLoader classLoader) {
+        ServiceUtil.getServices(CloudCommandProvider.class, classLoader).forEach(CloudCommandProvider::registerCommands);
+    }
+
+    public void registerListeners() {
+        registerListeners(getClassLoader());
+    }
+
+    public void registerListeners(ClassLoader classLoader) {
+        ServiceUtil.getServices(Listener.class, classLoader).forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
+    }
 
     @Override
     @SneakyThrows

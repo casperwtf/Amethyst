@@ -130,6 +130,14 @@
                                     <shadedPattern>wtf.casper.amethyst.libs.mariadb</shadedPattern>
                                 </relocation>
                                 <relocation>
+                                    <pattern>cloud.commandframework</pattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.cloud.commandframework</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>io.leangen.geantyref</pattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.geantyref</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>com.github.retrooper.packetevents</pattern>
                                     <shadedPattern>wtf.casper.amethyst.libs.packetevents.api</shadedPattern>
                                 </relocation>
@@ -299,9 +307,21 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>cloud.commandframework</groupId>
+            <artifactId>cloud-paper</artifactId>
+            <version>1.8.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>cloud.commandframework</groupId>
+            <artifactId>cloud-annotations</artifactId>
+            <version>1.8.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.19.4-R0.1-SNAPSHOT</version>
+            <version>1.20.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -387,8 +407,8 @@
         <dependency>
             <groupId>com.github.retrooper.packetevents</groupId>
             <artifactId>spigot</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
-            <scope>compile</scope>
+            <version>2.0.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -400,10 +420,6 @@
     </pluginRepositories>
 
     <repositories>
-        <repository>
-            <id>codemc-snapshots</id>
-            <url>https://repo.codemc.io/repository/maven-snapshots/</url>
-        </repository>
         <repository>
             <id>rosewood</id>
             <url>https://repo.rosewooddev.io/repository/public</url>
@@ -470,6 +486,11 @@
         <repository>
             <id>codemc-snapshots</id>
             <url>https://repo.codemc.io/repository/maven-snapshots/</url>
+        </repository>
+        <!-- For snapshot builds -->
+        <repository>
+            <id>sonatype-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
     </repositories>
 

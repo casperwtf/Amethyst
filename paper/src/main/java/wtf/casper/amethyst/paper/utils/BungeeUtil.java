@@ -8,7 +8,6 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import wtf.casper.amethyst.paper.AmethystPaper;
 import wtf.casper.amethyst.paper.AmethystPlugin;
 
-@Deprecated
 public class BungeeUtil {
 
     public static void registerOutChannel(JavaPlugin plugin, String channel) {

@@ -25,6 +25,7 @@ public class DependencyManager {
         this.libraryManager.addRepository("https://redempt.dev");
         this.libraryManager.addRepository("https://hub.jeff-media.com/nexus/repository/jeff-media-public/");
         this.libraryManager.addRepository("https://nexus.iridiumdevelopment.net/repository/maven-releases/");
+        this.libraryManager.addRepository("https://oss.sonatype.org/content/repositories/snapshots");
     }
 
     private Library getLibrary(String groupId, String artifactId, String version, String... patterns) {
@@ -104,6 +105,36 @@ public class DependencyManager {
                 this.getLibrary("org{}reflections", "reflections", "0.10.2",
                         "org{}reflections", amethystPackage+"{}libs{}reflections",
                         javaassist+"assist", amethystPackage+"{}libs{}javassist"
+                ),
+                // so much cloud shit wtf
+                this.getLibrary("io{}leangen{}geantyref", "geantyref", "1.3.14",
+                        "io{}leangen{}geantyref", amethystPackage+"{}libs{}geantyref"
+                ),
+                this.getLibrary("cloud{}commandframework", "cloud-core", "1.8.3",
+                        "cloud{}commandframework", amethystPackage+"{}libs{}cloud{}commandframework"
+                ),
+                this.getLibrary("cloud{}commandframework", "cloud-services", "1.8.3",
+                        "cloud{}commandframework", amethystPackage+"{}libs{}cloud{}commandframework"
+                ),
+                this.getLibrary("cloud{}commandframework", "cloud-tasks", "1.8.3",
+                        "cloud{}commandframework", amethystPackage+"{}libs{}cloud{}commandframework"
+                ),
+                this.getLibrary("cloud{}commandframework", "cloud-brigadier", "1.8.3",
+                        "cloud{}commandframework", amethystPackage+"{}libs{}cloud{}commandframework"
+                ),
+                this.getLibrary("cloud{}commandframework", "cloud-bukkit", "1.8.3",
+                        "cloud{}commandframework", amethystPackage+"{}libs{}cloud{}commandframework"
+                ),
+                this.getLibrary("cloud{}commandframework", "cloud-paper", "1.8.3",
+                        "cloud{}commandframework", amethystPackage+"{}libs{}cloud{}commandframework"
+                ),
+                this.getLibrary("cloud{}commandframework", "cloud-annotations", "1.8.3",
+                        "cloud{}commandframework", amethystPackage+"{}libs{}cloud{}commandframework"
+                ),
+                this.getLibrary("com{}github{}retrooper{}packetevents", "spigot", "2.0.0",
+                        "com{}github{}retrooper{}packetevents", amethystPackage + "{}libs{}packetevents{}api",
+                        "io{}github{}retrooper{}packetevents", amethystPackage + "{}libs{}packetevents{}impl",
+                        "net{}kyori", amethystPackage + "{}libs{}packetevents{}kyori"
                 )
         );
         for (Library library : libraries) {

@@ -9,6 +9,11 @@ public final class AmethystActual extends AmethystPlugin {
     }
 
     @Override
+    public void load() {
+        amethystPaper.loadAmethyst(this);
+    }
+
+    @Override
     public void enable() {
         amethystPaper.initAmethyst(this);
     }
