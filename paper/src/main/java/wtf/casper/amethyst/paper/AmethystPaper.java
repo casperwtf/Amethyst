@@ -8,21 +8,23 @@ import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
-import gg.optimalgames.hologrambridge.HologramBridge;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import wtf.casper.amethyst.core.AmethystCore;
-import wtf.casper.amethyst.core.scheduler.AmethystScheduler;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.core.utils.DiscordWebhook;
 import wtf.casper.amethyst.core.utils.pastes.PasteProvider;
 import wtf.casper.amethyst.core.utils.pastes.Pastebin;
+import wtf.casper.amethyst.paper.hologrambridge.HologramBridge;
 import wtf.casper.amethyst.paper.hooks.GeyserExpansion;
 import wtf.casper.amethyst.paper.hooks.combat.CombatManager;
 import wtf.casper.amethyst.paper.hooks.economy.EconomyManager;
@@ -44,6 +46,8 @@ import wtf.casper.amethyst.paper.utils.ArmorstandUtils;
 import wtf.casper.amethyst.paper.utils.GeneralUtils;
 import wtf.casper.amethyst.paper.utils.GeyserUtils;
 import wtf.casper.amethyst.paper.utils.ServerLock;
+import wtf.casper.amethyst.paper.vault.EventEconomyWrapper;
+import wtf.casper.amethyst.paper.vault.EventPermissionWrapper;
 
 import java.awt.Color;
 import java.io.File;
@@ -218,6 +222,7 @@ public class AmethystPaper {
         this.cloudCommandHandler = new CloudCommandProvider();
         this.cloudCommandHandler.setup(plugin);
 
+        // debug nag
         if (getYamlConfig().getBoolean("debug", false)) {
             AmethystLogger.debug(
                     "Debug mode is enabled, this will cause a lot of spam in the console.",
@@ -225,6 +230,7 @@ public class AmethystPaper {
             );
         }
 
+        // initialize these
         SchedulerUtil.runLater(() -> {
             new EconomyManager();
             new CombatManager();
@@ -232,6 +238,30 @@ public class AmethystPaper {
             new StackerManager();
             new VanishManager();
         }, 2L);
+
+        // Handle vault events
+
+        Economy provider = plugin.getServer().getServicesManager().getRegistration(Economy.class).getProvider();
+        if (provider != null && !(provider instanceof EventEconomyWrapper)) {
+            plugin.getServer().getServicesManager().register(Economy.class, new EventEconomyWrapper(provider), plugin, ServicePriority.Highest);
+        }
+
+        Permission permissionProvider = plugin.getServer().getServicesManager().getRegistration(Permission.class).getProvider();
+        if (permissionProvider != null && !(permissionProvider instanceof EventPermissionWrapper)) {
+            plugin.getServer().getServicesManager().register(Permission.class, new EventPermissionWrapper(permissionProvider), plugin, ServicePriority.Highest);
+        }
+
+        SchedulerUtil.run(() -> {
+            Economy economy = plugin.getServer().getServicesManager().getRegistration(Economy.class).getProvider();
+            if (economy != null && !(economy instanceof EventEconomyWrapper)) {
+                plugin.getServer().getServicesManager().register(Economy.class, new EventEconomyWrapper(provider), plugin, ServicePriority.Highest);
+            }
+
+            Permission permission = plugin.getServer().getServicesManager().getRegistration(Permission.class).getProvider();
+            if (permission != null && !(permission instanceof EventPermissionWrapper)) {
+                plugin.getServer().getServicesManager().register(Permission.class, new EventPermissionWrapper(permission), plugin, ServicePriority.Highest);
+            }
+        });
     }
 
     public void disableAmethyst() {
