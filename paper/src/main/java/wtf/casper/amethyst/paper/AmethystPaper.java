@@ -1,16 +1,18 @@
 package wtf.casper.amethyst.paper;
 
+import cloud.commandframework.minecraft.extras.MinecraftHelp;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.util.TimeStampMode;
 import com.jeff_media.customblockdata.CustomBlockData;
-import dev.dejvokep.boostedyaml.YamlDocument;
-import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
-import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
-import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
-import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
+import org.bukkit.command.CommandSender;
+import wtf.casper.storageapi.libs.boostedyaml.YamlDocument;
+import wtf.casper.storageapi.libs.boostedyaml.settings.dumper.DumperSettings;
+import wtf.casper.storageapi.libs.boostedyaml.settings.general.GeneralSettings;
+import wtf.casper.storageapi.libs.boostedyaml.settings.loader.LoaderSettings;
+import wtf.casper.storageapi.libs.boostedyaml.settings.updater.UpdaterSettings;
 import gg.optimalgames.hologrambridge.HologramBridge;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
-import io.github.rysefoxx.inventory.plugin.pagination.InventoryManager;
+import wtf.casper.amethyst.paper.ryseinventory.pagination.InventoryManager;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -64,7 +66,6 @@ public class AmethystPaper {
     @Getter private YamlDocument amethystConfig;
     private static JavaPlugin instance;
     @Getter private CloudCommandHandler cloudCommandHandler;
-
     /**
      * This constructor is used for loading Amethyst as a plugin
      * We load dependencies here because we need to load them before the plugin is enabled

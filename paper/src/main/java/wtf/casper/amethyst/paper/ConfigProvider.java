@@ -1,15 +1,16 @@
 package wtf.casper.amethyst.paper;
 
-import dev.dejvokep.boostedyaml.YamlDocument;
-import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
-import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
-import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
-import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
-import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
+import wtf.casper.storageapi.libs.boostedyaml.YamlDocument;
+import wtf.casper.storageapi.libs.boostedyaml.dvs.versioning.BasicVersioning;
+import wtf.casper.storageapi.libs.boostedyaml.settings.dumper.DumperSettings;
+import wtf.casper.storageapi.libs.boostedyaml.settings.general.GeneralSettings;
+import wtf.casper.storageapi.libs.boostedyaml.settings.loader.LoaderSettings;
+import wtf.casper.storageapi.libs.boostedyaml.settings.updater.UpdaterSettings;
 import lombok.SneakyThrows;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.IOException;
 
 public class ConfigProvider {
 
@@ -35,12 +36,23 @@ public class ConfigProvider {
 
     public YamlDocument getYamlDocumentVersioned(String path) {
         try {
-            return getYamlDocument(path,
+            YamlDocument document = getYamlDocument(path,
                     GeneralSettings.builder().setUseDefaults(false).build(),
                     LoaderSettings.builder().setAutoUpdate(true).build(),
                     DumperSettings.DEFAULT,
                     UpdaterSettings.builder().setVersioning(new BasicVersioning("config-version")).build()
             );
+
+            try {
+                if (!document.getDefaults().getString("config-version").equals(document.getString("config-version"))) {
+                    document.update();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+
+            return document;
         } catch (Exception e) {
             e.printStackTrace();
             return null;

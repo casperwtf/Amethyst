@@ -24,7 +24,6 @@ public class PlayerSmeltItemEvent extends Event {
         this.furnace = furnace;
         this.source = source;
         this.result = result;
-
     }
 
     @Override

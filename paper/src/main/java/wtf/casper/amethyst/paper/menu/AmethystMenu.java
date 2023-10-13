@@ -1,14 +1,13 @@
 package wtf.casper.amethyst.paper.menu;
 
-import dev.dejvokep.boostedyaml.block.implementation.Section;
-import io.github.rysefoxx.inventory.anvilgui.AnvilGUI;
-import io.github.rysefoxx.inventory.plugin.animator.SlideAnimation;
-import io.github.rysefoxx.inventory.plugin.content.IntelligentItem;
-import io.github.rysefoxx.inventory.plugin.content.InventoryContents;
-import io.github.rysefoxx.inventory.plugin.content.InventoryProvider;
-import io.github.rysefoxx.inventory.plugin.enums.InventoryOpenerType;
-import io.github.rysefoxx.inventory.plugin.enums.TimeSetting;
-import io.github.rysefoxx.inventory.plugin.pagination.RyseInventory;
+import net.wesjd.anvilgui.AnvilGUI;
+import wtf.casper.amethyst.paper.ryseinventory.animator.SlideAnimation;
+import wtf.casper.amethyst.paper.ryseinventory.content.IntelligentItem;
+import wtf.casper.amethyst.paper.ryseinventory.content.InventoryContents;
+import wtf.casper.amethyst.paper.ryseinventory.content.InventoryProvider;
+import wtf.casper.amethyst.paper.ryseinventory.enums.InventoryOpenerType;
+import wtf.casper.amethyst.paper.ryseinventory.enums.TimeSetting;
+import wtf.casper.amethyst.paper.ryseinventory.pagination.RyseInventory;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -25,6 +24,7 @@ import wtf.casper.amethyst.paper.utils.GeyserUtils;
 import wtf.casper.amethyst.paper.utils.ItemConfigUtils;
 import wtf.casper.amethyst.paper.utils.MenuUtil;
 import wtf.casper.amethyst.paper.utils.PlaceholderReplacer;
+import wtf.casper.storageapi.libs.boostedyaml.block.implementation.Section;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;

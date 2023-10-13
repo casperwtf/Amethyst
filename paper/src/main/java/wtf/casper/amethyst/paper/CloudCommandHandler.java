@@ -5,8 +5,10 @@ import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator;
 import cloud.commandframework.extra.confirmation.CommandConfirmationManager;
 import cloud.commandframework.meta.SimpleCommandMeta;
+import cloud.commandframework.minecraft.extras.MinecraftHelp;
 import cloud.commandframework.paper.PaperCommandManager;
 import lombok.Getter;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -37,24 +39,24 @@ public class CloudCommandHandler {
                     parserParameters -> SimpleCommandMeta.empty()
             );
 
-            CommandConfirmationManager<CommandSender> commandConfirmationManager = new CommandConfirmationManager<>(
-                    30,
-                    TimeUnit.SECONDS,
-                    ctx -> {
-                        ctx.getCommandContext().getSender().sendMessage(ChatColor.RED + "Confirmation is needed.");
-                    },
-                    commandSender -> {
-                        commandSender.sendMessage(ChatColor.RED + "An error has occurred.");
-                    }
-            );
-
-            commandConfirmationManager.registerConfirmationProcessor(commandManager);
-            commandManager.command(
-                    commandManager
-                            .commandBuilder("confirm")
-                            .handler(commandConfirmationManager.createConfirmationExecutionHandler())
-                            .build()
-            );
+//            CommandConfirmationManager<CommandSender> commandConfirmationManager = new CommandConfirmationManager<>(
+//                    30,
+//                    TimeUnit.SECONDS,
+//                    ctx -> {
+//                        ctx.getCommandContext().getSender().sendMessage(ChatColor.RED + "Confirmation is needed.");
+//                    },
+//                    commandSender -> {
+//                        commandSender.sendMessage(ChatColor.RED + "An error has occurred.");
+//                    }
+//            );
+//
+//            commandConfirmationManager.registerConfirmationProcessor(commandManager);
+//            commandManager.command(
+//                    commandManager
+//                            .commandBuilder("confirm")
+//                            .handler(commandConfirmationManager.createConfirmationExecutionHandler())
+//                            .build()
+//            );
 
             Inject.bind(CommandManager.class, commandManager);
             Inject.bind(AnnotationParser.class, parser);

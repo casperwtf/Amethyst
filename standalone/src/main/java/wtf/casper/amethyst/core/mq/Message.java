@@ -5,8 +5,7 @@ import lombok.Getter;
 import wtf.casper.amethyst.core.AmethystCore;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
 
-@Getter
-public abstract class Message {
+public interface Message {
 
     /**
      * We add in our own "amethyst_class_type" property to the JSON, so we can deserialize it later
@@ -15,7 +14,7 @@ public abstract class Message {
      *
      * @return The message serialized to JSON
      */
-    public String serialize() {
+    default String serialize() {
         String json = AmethystCore.getGson().toJson(this);
         JsonObject jsonObject = AmethystCore.getGson().fromJson(json, JsonObject.class);
         if (jsonObject == null) return json;

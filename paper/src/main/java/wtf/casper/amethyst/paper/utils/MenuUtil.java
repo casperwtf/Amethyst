@@ -1,8 +1,8 @@
 package wtf.casper.amethyst.paper.utils;
 
-import io.github.rysefoxx.inventory.plugin.content.InventoryProvider;
-import io.github.rysefoxx.inventory.plugin.enums.InventoryOpenerType;
-import io.github.rysefoxx.inventory.plugin.pagination.RyseInventory;
+import wtf.casper.amethyst.paper.ryseinventory.content.InventoryProvider;
+import wtf.casper.amethyst.paper.ryseinventory.enums.InventoryOpenerType;
+import wtf.casper.amethyst.paper.ryseinventory.pagination.RyseInventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import wtf.casper.amethyst.paper.AmethystPaper;
 

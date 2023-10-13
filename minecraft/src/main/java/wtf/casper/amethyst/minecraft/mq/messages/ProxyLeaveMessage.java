@@ -6,7 +6,7 @@ import wtf.casper.amethyst.core.mq.Message;
 import java.util.UUID;
 
 @Getter
-public class ProxyLeaveMessage extends Message {
+public class ProxyLeaveMessage implements Message {
     private final UUID uniqueId;
     private final String name;
     private final String finalServer;

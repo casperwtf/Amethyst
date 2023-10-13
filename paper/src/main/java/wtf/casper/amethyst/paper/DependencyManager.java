@@ -26,6 +26,7 @@ public class DependencyManager {
         this.libraryManager.addRepository("https://hub.jeff-media.com/nexus/repository/jeff-media-public/");
         this.libraryManager.addRepository("https://nexus.iridiumdevelopment.net/repository/maven-releases/");
         this.libraryManager.addRepository("https://oss.sonatype.org/content/repositories/snapshots");
+        this.libraryManager.addRepository("https://s01.oss.sonatype.org/content/repositories/snapshots/");
     }
 
     private Library getLibrary(String groupId, String artifactId, String version, String... patterns) {
@@ -75,9 +76,10 @@ public class DependencyManager {
                 this.getLibrary("dev{}dejvokep", "boosted-yaml", "1.3",
                         "dev{}dejvokep{}boostedyaml", amethystPackage+"{}libs{}boostedyaml"
                 ),
-                this.getLibrary("io{}github{}rysefoxx{}inventory", "RyseInventory-Plugin", "1.5.7",
-                        "io{}github{}rysefoxx{}inventory", amethystPackage+"{}libs{}inventory"
-                ),
+                // removed because we shade now
+//                this.getLibrary("io{}github{}rysefoxx{}inventory", "RyseInventory-Plugin", "1.5.7",
+//                        "io{}github{}rysefoxx{}inventory", amethystPackage+"{}libs{}inventory"
+//                ),
                 this.getLibrary("de{}themoep", "minedown-adventure", "1.7.1-SNAPSHOT",
                         "de{}themoep{}minedown", amethystPackage+"{}libs{}minedown"
                 ),
@@ -128,17 +130,34 @@ public class DependencyManager {
                 this.getLibrary("cloud{}commandframework", "cloud-paper", "1.8.3",
                         "cloud{}commandframework", amethystPackage+"{}libs{}cloud{}commandframework"
                 ),
+                this.getLibrary("cloud{}commandframework", "cloud-minecraft-extras", "1.8.3",
+                        "cloud{}commandframework", amethystPackage+"{}libs{}cloud{}commandframework"
+                ),
                 this.getLibrary("cloud{}commandframework", "cloud-annotations", "1.8.3",
                         "cloud{}commandframework", amethystPackage+"{}libs{}cloud{}commandframework"
                 ),
-                this.getLibrary("com{}github{}retrooper{}packetevents", "spigot", "2.0.0",
+                this.getLibrary("com{}github{}retrooper{}packetevents", "spigot", "2.0.1",
                         "com{}github{}retrooper{}packetevents", amethystPackage + "{}libs{}packetevents{}api",
                         "io{}github{}retrooper{}packetevents", amethystPackage + "{}libs{}packetevents{}impl",
-                        "net{}kyori", amethystPackage + "{}libs{}packetevents{}kyori"
+                        "net{}kyori", amethystPackage + "{}libs{}kyori"
+                ),
+                this.getLibrary("net{}kyori", "adventure-api", "4.14.0",
+                        "net{}kyori", amethystPackage + "{}libs{}kyori"
+                ),
+                this.getLibrary("net{}kyori", "adventure-platform-bukkit", "4.3.0",
+                        "net{}kyori", amethystPackage + "{}libs{}kyori"
+                ),
+                this.getLibrary("net{}wesjd", "anvilgui", "1.9.0-SNAPSHOT",
+                        "net{}wesjd{}anvilgui", amethystPackage + "{}libs{}anvilgui"
                 )
         );
         for (Library library : libraries) {
-            this.libraryManager.loadLibrary(library);
+            try {
+                this.libraryManager.loadLibrary(library);
+            } catch (RuntimeException exception) {
+                System.out.println("Failed to load library " + library.getArtifactId() + " " + library.getVersion());
+                exception.printStackTrace();
+            }
         }
 
         this.plugin.getLogger().log(Level.INFO, "Successfully loaded dependencies.");

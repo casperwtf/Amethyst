@@ -21,6 +21,8 @@ public abstract class RedisListener<T> implements RedisPubSubListener<String, St
             } catch (ClassCastException ignored) {
                 AmethystLogger.debug("Failed to register " + clazz.getName() + " as they are not an instance of " + Message.class.getName());
             }
+        } else {
+            AmethystLogger.debug("Failed to register " + clazz.getName() + " as they are not an instance of " + Message.class.getName());
         }
     }
 
@@ -29,17 +31,20 @@ public abstract class RedisListener<T> implements RedisPubSubListener<String, St
 
         JsonObject json = AmethystCore.getGson().fromJson(message, JsonObject.class);
         if (!json.has("amethyst_class_type")) {
+            AmethystLogger.debug("Failed to parse message as it does not contain amethyst_class_type");
             return;
         }
 
         String type = json.get("amethyst_class_type").getAsString();
         if (!type.equals(clazz.getSimpleName())) {
+            AmethystLogger.debug("Failed to parse message type " + type + " as it does not match " + clazz.getSimpleName());
             return;
         }
 
         try {
             T t = AmethystCore.getGson().fromJson(message, this.clazz);
             if (t == null) {
+                AmethystLogger.debug("Failed to parse message as it is null");
                 return;
             }
 

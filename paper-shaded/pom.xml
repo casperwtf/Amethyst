@@ -36,7 +36,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.5.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -74,7 +74,7 @@
                                     <shadedPattern>wtf.casper.amethyst.libs.libby</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>io.github.rysefoxx.inventory</pattern>
+                                    <pattern>wtf.casper.amethystmenu.inventory</pattern>
                                     <shadedPattern>wtf.casper.amethyst.libs.inventory</shadedPattern>
                                 </relocation>
                                 <relocation>
@@ -126,6 +126,14 @@
                                     <shadedPattern>wtf.casper.amethyst.libs.mariadb</shadedPattern>
                                 </relocation>
                                 <relocation>
+                                    <pattern>cloud.commandframework</pattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.cloud.commandframework</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>io.leangen.geantyref</pattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.geantyref</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>com.github.retrooper.packetevents</pattern>
                                     <shadedPattern>wtf.casper.amethyst.libs.packetevents.api</shadedPattern>
                                 </relocation>
@@ -135,15 +143,15 @@
                                 </relocation>
                                 <relocation>
                                     <pattern>net.kyori</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.packetevents.kyori</shadedPattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.kyori</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>cloud.commandframework</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.libs.cloud.commandframework</shadedPattern>
+                                    <pattern>net.wesjd.anvilgui</pattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.anvilgui</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>io.leangen.geantyref</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.libs.geantyref</shadedPattern>
+                                    <pattern>wtf.casper.storageapi</pattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.storageapi</shadedPattern>
                                 </relocation>
                             </relocations>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
@@ -170,6 +178,12 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>net.wesjd</groupId>
+            <artifactId>anvilgui</artifactId>
+            <version>1.9.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>wtf.casper.amethyst</groupId>
             <artifactId>paper</artifactId>
@@ -204,12 +218,6 @@
             <groupId>dev.dejvokep</groupId>
             <artifactId>boosted-yaml</artifactId>
             <version>1.3</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.github.rysefoxx.inventory</groupId>
-            <artifactId>RyseInventory-Plugin</artifactId>
-            <version>1.6.4</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -277,6 +285,12 @@
         <dependency>
             <groupId>cloud.commandframework</groupId>
             <artifactId>cloud-annotations</artifactId>
+            <version>1.8.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>cloud.commandframework</groupId>
+            <artifactId>cloud-minecraft-extras</artifactId>
             <version>1.8.3</version>
             <scope>compile</scope>
         </dependency>
@@ -351,7 +365,7 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-api</artifactId>
-            <version>4.12.0</version>
+            <version>4.14.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

@@ -40,7 +40,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.5.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -78,7 +78,7 @@
                                     <shadedPattern>wtf.casper.amethyst.libs.libby</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>io.github.rysefoxx.inventory</pattern>
+                                    <pattern>wtf.casper.amethystmenu.inventory</pattern>
                                     <shadedPattern>wtf.casper.amethyst.libs.inventory</shadedPattern>
                                 </relocation>
                                 <relocation>
@@ -147,7 +147,15 @@
                                 </relocation>
                                 <relocation>
                                     <pattern>net.kyori</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.packetevents.kyori</shadedPattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.kyori</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>net.wesjd.anvilgui</pattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.anvilgui</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>wtf.casper.storageapi</pattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.storageapi</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>
@@ -170,6 +178,7 @@
                                         <exclude>io/**</exclude>
                                         <exclude>javax/**</exclude>
                                         <exclude>redempt/**</exclude>
+<!--                                        <exclude>wtf/casper/storageapi/**</exclude>-->
                                         <exclude>wtf/casper/amethyst/libs/google/**</exclude>
                                         <exclude>wtf/casper/amethyst/libs/hikari/**</exclude>
                                         <exclude>wtf/casper/amethyst/libs/boostedyaml/**</exclude>
@@ -192,7 +201,7 @@
                                     </excludes>
                                 </filter>
                                 <filter>
-                                    <artifact>io.github.rysefoxx.inventory</artifact>
+                                    <artifact>wtf.casper.amethystmenu.inventory</artifact>
                                     <excludes>
                                         <exclude>plugin.yml</exclude>
                                     </excludes>
@@ -245,12 +254,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>io.github.rysefoxx.inventory</groupId>
-            <artifactId>RyseInventory-Plugin</artifactId>
-            <version>1.6.4</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>de.themoep</groupId>
             <artifactId>minedown-adventure</artifactId>
             <version>1.7.1-SNAPSHOT</version>
@@ -298,7 +301,12 @@
             <version>0.98.6.1</version>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>net.wesjd</groupId>
+            <artifactId>anvilgui</artifactId>
+            <version>1.9.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/com.mojang/authlib -->
         <dependency>
             <groupId>com.mojang</groupId>
@@ -318,6 +326,13 @@
             <version>1.8.3</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>cloud.commandframework</groupId>
+            <artifactId>cloud-minecraft-extras</artifactId>
+            <version>1.8.3</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
@@ -389,7 +404,7 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-api</artifactId>
-            <version>4.12.0</version>
+            <version>4.14.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -407,8 +422,22 @@
         <dependency>
             <groupId>com.github.retrooper.packetevents</groupId>
             <artifactId>spigot</artifactId>
-            <version>2.0.0</version>
+            <version>2.0.1</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.kyori</groupId>
+                    <artifactId>adventure-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.kyori</groupId>
+                    <artifactId>adventure-text-serializer-gson</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.kyori</groupId>
+                    <artifactId>adventure-text-serializer-legacy</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

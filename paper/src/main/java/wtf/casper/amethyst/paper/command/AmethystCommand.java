@@ -1,7 +1,7 @@
 package wtf.casper.amethyst.paper.command;
 
 import com.google.common.collect.ImmutableList;
-import dev.dejvokep.boostedyaml.block.implementation.Section;
+import wtf.casper.storageapi.libs.boostedyaml.block.implementation.Section;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.command.CommandSender;
