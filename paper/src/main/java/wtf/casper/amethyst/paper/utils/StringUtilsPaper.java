@@ -1,8 +1,8 @@
 package wtf.casper.amethyst.paper.utils;
 
 import de.themoep.minedown.adventure.MineDown;
-import wtf.casper.storageapi.libs.boostedyaml.YamlDocument;
-import wtf.casper.storageapi.libs.boostedyaml.block.implementation.Section;
+import dev.dejvokep.boostedyaml.YamlDocument;
+import dev.dejvokep.boostedyaml.block.implementation.Section;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;

@@ -525,7 +525,7 @@ public class SlideAnimation {
          * @return The Builder to perform further editing.
          * @throws IllegalArgumentException if slot is greater than 53
          */
-        public @NotNull Builder from(Integer ... slots) throws IllegalArgumentException {
+        public @NotNull Builder from(Integer... slots) throws IllegalArgumentException {
             for (Integer slot : slots)
                 from(slot);
 
@@ -540,7 +540,7 @@ public class SlideAnimation {
          * @return The Builder to perform further editing.
          * @throws IllegalArgumentException if row is greater than 5 or if column greater than 8
          */
-        public @NotNull Builder from(Integer [] rows, Integer [] columns) throws IllegalArgumentException {
+        public @NotNull Builder from(Integer[] rows, Integer[] columns) throws IllegalArgumentException {
             Preconditions.checkArgument(rows.length == columns.length, StringConstants.INVALID_ROW_LENGTH);
 
             for (int i = 0; i < rows.length; i++)
@@ -614,7 +614,7 @@ public class SlideAnimation {
          * @return The Builder to perform further editing.
          * @throws IllegalArgumentException if slot is greater than 53
          */
-        public @NotNull Builder to(int ... slots) throws IllegalArgumentException {
+        public @NotNull Builder to(int... slots) throws IllegalArgumentException {
             for (int slot : slots)
                 to(slot);
 
@@ -629,7 +629,7 @@ public class SlideAnimation {
          * @return The Builder to perform further editing.
          * @throws IllegalArgumentException if row is greater than 5 or if column greater than 8
          */
-        public @NotNull Builder to(Integer [] rows, Integer [] columns) throws IllegalArgumentException {
+        public @NotNull Builder to(Integer[] rows, Integer[] columns) throws IllegalArgumentException {
             Preconditions.checkArgument(rows.length == columns.length, StringConstants.INVALID_ROW_LENGTH);
 
             for (int i = 0; i < rows.length; i++)
@@ -684,7 +684,7 @@ public class SlideAnimation {
          * @param items The items to add.
          * @return The Builder to perform further editing.
          */
-        public @NotNull Builder item(IntelligentItem ... items) {
+        public @NotNull Builder item(IntelligentItem... items) {
             for (IntelligentItem item : items)
                 item(item);
 
@@ -697,7 +697,7 @@ public class SlideAnimation {
          * @param items The items to add.
          * @return The Builder to perform further editing.
          */
-        public @NotNull Builder items(IntelligentItem ... items) {
+        public @NotNull Builder items(IntelligentItem... items) {
             return item(items);
         }
 

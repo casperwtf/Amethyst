@@ -26,22 +26,21 @@
 package wtf.casper.amethyst.paper.ryseinventory.content;
 
 import org.bukkit.entity.Player;
-import wtf.casper.amethyst.paper.ryseinventory.content.IntelligentItem;
 
 public interface IntelligentItemError {
 
     /**
      * @param player The player
-     * @param item  The item
-     * This interface method is called when the player is unable to click on an item.
+     * @param item   The item
+     *               This interface method is called when the player is unable to click on an item.
      */
     default void cantClick(Player player, IntelligentItem item) {
     }
 
     /**
      * @param player The player
-     * @param item  The item
-     * This interface method is called when the player cannot see the item.
+     * @param item   The item
+     *               This interface method is called when the player cannot see the item.
      */
     default void cantSee(Player player, IntelligentItem item) {
     }

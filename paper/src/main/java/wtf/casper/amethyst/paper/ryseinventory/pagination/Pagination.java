@@ -35,8 +35,6 @@ import org.jetbrains.annotations.Nullable;
 import wtf.casper.amethyst.paper.ryseinventory.content.IntelligentItem;
 import wtf.casper.amethyst.paper.ryseinventory.content.IntelligentItemData;
 import wtf.casper.amethyst.paper.ryseinventory.enums.IntelligentType;
-import wtf.casper.amethyst.paper.ryseinventory.pagination.RyseInventory;
-import wtf.casper.amethyst.paper.ryseinventory.pagination.SlotIterator;
 import wtf.casper.amethyst.paper.ryseinventory.util.StringConstants;
 
 import javax.annotation.Nonnegative;
@@ -196,7 +194,7 @@ public class Pagination {
      *
      * @param items An array of smart ItemStacks
      */
-    public void setItems(IntelligentItem [] items) {
+    public void setItems(IntelligentItem[] items) {
         for (IntelligentItem item : items)
             this.inventoryData.add(new IntelligentItemData(item, this.page, -1, false, false));
     }

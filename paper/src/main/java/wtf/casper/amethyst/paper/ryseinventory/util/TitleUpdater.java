@@ -8,7 +8,6 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import wtf.casper.amethyst.paper.ryseinventory.util.ReflectionUtils;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -131,7 +130,8 @@ public final class TitleUpdater {
             InventoryType type = view.getTopInventory().getType();
 
             // Workbenchs and anvils can change their title since 1.14.
-            if ((type == InventoryType.WORKBENCH || type == InventoryType.ANVIL) && !useContainers()) return;
+            if ((type == InventoryType.WORKBENCH || type == InventoryType.ANVIL) && !useContainers())
+                return;
 
             // You can't reopen crafting, creative and player inventory.
             if (UNOPENABLES.contains(type.name())) return;
@@ -176,14 +176,15 @@ public final class TitleUpdater {
         if (handle != null) return handle;
 
         if (extraNames != null && extraNames.length > 0) {
-            if (extraNames.length == 1) return getField(refc, instc, extraNames[0]);
+            if (extraNames.length == 1)
+                return getField(refc, instc, extraNames[0]);
             return getField(refc, instc, extraNames[0], removeFirst(extraNames));
         }
 
         return null;
     }
 
-    private static String [] removeFirst(String [] array) {
+    private static String[] removeFirst(String[] array) {
         int length = array.length;
 
         String[] result = new String[length - 1];

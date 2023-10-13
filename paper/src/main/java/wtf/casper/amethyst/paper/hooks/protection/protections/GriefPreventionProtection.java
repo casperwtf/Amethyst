@@ -15,7 +15,8 @@ public class GriefPreventionProtection implements IProtection {
     public boolean canBuild(Player player, Location location) {
         Claim claimAt = GriefPrevention.instance.dataStore.getClaimAt(location, true, null);
         if (claimAt == null) return true;
-        if (GriefPrevention.instance.dataStore.getPlayerData(player.getUniqueId()).ignoreClaims) return true;
+        if (GriefPrevention.instance.dataStore.getPlayerData(player.getUniqueId()).ignoreClaims)
+            return true;
         return claimAt.hasExplicitPermission(player, ClaimPermission.Build);
     }
 
@@ -23,7 +24,8 @@ public class GriefPreventionProtection implements IProtection {
     public boolean canBreak(Player player, Location location) {
         Claim claimAt = GriefPrevention.instance.dataStore.getClaimAt(location, true, null);
         if (claimAt == null) return true;
-        if (GriefPrevention.instance.dataStore.getPlayerData(player.getUniqueId()).ignoreClaims) return true;
+        if (GriefPrevention.instance.dataStore.getPlayerData(player.getUniqueId()).ignoreClaims)
+            return true;
         return claimAt.hasExplicitPermission(player, ClaimPermission.Build);
     }
 
@@ -31,7 +33,8 @@ public class GriefPreventionProtection implements IProtection {
     public boolean canInteract(Player player, Location location) {
         Claim claimAt = GriefPrevention.instance.dataStore.getClaimAt(location, true, null);
         if (claimAt == null) return true;
-        if (GriefPrevention.instance.dataStore.getPlayerData(player.getUniqueId()).ignoreClaims) return true;
+        if (GriefPrevention.instance.dataStore.getPlayerData(player.getUniqueId()).ignoreClaims)
+            return true;
         return claimAt.hasExplicitPermission(player, ClaimPermission.Access);
     }
 
@@ -39,7 +42,8 @@ public class GriefPreventionProtection implements IProtection {
     public boolean canAttack(Player player, Location location) {
         Claim claimAt = GriefPrevention.instance.dataStore.getClaimAt(location, true, null);
         if (claimAt == null) return true;
-        if (GriefPrevention.instance.dataStore.getPlayerData(player.getUniqueId()).ignoreClaims) return true;
+        if (GriefPrevention.instance.dataStore.getPlayerData(player.getUniqueId()).ignoreClaims)
+            return true;
         return claimAt.hasExplicitPermission(player, ClaimPermission.Access);
     }
 

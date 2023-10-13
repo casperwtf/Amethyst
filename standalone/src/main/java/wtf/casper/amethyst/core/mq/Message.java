@@ -1,7 +1,6 @@
 package wtf.casper.amethyst.core.mq;
 
 import com.google.gson.JsonObject;
-import lombok.Getter;
 import wtf.casper.amethyst.core.AmethystCore;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
 

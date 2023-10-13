@@ -22,38 +22,38 @@ public class ArmorstandUtils extends AmethystListener<JavaPlugin> {
         armorStand.getPersistentDataContainer().set(armorstandKey, PersistentDataType.BYTE, (byte) 1);
     }
 
-    public static void unMarkArmorstand(ArmorStand armorStand) {
+    public static void unmarkArmorstand(ArmorStand armorStand) {
         armorStand.getPersistentDataContainer().remove(armorstandKey);
     }
 
-    public static boolean isArmorstand(ArmorStand armorStand) {
+    public static boolean isTracked(ArmorStand armorStand) {
         return armorStand.getPersistentDataContainer().has(armorstandKey, PersistentDataType.BYTE);
     }
 
     @EventHandler
     public void onArmorStandHit(EntityDamageByEntityEvent event) {
-        if (event.getEntity() instanceof ArmorStand && isArmorstand((ArmorStand) event.getEntity())) {
+        if (event.getEntity() instanceof ArmorStand && isTracked((ArmorStand) event.getEntity())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onArmorStandInteract(PlayerInteractEntityEvent event) {
-        if (event.getRightClicked() instanceof ArmorStand && isArmorstand((ArmorStand) event.getRightClicked())) {
+        if (event.getRightClicked() instanceof ArmorStand && isTracked((ArmorStand) event.getRightClicked())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onArmorStandInteract(PlayerInteractAtEntityEvent event) {
-        if (event.getRightClicked() instanceof ArmorStand && isArmorstand((ArmorStand) event.getRightClicked())) {
+        if (event.getRightClicked() instanceof ArmorStand && isTracked((ArmorStand) event.getRightClicked())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onArmorStandVehicle(VehicleEntityCollisionEvent event) {
-        if (event.getEntity() instanceof ArmorStand && isArmorstand((ArmorStand) event.getEntity())) {
+        if (event.getEntity() instanceof ArmorStand && isTracked((ArmorStand) event.getEntity())) {
             event.setCancelled(true);
         }
     }

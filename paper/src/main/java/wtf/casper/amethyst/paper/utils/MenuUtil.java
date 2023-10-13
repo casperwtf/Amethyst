@@ -1,10 +1,10 @@
 package wtf.casper.amethyst.paper.utils;
 
+import org.bukkit.plugin.java.JavaPlugin;
+import wtf.casper.amethyst.paper.AmethystPaper;
 import wtf.casper.amethyst.paper.ryseinventory.content.InventoryProvider;
 import wtf.casper.amethyst.paper.ryseinventory.enums.InventoryOpenerType;
 import wtf.casper.amethyst.paper.ryseinventory.pagination.RyseInventory;
-import org.bukkit.plugin.java.JavaPlugin;
-import wtf.casper.amethyst.paper.AmethystPaper;
 
 public class MenuUtil {
 

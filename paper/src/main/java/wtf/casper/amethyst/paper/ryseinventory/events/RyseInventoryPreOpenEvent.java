@@ -34,10 +34,10 @@ import org.jetbrains.annotations.NotNull;
 import wtf.casper.amethyst.paper.ryseinventory.pagination.RyseInventory;
 
 /**
- * @since 7/4/2022
  * @author Rysefoxx | Rysefoxx#6772
  * <br>
  * This class is called before the inventory is opened. With this you are able to e.g. change the inventory #setInventory or cancel it completely #setCancelled
+ * @since 7/4/2022
  */
 public class RyseInventoryPreOpenEvent extends PlayerEvent implements Cancellable {
 

@@ -1,24 +1,21 @@
-package wtf.casper.amethyst.paper;
+package wtf.casper.amethyst.paper.providers;
 
+import cloud.commandframework.CloudCapability;
 import cloud.commandframework.CommandManager;
 import cloud.commandframework.annotations.AnnotationParser;
+import cloud.commandframework.bukkit.CloudBukkitCapabilities;
 import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator;
-import cloud.commandframework.extra.confirmation.CommandConfirmationManager;
 import cloud.commandframework.meta.SimpleCommandMeta;
-import cloud.commandframework.minecraft.extras.MinecraftHelp;
 import cloud.commandframework.paper.PaperCommandManager;
 import lombok.Getter;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import wtf.casper.amethyst.core.inject.Inject;
 
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 @Getter
-public class CloudCommandHandler {
+public class CloudCommandProvider {
 
     private PaperCommandManager<CommandSender> commandManager;
 
@@ -32,8 +29,16 @@ public class CloudCommandHandler {
                     Function.identity(),
                     Function.identity()
             );
-            commandManager.registerBrigadier();
-            commandManager.registerAsynchronousCompletions();
+
+            if (commandManager.queryCapability(CloudBukkitCapabilities.BRIGADIER)) {
+                plugin.getLogger().log(java.util.logging.Level.INFO, "Enabling Brigadier support for Amethyst");
+                commandManager.registerBrigadier();
+            }
+
+            if (commandManager.queryCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
+                plugin.getLogger().log(java.util.logging.Level.INFO, "Enabling asynchronous tab completion for Amethyst");
+                commandManager.registerAsynchronousCompletions();
+            }
 
             AnnotationParser<CommandSender> parser = new AnnotationParser<>(commandManager, CommandSender.class,
                     parserParameters -> SimpleCommandMeta.empty()

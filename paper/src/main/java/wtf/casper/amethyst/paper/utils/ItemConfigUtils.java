@@ -1,12 +1,13 @@
 package wtf.casper.amethyst.paper.utils;
 
-import wtf.casper.storageapi.libs.boostedyaml.block.implementation.Section;
+import dev.dejvokep.boostedyaml.block.implementation.Section;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import wtf.casper.amethyst.core.exceptions.AmethystException;
 import wtf.casper.amethyst.core.utils.MathUtils;
 
@@ -78,7 +79,16 @@ public class ItemConfigUtils {
         });
         section.getOptionalSection("nbt").ifPresent(section1 -> {
             for (String key : section1.getRoutesAsStrings(false)) {
-                builder.addNBT(section1.getString(key + ".key"), section1.get(key + ".value"));
+                Object oTemp = section1.get(key + ".value");
+                if (oTemp instanceof String o) {
+                    builder.getItemMeta().getPersistentDataContainer().set(builder.keyFromCache(section1.getString(key + ".key")), PersistentDataType.STRING, o);
+                } else if (oTemp instanceof Boolean o) {
+                    builder.getItemMeta().getPersistentDataContainer().set(builder.keyFromCache(section1.getString(key + ".key")), PersistentDataType.BOOLEAN, o);
+                } else if (oTemp instanceof Number o) {
+                    builder.getItemMeta().getPersistentDataContainer().set(builder.keyFromCache(section1.getString(key + ".key")), PersistentDataType.DOUBLE, o.doubleValue());
+                } else {
+                    throw new IllegalStateException("Unknown type for NBT value. " + oTemp.getClass().getName() + " for " + section1.getRouteAsString());
+                }
             }
         });
         section.getOptionalBoolean("unbreakable").ifPresent(builder::setUnbreakable);
@@ -102,7 +112,7 @@ public class ItemConfigUtils {
     }
 
     public static ItemStack getItem(Section section, OfflinePlayer player, PlaceholderReplacer replacer) {
-        return getItemBuilder(section, player, replacer).getStack();
+        return getItemBuilder(section, player, replacer);
     }
 
     public static ItemStack getItem(Section section, OfflinePlayer player) {

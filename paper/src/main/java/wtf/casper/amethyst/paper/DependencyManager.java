@@ -55,88 +55,87 @@ public class DependencyManager {
         String javaassist = "jav";
 
         List<Library> libraries = Lists.newArrayList(
+                this.getLibrary("net{}wesjd", "anvilgui", "1.9.0-20230924.153836-3", // 1.9.0-SNAPSHOT but CodeMC is weird
+                        "net{}wesjd{}anvilgui", amethystPackage + "{}libs{}anvilgui"
+                ),
                 this.getLibrary("org{}mariadb{}jdbc", "mariadb-java-client", "3.1.3",
-                        "org{}mariadb{}jdbc", amethystPackage+"{}libs{}mariadb"
+                        "org{}mariadb{}jdbc", amethystPackage + "{}libs{}mariadb"
                 ),
                 this.getLibrary("com{}zaxxer", "HikariCP", "5.0.1",
-                        "com{}zaxxer{}hikari", amethystPackage+"{}libs{}hikari"
+                        "com{}zaxxer{}hikari", amethystPackage + "{}libs{}hikari"
                 ),
                 this.getLibrary("com{}jeff_media", "CustomBlockData", "2.2.0",
-                        "com{}jeff_media{}customblockdata", amethystPackage+"{}libs{}customblockdata"
+                        "com{}jeff_media{}customblockdata", amethystPackage + "{}libs{}customblockdata"
                 ),
                 this.getLibrary("io{}lettuce", "lettuce-core", "6.2.3.RELEASE",
-                        "org{}reactivestreams", amethystPackage+"{}libs{}reactivestreams",
-                        reactor+"actor", amethystPackage+"{}libs{}reactor",
-                        "io{}lettuce{}core", amethystPackage+"{}libs{}lettuce"
+                        "org{}reactivestreams", amethystPackage + "{}libs{}reactivestreams",
+                        reactor + "actor", amethystPackage + "{}libs{}reactor",
+                        "io{}lettuce{}core", amethystPackage + "{}libs{}lettuce"
                 ),
-                this.getLibrary("io{}projectreactor", reactor+"actor"+"-core", "3.5.3",
-                        reactor+"actor", amethystPackage+"{}libs{}reactor",
-                        "org{}reactivestreams", amethystPackage+"{}libs{}reactivestreams"
+                this.getLibrary("io{}projectreactor", reactor + "actor" + "-core", "3.5.3",
+                        reactor + "actor", amethystPackage + "{}libs{}reactor",
+                        "org{}reactivestreams", amethystPackage + "{}libs{}reactivestreams"
                 ),
                 this.getLibrary("dev{}dejvokep", "boosted-yaml", "1.3",
-                        "dev{}dejvokep{}boostedyaml", amethystPackage+"{}libs{}boostedyaml"
+                        "dev{}dejvokep{}boostedyaml", amethystPackage + "{}libs{}boostedyaml"
                 ),
-                // removed because we shade now
-//                this.getLibrary("io{}github{}rysefoxx{}inventory", "RyseInventory-Plugin", "1.5.7",
-//                        "io{}github{}rysefoxx{}inventory", amethystPackage+"{}libs{}inventory"
-//                ),
                 this.getLibrary("de{}themoep", "minedown-adventure", "1.7.1-SNAPSHOT",
-                        "de{}themoep{}minedown", amethystPackage+"{}libs{}minedown"
+                        "de{}themoep{}minedown", amethystPackage + "{}libs{}minedown"
                 ),
                 this.getLibrary("com{}github{}chubbyduck1", "HologramBridge", "1.1.0",
-                        "gg{}optimalgames{}hologrambridge", amethystPackage+"{}libs{}hologrambridge"
+                        "gg{}optimalgames{}hologrambridge", amethystPackage + "{}libs{}hologrambridge"
                 ),
                 this.getLibrary("com{}google{}code{}gson", "gson", "2.10.1",
-                        "com{}google{}gson", amethystPackage+"{}libs{}google{}gson"
+                        "com{}google{}gson", amethystPackage + "{}libs{}google{}gson"
                 ),
                 this.getLibrary("org{}mongodb", "mongo-java-driver", "3.12.11",
-                        "com{}mongodb", amethystPackage+"{}libs{}mongodb"
+                        "com{}mongodb", amethystPackage + "{}libs{}mongodb"
                 ),
                 this.getLibrary("org{}reactivestreams", "reactive-streams", "1.0.4",
-                        "org{}reactivestreams", amethystPackage+"{}libs{}reactivestreams"
+                        "org{}reactivestreams", amethystPackage + "{}libs{}reactivestreams"
                 ),
                 this.getLibrary("com{}github{}Redempt", "Crunch", "1.0",
-                        "redempt{}crunch", amethystPackage+"{}libs{}crunch"
+                        "redempt{}crunch", amethystPackage + "{}libs{}crunch"
                 ),
                 this.getLibrary("org{}quartz-scheduler", "quartz", "2.3.2",
-                        "org{}quartz", amethystPackage+"{}libs{}quartz"
+                        "org{}quartz", amethystPackage + "{}libs{}quartz"
                 ),
                 this.getLibrary("com{}github{}ben-manes{}caffeine", "caffeine", "3.1.5",
-                        "com{}github{}benmanes{}caffeine", amethystPackage+"{}libs{}caffeine"
+                        "com{}github{}benmanes{}caffeine", amethystPackage + "{}libs{}caffeine"
                 ),
                 this.getLibrary("org{}reflections", "reflections", "0.10.2",
-                        "org{}reflections", amethystPackage+"{}libs{}reflections",
-                        javaassist+"assist", amethystPackage+"{}libs{}javassist"
+                        "org{}reflections", amethystPackage + "{}libs{}reflections",
+                        javaassist + "assist", amethystPackage + "{}libs{}javassist"
                 ),
                 // so much cloud shit wtf
                 this.getLibrary("io{}leangen{}geantyref", "geantyref", "1.3.14",
-                        "io{}leangen{}geantyref", amethystPackage+"{}libs{}geantyref"
+                        "io{}leangen{}geantyref", amethystPackage + "{}libs{}geantyref"
                 ),
                 this.getLibrary("cloud{}commandframework", "cloud-core", "1.8.3",
-                        "cloud{}commandframework", amethystPackage+"{}libs{}cloud{}commandframework"
+                        "cloud{}commandframework", amethystPackage + "{}libs{}cloud{}commandframework"
                 ),
                 this.getLibrary("cloud{}commandframework", "cloud-services", "1.8.3",
-                        "cloud{}commandframework", amethystPackage+"{}libs{}cloud{}commandframework"
+                        "cloud{}commandframework", amethystPackage + "{}libs{}cloud{}commandframework"
                 ),
                 this.getLibrary("cloud{}commandframework", "cloud-tasks", "1.8.3",
-                        "cloud{}commandframework", amethystPackage+"{}libs{}cloud{}commandframework"
+                        "cloud{}commandframework", amethystPackage + "{}libs{}cloud{}commandframework"
                 ),
                 this.getLibrary("cloud{}commandframework", "cloud-brigadier", "1.8.3",
-                        "cloud{}commandframework", amethystPackage+"{}libs{}cloud{}commandframework"
+                        "cloud{}commandframework", amethystPackage + "{}libs{}cloud{}commandframework"
                 ),
                 this.getLibrary("cloud{}commandframework", "cloud-bukkit", "1.8.3",
-                        "cloud{}commandframework", amethystPackage+"{}libs{}cloud{}commandframework"
+                        "cloud{}commandframework", amethystPackage + "{}libs{}cloud{}commandframework"
                 ),
                 this.getLibrary("cloud{}commandframework", "cloud-paper", "1.8.3",
-                        "cloud{}commandframework", amethystPackage+"{}libs{}cloud{}commandframework"
+                        "cloud{}commandframework", amethystPackage + "{}libs{}cloud{}commandframework"
                 ),
                 this.getLibrary("cloud{}commandframework", "cloud-minecraft-extras", "1.8.3",
-                        "cloud{}commandframework", amethystPackage+"{}libs{}cloud{}commandframework"
+                        "cloud{}commandframework", amethystPackage + "{}libs{}cloud{}commandframework"
                 ),
                 this.getLibrary("cloud{}commandframework", "cloud-annotations", "1.8.3",
-                        "cloud{}commandframework", amethystPackage+"{}libs{}cloud{}commandframework"
+                        "cloud{}commandframework", amethystPackage + "{}libs{}cloud{}commandframework"
                 ),
-                this.getLibrary("com{}github{}retrooper{}packetevents", "spigot", "2.0.1",
+                this.getLibrary("com{}github{}retrooper{}packetevents", "spigot", "2.0.2",
                         "com{}github{}retrooper{}packetevents", amethystPackage + "{}libs{}packetevents{}api",
                         "io{}github{}retrooper{}packetevents", amethystPackage + "{}libs{}packetevents{}impl",
                         "net{}kyori", amethystPackage + "{}libs{}kyori"
@@ -146,11 +145,9 @@ public class DependencyManager {
                 ),
                 this.getLibrary("net{}kyori", "adventure-platform-bukkit", "4.3.0",
                         "net{}kyori", amethystPackage + "{}libs{}kyori"
-                ),
-                this.getLibrary("net{}wesjd", "anvilgui", "1.9.0-SNAPSHOT",
-                        "net{}wesjd{}anvilgui", amethystPackage + "{}libs{}anvilgui"
                 )
         );
+
         for (Library library : libraries) {
             try {
                 this.libraryManager.loadLibrary(library);

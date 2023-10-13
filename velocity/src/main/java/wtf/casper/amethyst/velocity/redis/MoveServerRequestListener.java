@@ -11,7 +11,7 @@ import wtf.casper.amethyst.velocity.AmethystVelocity;
 
 import java.util.Optional;
 
-public class MoveServerRequestListener implements RedisPubSubListener<String, String > {
+public class MoveServerRequestListener implements RedisPubSubListener<String, String> {
 
     private final AmethystVelocity plugin;
 

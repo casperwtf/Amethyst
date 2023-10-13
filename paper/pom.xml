@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -9,6 +10,10 @@
 
     <properties>
         <amethyst.version>2.0.0</amethyst.version>
+        <!--        Connector Versions-->
+        <holographicdisplays.legacyversion>2.4.9</holographicdisplays.legacyversion>
+        <holographicdisplays.version>3.0.0</holographicdisplays.version>
+        <decentholograms.version>2.7.5</decentholograms.version>
     </properties>
 
 
@@ -51,111 +56,165 @@
                             <relocations>
                                 <relocation>
                                     <pattern>de.themoep.minedown</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.minedown</shadedPattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.minedown
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>fr.mrmicky.fastboard</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.fastboard</shadedPattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.fastboard
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.google.gson</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.google.gson</shadedPattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.google.gson
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>dev.dejvokep.boostedyaml</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.boostedyaml</shadedPattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.boostedyaml
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>com.jeff_media.customblockdata</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.customblockdata</shadedPattern>
+                                    <pattern>com.jeff_media.customblockdata
+                                    </pattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.customblockdata
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>io.lettuce.core</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.lettuce</shadedPattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.lettuce
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>net.byteflux.libby</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.libby</shadedPattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.libby
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>wtf.casper.amethystmenu.inventory</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.inventory</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>gg.optimalgames.hologrambridge</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.hologrambridge</shadedPattern>
+                                    <pattern>wtf.casper.amethystmenu.inventory
+                                    </pattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.inventory
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.mongodb</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.mongodb</shadedPattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.mongodb
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>reactor</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.reactor</shadedPattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.reactor
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.reactivestreams</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.reactivestreams</shadedPattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.reactivestreams
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>redempt.crunch</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.crunch</shadedPattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.crunch
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.quartz</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.quartz</shadedPattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.quartz
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>com.github.benmanes.caffeine</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.caffeine</shadedPattern>
+                                    <pattern>com.github.benmanes.caffeine
+                                    </pattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.caffeine
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.reflections</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.reflections</shadedPattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.reflections
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>javassist</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.javassist</shadedPattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.javassist
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>com.iridium.iridiumcolorapi</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.iridiumcolorapi</shadedPattern>
+                                    <pattern>com.iridium.iridiumcolorapi
+                                    </pattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.iridiumcolorapi
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.zaxxer.hikari</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.hikari</shadedPattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.hikari
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.mariadb.jdbc</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.mariadb</shadedPattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.mariadb
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>cloud.commandframework</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.cloud.commandframework</shadedPattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.cloud.commandframework
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>io.leangen.geantyref</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.geantyref</shadedPattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.geantyref
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>com.github.retrooper.packetevents</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.packetevents.api</shadedPattern>
+                                    <pattern>com.github.retrooper.packetevents
+                                    </pattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.packetevents.api
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>io.github.retrooper.packetevents</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.packetevents.impl</shadedPattern>
+                                    <pattern>io.github.retrooper.packetevents
+                                    </pattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.packetevents.impl
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>net.kyori</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.kyori</shadedPattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.kyori
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>net.wesjd.anvilgui</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.anvilgui</shadedPattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.anvilgui
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>wtf.casper.storageapi</pattern>
-                                    <shadedPattern>wtf.casper.amethyst.libs.storageapi</shadedPattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.storageapi
+                                    </shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>
@@ -173,41 +232,78 @@
                                         <exclude>com/google/**</exclude>
                                         <exclude>com/mchange/**</exclude>
                                         <exclude>com/zaxxer/**</exclude>
-                                        <exclude>com/github/benmanes/**</exclude>
+                                        <exclude>com/github/benmanes/**
+                                        </exclude>
                                         <exclude>com/mongodb/**</exclude>
                                         <exclude>io/**</exclude>
                                         <exclude>javax/**</exclude>
                                         <exclude>redempt/**</exclude>
-<!--                                        <exclude>wtf/casper/storageapi/**</exclude>-->
-                                        <exclude>wtf/casper/amethyst/libs/google/**</exclude>
-                                        <exclude>wtf/casper/amethyst/libs/hikari/**</exclude>
-                                        <exclude>wtf/casper/amethyst/libs/boostedyaml/**</exclude>
-                                        <exclude>wtf/casper/amethyst/libs/lettuce/**</exclude>
-                                        <exclude>wtf/casper/amethyst/libs/libby/**</exclude>
-                                        <exclude>wtf/casper/amethyst/libs/mongodb/**</exclude>
-<!--                                        <exclude>wtf/casper/amethyst/libs/quartz/**</exclude>-->
-                                        <exclude>wtf/casper/amethyst/libs/reflections/**</exclude>
-                                        <exclude>wtf/casper/amethyst/libs/javassist/**</exclude>
-                                        <exclude>wtf/casper/amethyst/libs/crunch/**</exclude>
-                                        <exclude>wtf/casper/amethyst/libs/caffeine/**</exclude>
-                                        <exclude>wtf/casper/amethyst/libs/fastboard/**</exclude>
-                                        <exclude>wtf/casper/amethyst/libs/minedown/**</exclude>
-                                        <exclude>wtf/casper/amethyst/libs/customblockdata/**</exclude>
-                                        <exclude>wtf/casper/amethyst/libs/hologrambridge/**</exclude>
-                                        <exclude>wtf/casper/amethyst/libs/inventory/**</exclude>
-                                        <exclude>wtf/casper/amethyst/libs/reactivestreams/**</exclude>
-                                        <exclude>wtf/casper/amethyst/libs/reactor/**</exclude>
-                                        <exclude>wtf/casper/amethyst/libs/iridiumcolorapi/**</exclude>
+                                        <!--                                        <exclude>wtf/casper/storageapi/**</exclude>-->
+                                        <exclude>
+                                            wtf/casper/amethyst/libs/google/**
+                                        </exclude>
+                                        <exclude>
+                                            wtf/casper/amethyst/libs/hikari/**
+                                        </exclude>
+                                        <exclude>
+                                            wtf/casper/amethyst/libs/boostedyaml/**
+                                        </exclude>
+                                        <exclude>
+                                            wtf/casper/amethyst/libs/lettuce/**
+                                        </exclude>
+                                        <exclude>
+                                            wtf/casper/amethyst/libs/libby/**
+                                        </exclude>
+                                        <exclude>
+                                            wtf/casper/amethyst/libs/mongodb/**
+                                        </exclude>
+                                        <!--                                        <exclude>wtf/casper/amethyst/libs/quartz/**</exclude>-->
+                                        <exclude>
+                                            wtf/casper/amethyst/libs/reflections/**
+                                        </exclude>
+                                        <exclude>
+                                            wtf/casper/amethyst/libs/javassist/**
+                                        </exclude>
+                                        <exclude>
+                                            wtf/casper/amethyst/libs/crunch/**
+                                        </exclude>
+                                        <exclude>
+                                            wtf/casper/amethyst/libs/caffeine/**
+                                        </exclude>
+                                        <exclude>
+                                            wtf/casper/amethyst/libs/fastboard/**
+                                        </exclude>
+                                        <exclude>
+                                            wtf/casper/amethyst/libs/minedown/**
+                                        </exclude>
+                                        <exclude>
+                                            wtf/casper/amethyst/libs/customblockdata/**
+                                        </exclude>
+                                        <exclude>
+                                            wtf/casper/amethyst/libs/inventory/**
+                                        </exclude>
+                                        <exclude>
+                                            wtf/casper/amethyst/libs/reactivestreams/**
+                                        </exclude>
+                                        <exclude>
+                                            wtf/casper/amethyst/libs/reactor/**
+                                        </exclude>
+                                        <exclude>
+                                            wtf/casper/amethyst/libs/iridiumcolorapi/**
+                                        </exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
-                                    <artifact>wtf.casper.amethystmenu.inventory</artifact>
+                                    <artifact>
+                                        wtf.casper.amethystmenu.inventory
+                                    </artifact>
                                     <excludes>
                                         <exclude>plugin.yml</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <createDependencyReducedPom>false
+                            </createDependencyReducedPom>
                         </configuration>
                     </execution>
                 </executions>
@@ -257,12 +353,6 @@
             <groupId>de.themoep</groupId>
             <artifactId>minedown-adventure</artifactId>
             <version>1.7.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.chubbyduck1</groupId>
-            <artifactId>HologramBridge</artifactId>
-            <version>1.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -386,14 +476,16 @@
             <artifactId>api</artifactId>
             <version>1.40.4</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/DeluxeCombat-API.jar</systemPath>
+            <systemPath>${project.basedir}/libs/DeluxeCombat-API.jar
+            </systemPath>
         </dependency>
         <dependency>
             <groupId>net.craftersland.essentials</groupId>
             <artifactId>mysql</artifactId>
             <version>1.25.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/EssentialsMysqlStorage-API.jar</systemPath>
+            <systemPath>${project.basedir}/libs/EssentialsMysqlStorage-API.jar
+            </systemPath>
         </dependency>
         <dependency>
             <groupId>com.jeff_media</groupId>
@@ -422,7 +514,7 @@
         <dependency>
             <groupId>com.github.retrooper.packetevents</groupId>
             <artifactId>spigot</artifactId>
-            <version>2.0.1</version>
+            <version>2.0.2</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -439,12 +531,75 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <dependency>
+            <groupId>com.gmail.filoghost.holographicdisplays</groupId>
+            <artifactId>holographicdisplays-api</artifactId>
+            <version>${holographicdisplays.legacyversion}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>me.filoghost.holographicdisplays</groupId>
+            <artifactId>holographicdisplays-api</artifactId>
+            <version>${holographicdisplays.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--        CMI Connector-->
+
+        <dependency>
+            <groupId>CMI-LIB</groupId>
+            <artifactId>CMI-LIB</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/libs/CMILib1.4.2.1.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>CMI</groupId>
+            <artifactId>CMI</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/libs/CMI-API9.6.5.0.jar</systemPath>
+        </dependency>
+
+        <!--        Holograms - https://www.spigotmc.org/resources/holograms.4924/ -->
+
+        <dependency>
+            <groupId>Holograms</groupId>
+            <artifactId>Holograms</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/libs/Holograms-2.13.jar</systemPath>
+        </dependency>
+
+        <!--        Decent Holograms -->
+
+        <dependency>
+            <groupId>com.github.decentsoftware-eu</groupId>
+            <artifactId>decentholograms</artifactId>
+            <version>${decentholograms.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--        Fancy Holograms-->
+
+        <dependency>
+            <groupId>de.oliver.fancyholograms</groupId>
+            <artifactId>fancyholograms</artifactId>
+            <version>2.0.1</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/libs/FancyHolograms-2.0.1.jar</systemPath>
+        </dependency>
+
+        <!--        https://www.spigotmc.org/resources/proholographicdisplays-holographic-displays-continued-now-on-spigot.112186/ TODO look into this support?-->
     </dependencies>
 
     <pluginRepositories>
         <pluginRepository>
             <id>maven-snapshots</id>
-            <url>https://repository.apache.org/content/repositories/snapshots/</url>
+            <url>https://repository.apache.org/content/repositories/snapshots/
+            </url>
         </pluginRepository>
     </pluginRepositories>
 
@@ -485,7 +640,9 @@
         </repository>
         <repository>
             <id>placeholderapi</id>
-            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+            <url>
+                https://repo.extendedclip.com/content/repositories/placeholderapi/
+            </url>
         </repository>
         <repository>
             <id>minebench-repo</id>
@@ -506,11 +663,15 @@
         </repository>
         <repository>
             <id>jeff-media-public</id>
-            <url>https://hub.jeff-media.com/nexus/repository/jeff-media-public/</url>
+            <url>
+                https://hub.jeff-media.com/nexus/repository/jeff-media-public/
+            </url>
         </repository>
         <repository>
             <id>iridiumdevelopment</id>
-            <url>https://nexus.iridiumdevelopment.net/repository/maven-releases/</url>
+            <url>
+                https://nexus.iridiumdevelopment.net/repository/maven-releases/
+            </url>
         </repository>
         <repository>
             <id>codemc-snapshots</id>

@@ -1,9 +1,9 @@
 package wtf.casper.amethyst.paper.utils;
 
-import wtf.casper.storageapi.libs.boostedyaml.block.implementation.Section;
 import org.bukkit.Location;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
+import wtf.casper.storageapi.libs.boostedyaml.block.implementation.Section;
 
 public class SoundUtils {
 

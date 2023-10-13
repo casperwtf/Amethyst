@@ -94,7 +94,8 @@ public abstract class Laser {
      * @param plugin plugin used to start the task
      */
     public void start(Plugin plugin) {
-        if (main != null) throw new IllegalStateException("Task already started");
+        if (main != null)
+            throw new IllegalStateException("Task already started");
         this.plugin = plugin;
         main = new BukkitRunnable() {
             int time = 0;
@@ -225,8 +226,10 @@ public abstract class Laser {
     }
 
     private BukkitTask moveInternal(Location location, int ticks, BukkitTask oldTask, Supplier<Location> locationSupplier, ReflectiveConsumer<Location> moveConsumer, Runnable callback) {
-        if (ticks <= 0) throw new IllegalArgumentException("Ticks must be a positive value");
-        if (plugin == null) throw new IllegalStateException("The laser must have been started a least once");
+        if (ticks <= 0)
+            throw new IllegalArgumentException("Ticks must be a positive value");
+        if (plugin == null)
+            throw new IllegalStateException("The laser must have been started a least once");
         if (oldTask != null && !oldTask.isCancelled()) oldTask.cancel();
         return new BukkitRunnable() {
             double xPerTick = (location.getX() - locationSupplier.get().getX()) / ticks;
@@ -735,7 +738,8 @@ public abstract class Laser {
                     // e.g. Bukkit.getBukkitVersion() -> 1.17.1-R0.1-SNAPSHOT
                     versions = Bukkit.getBukkitVersion().split("-R")[0].split("\\.");
                     versionMinor = versions.length <= 2 ? 0 : Integer.parseInt(versions[2]);
-                } else versionMinor = Integer.parseInt(versions[2].substring(1)); // 1.X.Y
+                } else
+                    versionMinor = Integer.parseInt(versions[2].substring(1)); // 1.X.Y
                 logger.info("Found server version 1." + version + "." + versionMinor);
 
                 mappings = ProtocolMappings.getMappings(version);
@@ -773,7 +777,8 @@ public abstract class Laser {
                     watcherSet = getMethod(dataWatcherClass, "set");
                     watcherRegister = getMethod(dataWatcherClass, "register");
                 }
-                if (version >= 15) watcherDirty = getMethod(dataWatcherClass, "markDirty");
+                if (version >= 15)
+                    watcherDirty = getMethod(dataWatcherClass, "markDirty");
                 if (version > 19 || (version == 19 && versionMinor >= 3))
                     watcherPack = dataWatcherClass.getDeclaredMethod("b");
                 packetSpawnNormal = getNMSClass("network.protocol.game", "PacketPlayOutSpawnEntity").getDeclaredConstructor(version < 17 ? new Class<?>[0] : new Class<?>[]{getNMSClass("world.entity", "Entity")});

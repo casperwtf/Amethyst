@@ -457,7 +457,7 @@ public class RyseInventory {
      * @param values The values
      * @throws IllegalArgumentException if the two arrays do not have the same size.
      */
-    public void openAll(String [] keys, Object [] values) throws IllegalArgumentException {
+    public void openAll(String[] keys, Object[] values) throws IllegalArgumentException {
         Preconditions.checkArgument(keys.length == values.length, StringConstants.INVALID_OBJECT);
 
         for (Player onlinePlayer : Bukkit.getOnlinePlayers())
@@ -493,7 +493,7 @@ public class RyseInventory {
      * @param values The values
      * @throws IllegalArgumentException if the two arrays do not have the same size.
      */
-    public void openAll(@Nonnegative int page, String [] keys, Object [] values) throws IllegalArgumentException {
+    public void openAll(@Nonnegative int page, String[] keys, Object[] values) throws IllegalArgumentException {
         Preconditions.checkArgument(keys.length == values.length, StringConstants.INVALID_OBJECT);
 
         for (Player onlinePlayer : Bukkit.getOnlinePlayers())
@@ -514,7 +514,7 @@ public class RyseInventory {
      *
      * @param players The players for whom the inventory should be opened.
      */
-    public void open(Player ... players) {
+    public void open(Player... players) {
         for (Player player : players)
             open(player, 1);
     }
@@ -527,7 +527,7 @@ public class RyseInventory {
      * @param values  The values
      * @throws IllegalArgumentException if the two arrays do not have the same size.
      */
-    public void open(String [] keys, Object [] values, Player ... players) throws IllegalArgumentException {
+    public void open(String[] keys, Object[] values, Player... players) throws IllegalArgumentException {
         Preconditions.checkArgument(keys.length == values.length, StringConstants.INVALID_OBJECT);
 
         for (Player player : players)
@@ -540,7 +540,7 @@ public class RyseInventory {
      * @param players The players for whom the inventory should be opened.
      * @param data    The predefined data
      */
-    public void open(@NotNull Map<String, Object> data, Player ... players) {
+    public void open(@NotNull Map<String, Object> data, Player... players) {
         for (Player player : players)
             open(player, 1, data);
     }
@@ -551,7 +551,7 @@ public class RyseInventory {
      * @param players The players for whom the inventory should be opened.
      * @param page    The page to open.
      */
-    public void open(@Nonnegative int page, Player ... players) {
+    public void open(@Nonnegative int page, Player... players) {
         for (Player player : players)
             open(player, page);
     }
@@ -575,7 +575,7 @@ public class RyseInventory {
      * @param values The values
      * @throws IllegalArgumentException if the two arrays do not have the same size.
      */
-    public void open(@NotNull Player player, @Nonnegative int page, String [] keys, Object [] values) throws IllegalArgumentException {
+    public void open(@NotNull Player player, @Nonnegative int page, String[] keys, Object[] values) throws IllegalArgumentException {
         Preconditions.checkArgument(keys.length == values.length, StringConstants.INVALID_OBJECT);
 
         Bukkit.getScheduler().runTask(this.plugin, () -> initInventory(player, page, keys, values));
@@ -603,7 +603,7 @@ public class RyseInventory {
      * @param values The values
      * @throws IllegalArgumentException if the two arrays do not have the same size.
      */
-    public void open(@NotNull Player player, String [] keys, Object [] values) throws IllegalArgumentException {
+    public void open(@NotNull Player player, String[] keys, Object[] values) throws IllegalArgumentException {
         Preconditions.checkArgument(keys.length == values.length, StringConstants.INVALID_OBJECT);
 
         Bukkit.getScheduler().runTask(this.plugin, () -> initInventory(player, 1, keys, values));
@@ -1435,7 +1435,8 @@ public class RyseInventory {
     public void removeMaterialAnimator(@NotNull IntelligentMaterialAnimator animator) {
         this.materialAnimator.remove(animator);
 
-        if (!Bukkit.getScheduler().isQueued(animator.getTask().getTaskId())) return;
+        if (!Bukkit.getScheduler().isQueued(animator.getTask().getTaskId()))
+            return;
         animator.getTask().cancel();
     }
 
@@ -1448,7 +1449,8 @@ public class RyseInventory {
     public void removeItemAnimator(@NotNull IntelligentItemNameAnimator animator) {
         this.itemAnimator.remove(animator);
 
-        if (!Bukkit.getScheduler().isQueued(animator.getTask().getTaskId())) return;
+        if (!Bukkit.getScheduler().isQueued(animator.getTask().getTaskId()))
+            return;
         animator.getTask().cancel();
     }
 
@@ -1471,7 +1473,8 @@ public class RyseInventory {
     public void removeTitleAnimator(@NotNull IntelligentTitleAnimator animator) {
         this.titleAnimator.remove(animator);
 
-        if (!Bukkit.getScheduler().isQueued(animator.getTask().getTaskId())) return;
+        if (!Bukkit.getScheduler().isQueued(animator.getTask().getTaskId()))
+            return;
         animator.getTask().cancel();
     }
 
@@ -1856,7 +1859,7 @@ public class RyseInventory {
          * @param slots The slots
          * @return The Inventory Builder to set additional options.
          */
-        public @NotNull Builder ignoredSlots(int ... slots) {
+        public @NotNull Builder ignoredSlots(int... slots) {
             for (int slot : slots)
                 this.ryseInventory.ignoredSlotsWithEvents.put(slot, null);
             return this;
@@ -1883,7 +1886,7 @@ public class RyseInventory {
          * @param options All setting options for the inventory
          * @return The Inventory Builder to set additional options.
          */
-        public @NotNull Builder options(InventoryOptions ... options) {
+        public @NotNull Builder options(InventoryOptions... options) {
             this.ryseInventory.options.addAll(new ArrayList<>(Arrays.asList(options)));
             return this;
         }
@@ -1911,7 +1914,7 @@ public class RyseInventory {
          * @param reasons The reason to close the inventory.
          * @return The Inventory Builder to set additional options.
          */
-        public @NotNull Builder close(CloseReason ... reasons) {
+        public @NotNull Builder close(CloseReason... reasons) {
             this.ryseInventory.closeReasons.addAll(new ArrayList<>(Arrays.asList(reasons)));
             return this;
         }
@@ -1972,7 +1975,7 @@ public class RyseInventory {
          * @param condition The condition must return true for the action to be activated.
          * @return The Inventory Builder to set additional options.
          */
-        public @NotNull Builder enableAction(@NotNull BooleanSupplier condition, Action ... actions) {
+        public @NotNull Builder enableAction(@NotNull BooleanSupplier condition, Action... actions) {
             if (!condition.getAsBoolean()) return this;
 
             this.ryseInventory.enabledActions.addAll(Arrays.asList(actions));
@@ -1986,7 +1989,7 @@ public class RyseInventory {
          * @param actions The actions
          * @return The Inventory Builder to set additional options.
          */
-        public @NotNull Builder enableAction(Action ... actions) {
+        public @NotNull Builder enableAction(Action... actions) {
             this.ryseInventory.enabledActions.addAll(Arrays.asList(actions));
             return this;
         }
@@ -2159,7 +2162,7 @@ public class RyseInventory {
          * @param pages The pages
          * @return The Inventory Builder to set additional options.
          */
-        public @NotNull Builder rows(Page ... pages) {
+        public @NotNull Builder rows(Page... pages) {
             for (Page page : pages)
                 rows(page);
 
@@ -2244,7 +2247,7 @@ public class RyseInventory {
          * @param clicks What should be ignored
          * @return The Inventory Builder to set additional options.
          */
-        public @NotNull Builder ignoreClickEvent(DisabledInventoryClick ... clicks) {
+        public @NotNull Builder ignoreClickEvent(DisabledInventoryClick... clicks) {
             this.ryseInventory.ignoreClickEvent.addAll(new ArrayList<>(Arrays.asList(clicks)));
             return this;
         }
@@ -2255,7 +2258,7 @@ public class RyseInventory {
          * @param events The events
          * @return The Inventory Builder to set additional options.
          */
-        public @NotNull Builder ignoreEvents(DisabledEvents ... events) {
+        public @NotNull Builder ignoreEvents(DisabledEvents... events) {
             this.ryseInventory.disabledEvents.addAll(new ArrayList<>(Arrays.asList(events)));
             return this;
         }

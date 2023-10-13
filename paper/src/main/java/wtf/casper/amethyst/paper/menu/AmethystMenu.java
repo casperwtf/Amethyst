@@ -1,16 +1,10 @@
 package wtf.casper.amethyst.paper.menu;
 
-import net.wesjd.anvilgui.AnvilGUI;
-import wtf.casper.amethyst.paper.ryseinventory.animator.SlideAnimation;
-import wtf.casper.amethyst.paper.ryseinventory.content.IntelligentItem;
-import wtf.casper.amethyst.paper.ryseinventory.content.InventoryContents;
-import wtf.casper.amethyst.paper.ryseinventory.content.InventoryProvider;
-import wtf.casper.amethyst.paper.ryseinventory.enums.InventoryOpenerType;
-import wtf.casper.amethyst.paper.ryseinventory.enums.TimeSetting;
-import wtf.casper.amethyst.paper.ryseinventory.pagination.RyseInventory;
+import dev.dejvokep.boostedyaml.block.implementation.Section;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -20,11 +14,17 @@ import org.geysermc.cumulus.form.SimpleForm;
 import org.geysermc.floodgate.api.FloodgateApi;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.core.utils.MathUtils;
+import wtf.casper.amethyst.paper.ryseinventory.animator.SlideAnimation;
+import wtf.casper.amethyst.paper.ryseinventory.content.IntelligentItem;
+import wtf.casper.amethyst.paper.ryseinventory.content.InventoryContents;
+import wtf.casper.amethyst.paper.ryseinventory.content.InventoryProvider;
+import wtf.casper.amethyst.paper.ryseinventory.enums.InventoryOpenerType;
+import wtf.casper.amethyst.paper.ryseinventory.enums.TimeSetting;
+import wtf.casper.amethyst.paper.ryseinventory.pagination.RyseInventory;
 import wtf.casper.amethyst.paper.utils.GeyserUtils;
 import wtf.casper.amethyst.paper.utils.ItemConfigUtils;
 import wtf.casper.amethyst.paper.utils.MenuUtil;
 import wtf.casper.amethyst.paper.utils.PlaceholderReplacer;
-import wtf.casper.storageapi.libs.boostedyaml.block.implementation.Section;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;

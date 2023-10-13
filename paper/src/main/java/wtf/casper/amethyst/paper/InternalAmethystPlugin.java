@@ -1,25 +1,20 @@
 package wtf.casper.amethyst.paper;
 
-public final class AmethystActual extends AmethystPlugin {
+public final class InternalAmethystPlugin extends AmethystPlugin {
 
     private final AmethystPaper amethystPaper;
 
-    public AmethystActual() {
+    public InternalAmethystPlugin() {
         amethystPaper = new AmethystPaper(this, false);
     }
 
     @Override
-    public void load() {
-        amethystPaper.loadAmethyst(this);
-    }
-
-    @Override
-    public void enable() {
+    public void onEnable() {
         amethystPaper.initAmethyst(this);
     }
 
     @Override
-    public void disable() {
+    public void onDisable() {
         amethystPaper.disableAmethyst();
     }
 }

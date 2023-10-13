@@ -619,7 +619,7 @@ public class InventoryContents {
      * @param slots The slots to remove from the ignored slots list.
      * @return true if the slots were removed, false if none were in the list.
      */
-    public boolean removeIgnoredSlots(int ... slots) {
+    public boolean removeIgnoredSlots(int... slots) {
         int success = 0;
         for (int slot : slots)
             if (removeIgnoredSlot(slot))
@@ -648,7 +648,7 @@ public class InventoryContents {
      * @param slots The slots to remove from the ignored slots list.
      * @return true if the slots were added, false if none were in the list.
      */
-    public boolean addIgnoredSlots(int ... slots) {
+    public boolean addIgnoredSlots(int... slots) {
         int success = 0;
         for (int slot : slots)
             if (addIgnoredSlot(slot))
@@ -694,7 +694,7 @@ public class InventoryContents {
      * @return true if the item was removed.
      * @throws IllegalArgumentException if slot greater than 53 or slot greater than inventory size
      */
-    public boolean removeItemWithConsumer(int ... slots) throws IllegalArgumentException {
+    public boolean removeItemWithConsumer(int... slots) throws IllegalArgumentException {
         int success = 0;
         for (int slot : slots) {
 
@@ -741,7 +741,8 @@ public class InventoryContents {
             if (!optional.isPresent()) continue;
 
             ItemStack itemStack = optional.get().getItemStack();
-            if (itemStack == null || itemStack.getType().equals(Material.AIR)) continue;
+            if (itemStack == null || itemStack.getType().equals(Material.AIR))
+                continue;
             if (!itemStack.isSimilar(item)) continue;
 
             removeSlot(i);
@@ -765,7 +766,8 @@ public class InventoryContents {
             if (!optional.isPresent()) continue;
 
             ItemStack itemStack = optional.get().getItemStack();
-            if (itemStack == null || itemStack.getType().equals(Material.AIR)) continue;
+            if (itemStack == null || itemStack.getType().equals(Material.AIR))
+                continue;
             if (itemStack.getType() != material) continue;
 
             removeSlot(i);
@@ -797,7 +799,8 @@ public class InventoryContents {
             if (!optional.isPresent()) continue;
 
             ItemStack itemStack = optional.get().getItemStack();
-            if (itemStack == null || itemStack.getType().equals(Material.AIR)) continue;
+            if (itemStack == null || itemStack.getType().equals(Material.AIR))
+                continue;
             if (!itemStack.isSimilar(item)) continue;
 
             Optional<Inventory> inventoryOptional = this.inventory.inventoryBasedOnOption(this.player.getUniqueId());
@@ -825,7 +828,8 @@ public class InventoryContents {
             if (!optional.isPresent()) continue;
 
             ItemStack itemStack = optional.get().getItemStack();
-            if (itemStack == null || itemStack.getType().equals(Material.AIR)) continue;
+            if (itemStack == null || itemStack.getType().equals(Material.AIR))
+                continue;
             if (!itemStack.isSimilar(item)) continue;
 
             removeSlot(i);
@@ -854,7 +858,8 @@ public class InventoryContents {
             if (!optional.isPresent()) continue;
 
             ItemStack itemStack = optional.get().getItemStack();
-            if (itemStack == null || itemStack.getType().equals(Material.AIR)) continue;
+            if (itemStack == null || itemStack.getType().equals(Material.AIR))
+                continue;
             if (!itemStack.isSimilar(item)) continue;
 
             Optional<Inventory> inventoryOptional = this.inventory.inventoryBasedOnOption(this.player.getUniqueId());
@@ -880,7 +885,8 @@ public class InventoryContents {
             if (!optional.isPresent()) continue;
 
             ItemStack itemStack = optional.get().getItemStack();
-            if (itemStack == null || itemStack.getType().equals(Material.AIR)) continue;
+            if (itemStack == null || itemStack.getType().equals(Material.AIR))
+                continue;
 
             removeSlot(i);
 
@@ -907,7 +913,8 @@ public class InventoryContents {
             if (!optional.isPresent()) continue;
 
             ItemStack itemStack = optional.get().getItemStack();
-            if (itemStack == null || itemStack.getType().equals(Material.AIR)) continue;
+            if (itemStack == null || itemStack.getType().equals(Material.AIR))
+                continue;
 
             Optional<Inventory> inventoryOptional = this.inventory.inventoryBasedOnOption(this.player.getUniqueId());
             if (itemStack.getAmount() - amount < 1) {
@@ -1650,7 +1657,7 @@ public class InventoryContents {
      * @param items The ItemStacks to be displayed in the inventory
      * @return true if the items were added, false otherwise.
      */
-    public boolean add(IntelligentItem ... items) {
+    public boolean add(IntelligentItem... items) {
         int success = 0;
 
         for (IntelligentItem item : items)
@@ -1675,7 +1682,7 @@ public class InventoryContents {
      * @param items The ItemStacks to be displayed in the inventory
      * @return true if the items were added, false otherwise.
      */
-    public boolean add(ItemStack ... items) {
+    public boolean add(ItemStack... items) {
         int sucess = 0;
 
         for (ItemStack item : items)
@@ -1706,7 +1713,7 @@ public class InventoryContents {
      * @return true if the items were added, false otherwise.
      */
     public boolean add(@NotNull IntelligentType type,
-                       ItemStack ... items) {
+                       ItemStack... items) {
         int success = 0;
 
         for (ItemStack item : items) {
@@ -2363,8 +2370,9 @@ public class InventoryContents {
 
     /**
      * Fills the inventory diagonally based on the slot.
+     *
      * @param startSlot The slot where the diagonal should start.
-     * @param item The item to be placed.
+     * @param item      The item to be placed.
      * @throws IllegalArgumentException if slot greater than 53 or slot greater than inventory size
      */
     public void fillDiagonal(@Nonnegative int startSlot,
@@ -2383,8 +2391,9 @@ public class InventoryContents {
 
     /**
      * Fills the inventory diagonally based on the slot.
+     *
      * @param startSlot The slot where the diagonal should start.
-     * @param item The item to be placed.
+     * @param item      The item to be placed.
      * @throws IllegalArgumentException if slot greater than 53 or slot greater than inventory size
      */
     public void fillDiagonal(@Nonnegative int startSlot,
@@ -2394,9 +2403,10 @@ public class InventoryContents {
 
     /**
      * Fills the inventory diagonally based on the slot.
+     *
      * @param startSlot The slot where the diagonal should start.
-     * @param item The item to be placed.
-     * @param type The type of the item
+     * @param item      The item to be placed.
+     * @param type      The type of the item
      * @throws IllegalArgumentException if slot greater than 53 or slot greater than inventory size
      */
     public void fillDiagonal(@Nonnegative int startSlot,
@@ -2851,8 +2861,10 @@ public class InventoryContents {
             Optional<InventoryContents> inventoryContents = this.inventory.getManager().getContents(openedPlayer);
 
             inventoryContents.ifPresent(contents -> {
-                if (this.pagination.page() != contents.pagination().page()) return;
-                if (contents.updateLore(SlotUtils.toSlot(row, column), index, line)) updated.getAndIncrement();
+                if (this.pagination.page() != contents.pagination().page())
+                    return;
+                if (contents.updateLore(SlotUtils.toSlot(row, column), index, line))
+                    updated.getAndIncrement();
             });
         }
         return updated.get() == this.inventory.getOpenedPlayers().size();
@@ -2910,7 +2922,8 @@ public class InventoryContents {
             Optional<InventoryContents> inventoryContents = this.inventory.getManager().getContents(openedPlayer);
 
             inventoryContents.ifPresent(contents -> {
-                if (this.pagination.page() != contents.pagination().page()) return;
+                if (this.pagination.page() != contents.pagination().page())
+                    return;
                 if (contents.updateLore(slot, lore)) updated.getAndIncrement();
             });
         }
@@ -2979,8 +2992,10 @@ public class InventoryContents {
             Optional<InventoryContents> inventoryContents = this.inventory.getManager().getContents(openedPlayer);
 
             inventoryContents.ifPresent(contents -> {
-                if (this.pagination.page() != contents.pagination().page()) return;
-                if (contents.updateLore(slot, index, line)) updated.getAndIncrement();
+                if (this.pagination.page() != contents.pagination().page())
+                    return;
+                if (contents.updateLore(slot, index, line))
+                    updated.getAndIncrement();
             });
         }
         return updated.get() == this.inventory.getOpenedPlayers().size();
@@ -3033,8 +3048,10 @@ public class InventoryContents {
             Optional<InventoryContents> inventoryContents = this.inventory.getManager().getContents(openedPlayer);
 
             inventoryContents.ifPresent(contents -> {
-                if (this.pagination.page() != contents.pagination().page()) return;
-                if (contents.updateLore(slots, indexes, lines)) updated.getAndIncrement();
+                if (this.pagination.page() != contents.pagination().page())
+                    return;
+                if (contents.updateLore(slots, indexes, lines))
+                    updated.getAndIncrement();
             });
         }
         return updated.get() == this.inventory.getOpenedPlayers().size();
@@ -3109,7 +3126,8 @@ public class InventoryContents {
             Optional<InventoryContents> inventoryContents = this.inventory.getManager().getContents(openedPlayer);
 
             inventoryContents.ifPresent(contents -> {
-                if (this.pagination.page() != contents.pagination().page()) return;
+                if (this.pagination.page() != contents.pagination().page())
+                    return;
                 if (contents.update(slot, itemStack)) updated.getAndIncrement();
             });
         }
@@ -3164,8 +3182,10 @@ public class InventoryContents {
             Optional<InventoryContents> inventoryContents = this.inventory.getManager().getContents(openedPlayer);
 
             inventoryContents.ifPresent(contents -> {
-                if (this.pagination.page() != contents.pagination().page()) return;
-                if (contents.updateDisplayName(slot, displayName)) updated.getAndIncrement();
+                if (this.pagination.page() != contents.pagination().page())
+                    return;
+                if (contents.updateDisplayName(slot, displayName))
+                    updated.getAndIncrement();
             });
         }
         return updated.get() == this.inventory.getOpenedPlayers().size();
@@ -3215,7 +3235,8 @@ public class InventoryContents {
             Optional<InventoryContents> inventoryContents = this.inventory.getManager().getContents(openedPlayer);
 
             inventoryContents.ifPresent(contents -> {
-                if (this.pagination.page() != contents.pagination().page()) return;
+                if (this.pagination.page() != contents.pagination().page())
+                    return;
 
                 contents.updateDisplayName(slot, item, displayName);
             });
@@ -3307,8 +3328,10 @@ public class InventoryContents {
             Optional<InventoryContents> inventoryContents = this.inventory.getManager().getContents(openedPlayer);
 
             inventoryContents.ifPresent(contents -> {
-                if (this.pagination.page() != contents.pagination().page()) return;
-                if (contents.update(slot, intelligentItem)) updated.getAndIncrement();
+                if (this.pagination.page() != contents.pagination().page())
+                    return;
+                if (contents.update(slot, intelligentItem))
+                    updated.getAndIncrement();
             });
         }
         return updated.get() == this.inventory.getOpenedPlayers().size();
@@ -3346,7 +3369,8 @@ public class InventoryContents {
             Optional<InventoryContents> inventoryContents = this.inventory.getManager().getContents(openedPlayer);
 
             inventoryContents.ifPresent(contents -> {
-                if (this.pagination.page() != contents.pagination().page()) return;
+                if (this.pagination.page() != contents.pagination().page())
+                    return;
                 if (contents.update(SlotUtils.toSlot(row, column), intelligentItem.getItemStack()))
                     updated.getAndIncrement();
             });
@@ -3387,8 +3411,10 @@ public class InventoryContents {
             Optional<InventoryContents> inventoryContents = this.inventory.getManager().getContents(openedPlayer);
 
             inventoryContents.ifPresent(contents -> {
-                if (this.pagination.page() != contents.pagination().page()) return;
-                if (contents.update(slots, itemStack)) updated.getAndIncrement();
+                if (this.pagination.page() != contents.pagination().page())
+                    return;
+                if (contents.update(slots, itemStack))
+                    updated.getAndIncrement();
             });
         }
         return updated.get() == this.inventory.getOpenedPlayers().size();
@@ -3426,8 +3452,10 @@ public class InventoryContents {
             Optional<InventoryContents> inventoryContents = this.inventory.getManager().getContents(openedPlayer);
 
             inventoryContents.ifPresent(contents -> {
-                if (this.pagination.page() != contents.pagination().page()) return;
-                if (contents.update(SlotUtils.toSlot(row, column), itemStack)) updated.getAndIncrement();
+                if (this.pagination.page() != contents.pagination().page())
+                    return;
+                if (contents.update(SlotUtils.toSlot(row, column), itemStack))
+                    updated.getAndIncrement();
             });
         }
         return updated.get() == this.inventory.getOpenedPlayers().size();
@@ -3444,7 +3472,8 @@ public class InventoryContents {
                                          @NotNull ItemStack itemStack) {
         AtomicInteger updated = new AtomicInteger();
         pairs.forEach(pair -> {
-            if (updateViaCoordination(pair.getLeft(), pair.getRight(), itemStack)) updated.getAndIncrement();
+            if (updateViaCoordination(pair.getLeft(), pair.getRight(), itemStack))
+                updated.getAndIncrement();
         });
         return updated.get() >= pairs.size();
     }
@@ -3463,8 +3492,10 @@ public class InventoryContents {
             Optional<InventoryContents> inventoryContents = this.inventory.getManager().getContents(openedPlayer);
 
             inventoryContents.ifPresent(contents -> {
-                if (this.pagination.page() != contents.pagination().page()) return;
-                if (contents.updateViaCoordination(pairs, itemStack)) updated.getAndIncrement();
+                if (this.pagination.page() != contents.pagination().page())
+                    return;
+                if (contents.updateViaCoordination(pairs, itemStack))
+                    updated.getAndIncrement();
             });
         }
         return updated.get() == this.inventory.getOpenedPlayers().size();
@@ -3523,8 +3554,10 @@ public class InventoryContents {
             Optional<InventoryContents> inventoryContents = this.inventory.getManager().getContents(openedPlayer);
 
             inventoryContents.ifPresent(contents -> {
-                if (this.pagination.page() != contents.pagination().page()) return;
-                if (contents.update(itemSlot, newSlot, itemStack)) updated.getAndIncrement();
+                if (this.pagination.page() != contents.pagination().page())
+                    return;
+                if (contents.update(itemSlot, newSlot, itemStack))
+                    updated.getAndIncrement();
             });
         }
         return updated.get() == this.inventory.getOpenedPlayers().size();
@@ -3558,8 +3591,10 @@ public class InventoryContents {
             Optional<InventoryContents> inventoryContents = this.inventory.getManager().getContents(openedPlayer);
 
             inventoryContents.ifPresent(contents -> {
-                if (this.pagination.page() != contents.pagination().page()) return;
-                if (contents.updatePosition(itemSlot, newSlot)) updated.getAndIncrement();
+                if (this.pagination.page() != contents.pagination().page())
+                    return;
+                if (contents.updatePosition(itemSlot, newSlot))
+                    updated.getAndIncrement();
             });
         }
         return updated.get() == this.inventory.getOpenedPlayers().size();

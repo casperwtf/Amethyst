@@ -28,7 +28,6 @@ package wtf.casper.amethyst.paper.ryseinventory.content;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.entity.Player;
 import wtf.casper.amethyst.paper.ryseinventory.animator.SlideAnimation;
-import wtf.casper.amethyst.paper.ryseinventory.content.InventoryContents;
 import wtf.casper.amethyst.paper.ryseinventory.pagination.RyseInventory;
 
 /**

@@ -17,7 +17,7 @@ public class StringUtils {
      * @param input    the string to check
      * @param enumType the enum type to check against
      *                 <p>
-     * Checks if a string is a valid enum value
+     *                 Checks if a string is a valid enum value
      */
     public static boolean validateEnum(String input, Class<? extends Enum> enumType) {
         if (enumType == null) {
@@ -32,9 +32,9 @@ public class StringUtils {
     }
 
     /**
-    * @param enumType the enum type to check against
-    * @return a list of all enum names
-    * */
+     * @param enumType the enum type to check against
+     * @return a list of all enum names
+     */
     public static List<String> getEnumNames(Class<? extends Enum<?>> enumType) {
         return Arrays.stream(enumType.getEnumConstants()).map(Enum::toString).collect(Collectors.toList());
     }
@@ -42,7 +42,7 @@ public class StringUtils {
     /**
      * @param string the string to capitalize
      *               <p>
-     * Capitalizes the first letter of each word in a string
+     *               Capitalizes the first letter of each word in a string
      */
     public static String capitalizeString(String string) {
         StringBuilder output = new StringBuilder();
@@ -57,8 +57,8 @@ public class StringUtils {
     /**
      * @param enumValue the enum value to format
      *                  <p>
-     * Formats an enum value to be human-readable
-     * Example: "MY_ENUM_VALUE" -> "My Enum Value"
+     *                  Formats an enum value to be human-readable
+     *                  Example: "MY_ENUM_VALUE" -> "My Enum Value"
      */
     public static String formatEnum(String enumValue) {
         if (enumValue == null) return null;
@@ -68,8 +68,8 @@ public class StringUtils {
     /**
      * @param enumValue the enum value to format
      *                  <p>
-     * Formats an enum value to be human-readable
-     * Example: "MY_ENUM_VALUE" -> "My Enum Value"
+     *                  Formats an enum value to be human-readable
+     *                  Example: "MY_ENUM_VALUE" -> "My Enum Value"
      */
     public static String formatEnum(Enum<?> enumValue) {
         if (enumValue == null) return null;
@@ -77,10 +77,10 @@ public class StringUtils {
     }
 
     /**
-     * @param current The current progress
-     * @param max The maximum progress
+     * @param current   The current progress
+     * @param max       The maximum progress
      * @param totalBars total bars to display
-     * @param symbol the symbol to use for the bar
+     * @param symbol    the symbol to use for the bar
      * @return a string of the progress bar
      */
     public static String getProgressBar(int current, int max, int totalBars, String symbol) {
@@ -175,9 +175,9 @@ public class StringUtils {
     }
 
     /**
-    * @param time1 This should be a time in the future
-    * @return The time formatted into a string to go up to the days
-    * */
+     * @param time1 This should be a time in the future
+     * @return The time formatted into a string to go up to the days
+     */
     public static String timeUntil(long time1) {
 
         long differenceInTime = time1 - System.currentTimeMillis();
@@ -261,11 +261,11 @@ public class StringUtils {
     }
 
     /**
-     * @param input The input to format
+     * @param input    The input to format
      * @param timeUnit The time unit to convert to
      * @return The time in the specified time unit
      * Example: "1w 2d 3h 4m 5s", TimeUnit.SECONDS -> 788645
-     * */
+     */
     public long timeFromString(String input, TimeUnit timeUnit) {
         int seconds = 0;
         int minutes = 0;
@@ -296,11 +296,11 @@ public class StringUtils {
     }
 
     /**
-    * @param line The line to wrap
-    * @param lineLength The length of the line
-    * @return The line wrapped to the specified length
-    * The wrap is split with \n characters
-    * */
+     * @param line       The line to wrap
+     * @param lineLength The length of the line
+     * @return The line wrapped to the specified length
+     * The wrap is split with \n characters
+     */
     public static String wrapLine(String line, int lineLength) {
         if (line.length() == 0) return "\n";
         if (line.length() <= lineLength) return line + "\n";
@@ -324,10 +324,10 @@ public class StringUtils {
     }
 
     /**
-     * @param text The text to check
+     * @param text  The text to check
      * @param chars The characters to check for
      * @return True if the text only contains the characters in the char array
-     * */
+     */
     public static boolean onlyContains(String text, char[] chars) {
         // only contains characters found in the char array
         for (char c : text.toCharArray()) {
@@ -348,17 +348,17 @@ public class StringUtils {
     /**
      * @param text The text to check
      * @return True if the text only contains alphanumeric characters
-     * */
+     */
     public static boolean isAlphaNumeric(String text) {
         return onlyContains(text, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray());
     }
 
     /**
-    * @param string The string to wrap
-    * @param lineLength The length of the line
-    * @param prefix The prefix to add to each line
-    * @param suffix The suffix to add to each line
-    * */
+     * @param string     The string to wrap
+     * @param lineLength The length of the line
+     * @param prefix     The prefix to add to each line
+     * @param suffix     The suffix to add to each line
+     */
     public static List<String> wrap(String string, int lineLength, String prefix, String suffix) {
         StringBuilder b = new StringBuilder();
         for (String line : string.split(Pattern.quote("\n"))) {

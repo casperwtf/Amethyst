@@ -2,10 +2,8 @@ package wtf.casper.amethyst.core.utils;
 
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.Nullable;
-import org.reflections.Configuration;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
-import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ConfigurationBuilder;
 
 import java.lang.annotation.Annotation;
@@ -104,7 +102,8 @@ public class ReflectionUtil {
     public static Method findDeclaredMethod(Class<?> clazz, Class<?>[] paramTypes, Class<?> returnType, String name) {
         for (Method method : clazz.getDeclaredMethods()) {
             if (!method.getReturnType().equals(returnType)) continue;
-            if (!Arrays.equals(paramTypes, method.getParameterTypes())) continue;
+            if (!Arrays.equals(paramTypes, method.getParameterTypes()))
+                continue;
 
             method.setAccessible(true);
             return method;
@@ -144,7 +143,8 @@ public class ReflectionUtil {
     public static <V> V createInstance(Class<V> valueClass, Class<?>[] paramTypes, Object[] params) {
         try {
             return valueClass.getConstructor(paramTypes).newInstance(params);
-        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
+        } catch (InstantiationException | IllegalAccessException |
+                 NoSuchMethodException |
                  InvocationTargetException e) {
             throw new RuntimeException(e);
         }
@@ -160,10 +160,11 @@ public class ReflectionUtil {
 
     /**
      * Get the generic type of class (e.g. List<String> -> String)
+     *
      * @param clazz the class to get the generic type from
      * @param index the index of the generic type
      * @return the generic type
-     * */
+     */
     @Nullable
     public static <T> Class<T> getGenericType(Class<T> clazz, int index) {
         Type type = clazz.getGenericSuperclass();
@@ -204,7 +205,8 @@ public class ReflectionUtil {
             field.setAccessible(true);
             Optional<Object> optional = Optional.ofNullable(field.get(v));
             return optional.map(returnType::cast);
-        } catch (NoSuchFieldException | IllegalAccessException | ClassCastException e) {
+        } catch (NoSuchFieldException | IllegalAccessException |
+                 ClassCastException e) {
             return Optional.empty();
         }
     }

@@ -60,7 +60,6 @@ import wtf.casper.amethyst.paper.ryseinventory.content.InventoryContents;
 import wtf.casper.amethyst.paper.ryseinventory.enums.*;
 import wtf.casper.amethyst.paper.ryseinventory.events.*;
 import wtf.casper.amethyst.paper.ryseinventory.other.EventCreator;
-import wtf.casper.amethyst.paper.ryseinventory.pagination.RyseInventory;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -109,7 +108,8 @@ public class InventoryManager {
      * @throws NullPointerException If the item ID is null.
      */
     public void register(@NotNull final IntelligentItem item) throws NullPointerException {
-        if (item.getId() == null) throw new NullPointerException("The item has no ID!");
+        if (item.getId() == null)
+            throw new NullPointerException("The item has no ID!");
         this.items.add(item);
     }
 
@@ -369,7 +369,8 @@ public class InventoryManager {
 
             RyseInventory mainInventory = inventories.get(player.getUniqueId());
 
-            if (!mainInventory.getOptions().contains(InventoryOptions.NO_DAMAGE)) return;
+            if (!mainInventory.getOptions().contains(InventoryOptions.NO_DAMAGE))
+                return;
             event.setCancelled(true);
         }
 
@@ -383,7 +384,8 @@ public class InventoryManager {
 
             RyseInventory mainInventory = inventories.get(player.getUniqueId());
 
-            if (!mainInventory.getOptions().contains(InventoryOptions.NO_HUNGER)) return;
+            if (!mainInventory.getOptions().contains(InventoryOptions.NO_HUNGER))
+                return;
             event.setCancelled(true);
         }
 
@@ -395,7 +397,8 @@ public class InventoryManager {
 
             RyseInventory mainInventory = inventories.get(player.getUniqueId());
 
-            if (!mainInventory.getOptions().contains(InventoryOptions.NO_ITEM_PICKUP)) return;
+            if (!mainInventory.getOptions().contains(InventoryOptions.NO_ITEM_PICKUP))
+                return;
             event.setCancelled(true);
         }
 
@@ -410,7 +413,8 @@ public class InventoryManager {
 
                 RyseInventory mainInventory = inventories.get(player.getUniqueId());
 
-                if (!mainInventory.getOptions().contains(InventoryOptions.NO_POTION_EFFECT)) continue;
+                if (!mainInventory.getOptions().contains(InventoryOptions.NO_POTION_EFFECT))
+                    continue;
                 event.setCancelled(true);
 
             }
@@ -438,7 +442,8 @@ public class InventoryManager {
 
                     RyseInventory mainInventory = inventories.get(affectedPlayer.getUniqueId());
 
-                    if (!mainInventory.getOptions().contains(InventoryOptions.NO_BLOCK_BREAK)) return;
+                    if (!mainInventory.getOptions().contains(InventoryOptions.NO_BLOCK_BREAK))
+                        return;
                     event.setCancelled(true);
                 });
             }
@@ -498,7 +503,8 @@ public class InventoryManager {
 
                     Optional<IntelligentItem> itemOptional = contents.get(targetSlot);
 
-                    if (cancelEventIfItemHasConsumer(event, mainInventory, targetSlot, itemOptional)) return;
+                    if (cancelEventIfItemHasConsumer(event, mainInventory, targetSlot, itemOptional))
+                        return;
 
                     if (adjustItemStackAmount(topInventory, event, mainInventory, contents, targetSlot, targetAmount))
                         return;
@@ -752,9 +758,9 @@ public class InventoryManager {
          * @param itemStack    The item you want to check for.
          * @return An array of integers.
          */
-        private int [] checkForExistingItem(@NotNull Inventory topInventory,
-                                                     @Nullable ItemStack itemStack,
-                                                     @NotNull RyseInventory mainInventory) {
+        private int[] checkForExistingItem(@NotNull Inventory topInventory,
+                                           @Nullable ItemStack itemStack,
+                                           @NotNull RyseInventory mainInventory) {
             int[] data = new int[2];
             data[0] = -1;
             for (int i = 0; i < topInventory.getSize(); i++) {
@@ -789,7 +795,8 @@ public class InventoryManager {
                                                      int targetSlot,
                                                      Optional<IntelligentItem> itemOptional) {
             if (!mainInventory.getIgnoredSlots().containsKey(targetSlot)) {
-                if (itemOptional.isPresent() && itemOptional.get().getDefaultConsumer() != null) return true;
+                if (itemOptional.isPresent() && itemOptional.get().getDefaultConsumer() != null)
+                    return true;
 
                 event.setCancelled(true);
                 return true;
@@ -892,7 +899,8 @@ public class InventoryManager {
                                                     int slot,
                                                     ClickType clickType,
                                                     InventoryContents contents) {
-            if (event.getCursor() == null || event.getCursor().getType() == Material.AIR) return;
+            if (event.getCursor() == null || event.getCursor().getType() == Material.AIR)
+                return;
 
             ItemStack cursor = event.getCursor().clone();
             if (clickType == ClickType.RIGHT) {

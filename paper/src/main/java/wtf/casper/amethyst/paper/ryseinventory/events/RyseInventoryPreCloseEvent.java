@@ -50,8 +50,8 @@ public class RyseInventoryPreCloseEvent extends PlayerEvent implements Cancellab
      *
      * @param player    The player who closed the inventory.
      * @param inventory The inventory that was closed.
-     * <p>
-     * The event is called only when the inventory is closed with the {@link RyseInventory#close(Player)} method.
+     *                  <p>
+     *                  The event is called only when the inventory is closed with the {@link RyseInventory#close(Player)} method.
      */
     public RyseInventoryPreCloseEvent(@NotNull Player player, @NotNull RyseInventory inventory) {
         super(player);

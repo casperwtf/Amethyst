@@ -91,6 +91,7 @@ public final class NMSReflectionUtil {
             throw new IllegalArgumentException("Failed to parse server version. Could not find any package starting with name: 'org.bukkit.craftbukkit.v'");
         VERSION = found;
     }
+
     /**
      * The raw minor version number.
      * E.g. {@code v1_17_R1} to {@code 17}
@@ -138,7 +139,8 @@ public final class NMSReflectionUtil {
             sendPacket = lookup.findVirtual(playerConnection,
                     v(18, "a").orElse("sendPacket"),
                     MethodType.methodType(void.class, getNMSClass("network.protocol", "Packet")));
-        } catch (NoSuchMethodException | NoSuchFieldException | IllegalAccessException ex) {
+        } catch (NoSuchMethodException | NoSuchFieldException |
+                 IllegalAccessException ex) {
             ex.printStackTrace();
         }
 
@@ -240,7 +242,8 @@ public final class NMSReflectionUtil {
 
             // Checking if the connection is not null is enough. There is no need to check if the player is online.
             if (connection != null) {
-                for (Object packet : packets) SEND_PACKET.invoke(connection, packet);
+                for (Object packet : packets)
+                    SEND_PACKET.invoke(connection, packet);
             }
         } catch (Throwable throwable) {
             throwable.printStackTrace();

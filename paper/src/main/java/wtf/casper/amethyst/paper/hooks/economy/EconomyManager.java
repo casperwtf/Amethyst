@@ -12,7 +12,7 @@ public class EconomyManager {
 
     public final static List<IEconomy> economies = new ArrayList<>();
 
-    public static void init() {
+    public EconomyManager() {
         for (IEconomy iEconomy : List.of(
                 new ExpEconomy(),
                 new SQLEssEconomy(),

@@ -123,7 +123,8 @@ public final class ReflectionUtils {
             sendPacket = lookup.findVirtual(playerConnection,
                     v(18, "a").orElse("sendPacket"),
                     MethodType.methodType(void.class, getNMSClass("network.protocol", "Packet")));
-        } catch (NoSuchMethodException | NoSuchFieldException | IllegalAccessException ex) {
+        } catch (NoSuchMethodException | NoSuchFieldException |
+                 IllegalAccessException ex) {
             Bukkit.getLogger().log(Level.SEVERE, "Error while finding getter", ex);
         }
 
@@ -273,7 +274,8 @@ public final class ReflectionUtils {
 
             // Checking if the connection is not null is enough. There is no need to check if the player is online.
             if (connection != null) {
-                for (Object packet : packets) SEND_PACKET.invoke(connection, packet);
+                for (Object packet : packets)
+                    SEND_PACKET.invoke(connection, packet);
             }
         } catch (Throwable throwable) {
             Bukkit.getLogger().log(Level.SEVERE, "Error sending a packet.", throwable);

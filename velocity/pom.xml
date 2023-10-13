@@ -127,7 +127,8 @@
                 <configuration>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <tagNameFormat>@{project.version}</tagNameFormat>
-                    <scmCommentPrefix xml:space="preserve">[RELEASE] </scmCommentPrefix>
+                    <scmCommentPrefix
+                            xml:space="preserve">[RELEASE] </scmCommentPrefix>
                     <goals>install deploy site-deploy
                     </goals> <!-- install is here to fix javadoc generation in multimodule projects -->
                     <releaseProfiles>release</releaseProfiles>

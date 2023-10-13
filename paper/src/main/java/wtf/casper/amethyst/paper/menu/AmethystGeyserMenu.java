@@ -16,8 +16,8 @@ import java.util.UUID;
 import java.util.function.BiConsumer;
 
 /**
-* This entire class is just a wrapper for Geyser's Cumulus API. I just don't remember where things come from so this is to add it all in one place.
-* */
+ * This entire class is just a wrapper for Geyser's Cumulus API. I just don't remember where things come from so this is to add it all in one place.
+ */
 public class AmethystGeyserMenu {
 
     public static ButtonComponent getButtonComponentOf(String text, FormImage.Type type, @Nullable String data) {

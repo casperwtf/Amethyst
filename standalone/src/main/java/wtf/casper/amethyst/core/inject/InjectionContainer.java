@@ -8,13 +8,13 @@ import javax.annotation.Nullable;
 @Getter
 public class InjectionContainer implements Comparable<InjectionContainer> {
 
-    public static final InjectionContainer GLOBAL = new InjectionContainer(null, Integer.MAX_VALUE);;
+    public static final InjectionContainer GLOBAL = new InjectionContainer(null, Integer.MAX_VALUE);
 
     @Nullable
     private InjectionContainer parent;
     /**
      * The priority of this container. Higher priority containers will be checked first.
-     * */
+     */
     private int priority;
 
     public InjectionContainer() {

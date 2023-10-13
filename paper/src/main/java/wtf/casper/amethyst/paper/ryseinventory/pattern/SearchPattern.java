@@ -57,7 +57,7 @@ public class SearchPattern {
      * @param lines The lines of the pattern.
      * @throws IllegalArgumentException If the line length is not 9.
      */
-    public void define(String ... lines) throws IllegalArgumentException {
+    public void define(String... lines) throws IllegalArgumentException {
         long count = Arrays.stream(lines).filter(line -> line.length() != 9).count();
         if (count > 0)
             throw new IllegalArgumentException("Passed pattern must contain 9 characters");
@@ -68,7 +68,7 @@ public class SearchPattern {
     /**
      * Defines the pattern to be searched for.
      *
-     * @param line The line of the pattern.
+     * @param line   The line of the pattern.
      * @param amount How often this pattern should be repeated.
      * @throws IllegalArgumentException If the line length is not 9 or the amount is higher than 6.
      */
@@ -76,7 +76,7 @@ public class SearchPattern {
         if (line.length() != 9)
             throw new IllegalArgumentException("Passed pattern must contain 9 characters");
 
-        if(amount > 6)
+        if (amount > 6)
             throw new IllegalArgumentException("Passed amount must be lower than 6");
 
         for (int i = 0; i < amount; i++)

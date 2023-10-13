@@ -41,7 +41,7 @@ public class TimeUtils {
 
     @Contract(pure = true)
     public int buildTime(@Nonnegative int time, @Nullable TimeSetting setting) {
-        if(setting == null)
+        if (setting == null)
             return -1;
 
         return setting ==

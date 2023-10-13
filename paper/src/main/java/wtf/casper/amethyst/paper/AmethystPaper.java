@@ -1,18 +1,15 @@
 package wtf.casper.amethyst.paper;
 
-import cloud.commandframework.minecraft.extras.MinecraftHelp;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.util.TimeStampMode;
 import com.jeff_media.customblockdata.CustomBlockData;
-import org.bukkit.command.CommandSender;
-import wtf.casper.storageapi.libs.boostedyaml.YamlDocument;
-import wtf.casper.storageapi.libs.boostedyaml.settings.dumper.DumperSettings;
-import wtf.casper.storageapi.libs.boostedyaml.settings.general.GeneralSettings;
-import wtf.casper.storageapi.libs.boostedyaml.settings.loader.LoaderSettings;
-import wtf.casper.storageapi.libs.boostedyaml.settings.updater.UpdaterSettings;
+import dev.dejvokep.boostedyaml.YamlDocument;
+import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
+import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
+import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
+import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import gg.optimalgames.hologrambridge.HologramBridge;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
-import wtf.casper.amethyst.paper.ryseinventory.pagination.InventoryManager;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -21,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import wtf.casper.amethyst.core.AmethystCore;
+import wtf.casper.amethyst.core.scheduler.AmethystScheduler;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.core.utils.DiscordWebhook;
 import wtf.casper.amethyst.core.utils.pastes.PasteProvider;
@@ -34,6 +32,9 @@ import wtf.casper.amethyst.paper.hooks.vanish.VanishManager;
 import wtf.casper.amethyst.paper.listeners.LoggerListener;
 import wtf.casper.amethyst.paper.listeners.PlayerBlockListener;
 import wtf.casper.amethyst.paper.listeners.PlayerSmeltItemEventListener;
+import wtf.casper.amethyst.paper.providers.CloudCommandProvider;
+import wtf.casper.amethyst.paper.ryseinventory.pagination.InventoryManager;
+import wtf.casper.amethyst.paper.scheduler.SchedulerUtil;
 import wtf.casper.amethyst.paper.serialized.SerializableItem;
 import wtf.casper.amethyst.paper.serialized.SerializableItemTypeAdapter;
 import wtf.casper.amethyst.paper.serialized.serializer.*;
@@ -57,7 +58,7 @@ import java.util.logging.Filter;
 public class AmethystPaper {
 
     // this is to prevent relocation from changing the package name here, which would break the relocation check
-    private final char[] DEFAULT_PACKAGE = new char[] {'w', 't', 'f', '.', 'c', 'a', 's', 'p', 'e', 'r', '.', 'a', 'm', 'e', 't', 'h', 'y', 's', 't', '.', 'p', 'a', 'p', 'e', 'r'};
+    private final char[] DEFAULT_PACKAGE = new char[]{'w', 't', 'f', '.', 'c', 'a', 's', 'p', 'e', 'r', '.', 'a', 'm', 'e', 't', 'h', 'y', 's', 't', '.', 'p', 'a', 'p', 'e', 'r'};
 
     @Getter private static final Map<JavaPlugin, InventoryManager> inventoryManagers = new HashMap<>();
     @Getter private static Filter filter;
@@ -65,12 +66,14 @@ public class AmethystPaper {
     @Getter @Setter private static NamespacedKey playerSmeltItemKey;
     @Getter private YamlDocument amethystConfig;
     private static JavaPlugin instance;
-    @Getter private CloudCommandHandler cloudCommandHandler;
+    @Getter private CloudCommandProvider cloudCommandHandler;
+
     /**
      * This constructor is used for loading Amethyst as a plugin
      * We load dependencies here because we need to load them before the plugin is enabled
      * This is because the onLoad for plugins does not call in order of depends within plugin.yml
-     * @param plugin The plugin that is shading Amethyst
+     *
+     * @param plugin          The plugin that is shading Amethyst
      * @param relocationCheck Whether to check if the plugin is relocated
      */
     public AmethystPaper(JavaPlugin plugin, boolean relocationCheck) {
@@ -109,7 +112,7 @@ public class AmethystPaper {
 
         CustomBlockData.registerListener(plugin);
         new PlayerBlockListener(plugin, this);
-        new PlayerSmeltItemEventListener(plugin);;
+        new PlayerSmeltItemEventListener(plugin);
 
         new ServerLock(plugin);
 
@@ -209,16 +212,10 @@ public class AmethystPaper {
 
         new HologramBridge(plugin, true);
 
-        EconomyManager.init();
-        new CombatManager();
-        new ProtectionManager();
-        new StackerManager();
-        new VanishManager();
-
         PacketEvents.getAPI().getSettings().debug(false).bStats(false).checkForUpdates(true).timeStampMode(TimeStampMode.MILLIS).reEncodeByDefault(true);
         PacketEvents.getAPI().init();
 
-        this.cloudCommandHandler = new CloudCommandHandler();
+        this.cloudCommandHandler = new CloudCommandProvider();
         this.cloudCommandHandler.setup(plugin);
 
         if (getYamlConfig().getBoolean("debug", false)) {
@@ -227,6 +224,14 @@ public class AmethystPaper {
                     "Please disable debug mode in the amethyst-config.yml if you do not need it."
             );
         }
+
+        SchedulerUtil.runLater(() -> {
+            new EconomyManager();
+            new CombatManager();
+            new ProtectionManager();
+            new StackerManager();
+            new VanishManager();
+        }, 2L);
     }
 
     public void disableAmethyst() {
@@ -234,10 +239,6 @@ public class AmethystPaper {
         VanishManager.disable();
         CombatManager.disable();
         ProtectionManager.disable();
-        if (Bukkit.getPluginManager().isPluginEnabled("Floodgate") && Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            GeyserUtils.getGeyserStorage().write().join();
-            GeyserUtils.getGeyserStorage().close().join();
-        }
     }
 
     @NotNull

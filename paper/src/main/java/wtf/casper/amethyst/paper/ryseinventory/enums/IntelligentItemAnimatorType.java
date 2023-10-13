@@ -38,7 +38,7 @@ public enum IntelligentItemAnimatorType {
      * <p>
      * Your Text: Hello World
      * <p>
-     *  First H is animated then e then l then o and so on.
+     * First H is animated then e then l then o and so on.
      */
     WORD_BY_WORD,
     /**

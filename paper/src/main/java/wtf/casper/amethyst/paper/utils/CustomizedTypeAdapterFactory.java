@@ -17,7 +17,8 @@ public abstract class CustomizedTypeAdapterFactory<C> implements TypeAdapterFact
         this.customizedClass = customizedClass;
     }
 
-    @SuppressWarnings("unchecked") // we use a runtime check to guarantee that 'C' and 'T' are equal
+    @SuppressWarnings("unchecked")
+    // we use a runtime check to guarantee that 'C' and 'T' are equal
     public final <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
         return type.getRawType() == customizedClass
                 ? (TypeAdapter<T>) customizeMyClassAdapter(gson, (TypeToken<C>) type)

@@ -9,7 +9,8 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-@Getter @Setter
+@Getter
+@Setter
 public class PlayerSmeltItemEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();

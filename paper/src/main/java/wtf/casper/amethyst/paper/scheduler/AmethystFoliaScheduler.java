@@ -1,6 +1,5 @@
 package wtf.casper.amethyst.paper.scheduler;
 
-import org.bukkit.Bukkit;
 import wtf.casper.amethyst.core.scheduler.AmethystScheduler;
 import wtf.casper.amethyst.paper.AmethystPaper;
 import wtf.casper.amethyst.paper.reflections.FoliaReflections;
@@ -77,7 +76,8 @@ public class AmethystFoliaScheduler extends AmethystScheduler {
     public void cancel() {
         try {
             scheduler.getClass().getMethod("cancel").invoke(scheduler);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
     }

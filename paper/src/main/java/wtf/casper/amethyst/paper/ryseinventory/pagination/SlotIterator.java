@@ -29,7 +29,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
-import wtf.casper.amethyst.paper.ryseinventory.pagination.Pagination;
 import wtf.casper.amethyst.paper.ryseinventory.pattern.SlotIteratorPattern;
 import wtf.casper.amethyst.paper.ryseinventory.util.SlotUtils;
 
@@ -166,7 +165,7 @@ public class SlotIterator {
          * @param slots The slots to be used for the inventory.
          * @return The builder object itself.
          */
-        public @NotNull Builder blackList(int ... slots) {
+        public @NotNull Builder blackList(int... slots) {
             for (int blackListSlot : slots)
                 blackList(blackListSlot);
 

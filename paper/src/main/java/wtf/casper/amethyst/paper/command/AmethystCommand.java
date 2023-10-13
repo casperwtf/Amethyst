@@ -1,7 +1,7 @@
 package wtf.casper.amethyst.paper.command;
 
 import com.google.common.collect.ImmutableList;
-import wtf.casper.storageapi.libs.boostedyaml.block.implementation.Section;
+import dev.dejvokep.boostedyaml.block.implementation.Section;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.command.CommandSender;
@@ -157,7 +157,9 @@ public abstract class AmethystCommand extends BukkitCommand {
     }
 
     public void runDefault(@NotNull CommandSender sender, String label, @NotNull String[] args) {
-    };
+    }
+
+    ;
 
     public List<String> defaultTab(@NotNull CommandSender sender, String commandLabel, @NotNull String[] args) {
         return null;

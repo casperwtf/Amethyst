@@ -35,7 +35,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import wtf.casper.amethyst.paper.ryseinventory.animator.IntelligentItemNameAnimator;
 import wtf.casper.amethyst.paper.ryseinventory.content.IntelligentItemColor;
 import wtf.casper.amethyst.paper.ryseinventory.content.InventoryContents;
 import wtf.casper.amethyst.paper.ryseinventory.enums.IntelligentItemAnimatorType;
@@ -159,7 +158,7 @@ public class IntelligentTitleAnimator {
                 inventory.updateTitle(player, currentTitle);
             }
 
-            private char [] updateFramesWhenRequired() {
+            private char[] updateFramesWhenRequired() {
                 char[] currentFrames = framesCopy.get(this.currentFrameIndex).toCharArray();
 
                 if (this.colorState < currentFrames.length)
@@ -261,7 +260,7 @@ public class IntelligentTitleAnimator {
                 return newString;
             }
 
-            private char [] updateFramesWhenRequired() {
+            private char[] updateFramesWhenRequired() {
                 char[] currentFrames = framesCopy.get(this.currentFrameIndex).toCharArray();
 
                 if (this.colorIndex < currentFrames.length)
@@ -358,7 +357,7 @@ public class IntelligentTitleAnimator {
                         + letter;
             }
 
-            private char [] updateFramesWhenRequired() {
+            private char[] updateFramesWhenRequired() {
                 char[] currentFrames = framesCopy.get(this.currentFrameIndex).toCharArray();
 
                 if (this.colorState < currentFrames.length)
@@ -485,7 +484,7 @@ public class IntelligentTitleAnimator {
          * @return The Builder to perform further editing.
          * @throws IllegalArgumentException If the parameters are not equal.
          */
-        public @NotNull Builder colors(@NotNull List<Character> frames, IntelligentItemColor ... color) {
+        public @NotNull Builder colors(@NotNull List<Character> frames, IntelligentItemColor... color) {
             Preconditions.checkArgument(frames.size() == color.length, StringConstants.INVALID_COLOR_FRAME);
 
             for (int i = 0; i < frames.size(); i++)
@@ -502,7 +501,7 @@ public class IntelligentTitleAnimator {
          * @return The Builder to perform further editing.
          * @throws IllegalArgumentException If the parameters are not equal.
          */
-        public @NotNull Builder colors(Character [] frames, IntelligentItemColor ... color) {
+        public @NotNull Builder colors(Character[] frames, IntelligentItemColor... color) {
             Preconditions.checkArgument(frames.length == color.length, StringConstants.INVALID_COLOR_FRAME);
 
             for (int i = 0; i < frames.length; i++)
@@ -519,7 +518,7 @@ public class IntelligentTitleAnimator {
          * @return The Builder to perform further editing.
          * @throws IllegalArgumentException If the parameters are not equal.
          */
-        public @NotNull Builder colors(Character [] frames, @NotNull List<IntelligentItemColor> color) {
+        public @NotNull Builder colors(Character[] frames, @NotNull List<IntelligentItemColor> color) {
             Preconditions.checkArgument(frames.length == color.size(), StringConstants.INVALID_COLOR_FRAME);
 
             for (int i = 0; i < frames.length; i++)
@@ -547,7 +546,7 @@ public class IntelligentTitleAnimator {
          * @return The Builder to perform further editing.
          * @throws IllegalArgumentException If no color has been assigned to the frame yet. e.g {@link wtf.casper.amethyst.paper.ryseinventory.animator.IntelligentItemNameAnimator.Builder#colors(List, IntelligentItemColor...)}
          */
-        public @NotNull Builder frames(String ... frames) {
+        public @NotNull Builder frames(String... frames) {
             for (String frame : frames)
                 frame(frame);
 

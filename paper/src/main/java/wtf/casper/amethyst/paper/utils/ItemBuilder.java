@@ -2,11 +2,7 @@ package wtf.casper.amethyst.paper.utils;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import de.tr7zw.nbtapi.NBT;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.DyeColor;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -17,43 +13,30 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
-public class ItemBuilder {
+public class ItemBuilder extends ItemStack {
 
-    private ItemStack stack;
+    private final static Map<String, NamespacedKey> keysCache = new HashMap<>();
 
     public ItemBuilder(ItemStack stack) {
-        this.stack = stack;
+        this.setType(stack.getType());
+        this.setAmount(stack.getAmount());
+        this.setData(stack.getData());
+        this.setItemMeta(stack.getItemMeta());
     }
 
     public ItemBuilder(Material mat) {
-        stack = new ItemStack(mat);
+        super(mat);
     }
 
-    @Deprecated
-    public ItemBuilder(Material mat, short sh) {
-        stack = new ItemStack(mat, 1, sh);
-    }
-
-    public ItemMeta getItemMeta() {
-        return stack.getItemMeta();
-    }
-
-    public ItemBuilder setItemMeta(ItemMeta meta) {
-        stack.setItemMeta(meta);
+    public ItemBuilder itemMeta(ItemMeta meta) {
+        this.setItemMeta(meta);
         return this;
     }
 
-    public ItemStack getStack() {
-        return stack;
-    }
-
-    public ItemStack getStack(PlaceholderReplacer replacer) {
-        ItemStack stack = this.stack.clone();
-        ItemMeta meta = stack.getItemMeta();
+    public ItemBuilder getStack(PlaceholderReplacer replacer) {
+        ItemMeta meta = this.getItemMeta();
         if (meta.hasDisplayName()) {
             meta.setDisplayName(replacer.parse(meta.getDisplayName()));
         }
@@ -64,13 +47,12 @@ public class ItemBuilder {
             }
             meta.setLore(lore);
         }
-        stack.setItemMeta(meta);
-        return stack;
+        this.setItemMeta(meta);
+        return this;
     }
 
-    public ItemStack getStack(Player player, PlaceholderReplacer replacer) {
-        ItemStack stack = this.stack.clone();
-        ItemMeta meta = stack.getItemMeta();
+    public ItemBuilder getStack(Player player, PlaceholderReplacer replacer) {
+        ItemMeta meta = this.getItemMeta();
         if (meta.hasDisplayName()) {
             meta.setDisplayName(StringUtilsPaper.parsePlaceholders(meta.getDisplayName(), replacer, player));
         }
@@ -81,12 +63,12 @@ public class ItemBuilder {
             }
             meta.setLore(lore);
         }
-        stack.setItemMeta(meta);
-        return stack;
+        this.setItemMeta(meta);
+        return this;
     }
 
     public ItemBuilder setColor(Color color) {
-        LeatherArmorMeta meta = (LeatherArmorMeta) stack.getItemMeta();
+        LeatherArmorMeta meta = (LeatherArmorMeta) this.getItemMeta();
         meta.setColor(color);
         setItemMeta(meta);
         return this;
@@ -106,26 +88,21 @@ public class ItemBuilder {
     }
 
     public ItemBuilder setUnbreakable(boolean unbreakable) {
-        ItemMeta meta = stack.getItemMeta();
+        ItemMeta meta = getItemMeta();
         meta.setUnbreakable(unbreakable);
-        stack.setItemMeta(meta);
+        this.setItemMeta(meta);
         return this;
     }
 
     public ItemBuilder setBannerColor(DyeColor color) {
-        BannerMeta meta = (BannerMeta) stack.getItemMeta();
+        BannerMeta meta = (BannerMeta) this.getItemMeta();
         meta.setBaseColor(color);
         setItemMeta(meta);
         return this;
     }
 
-    public ItemBuilder setAmount(int amount) {
-        stack.setAmount(amount);
-        return this;
-    }
-
     public ItemBuilder setHeadUrl(String url) {
-        SkullMeta skullMeta = (SkullMeta) stack.getItemMeta();
+        SkullMeta skullMeta = (SkullMeta) this.getItemMeta();
         GameProfile profile = new GameProfile(UUID.randomUUID(), null);
         profile.getProperties().put("textures", new Property("textures", url));
         Field profileField;
@@ -136,12 +113,12 @@ public class ItemBuilder {
         } catch (IllegalAccessException | NoSuchFieldException ex) {
             ex.printStackTrace();
         }
-        stack.setItemMeta(skullMeta);
+        this.setItemMeta(skullMeta);
         return this;
     }
 
     public ItemBuilder setHead(String owner) {
-        SkullMeta meta = (SkullMeta) stack.getItemMeta();
+        SkullMeta meta = (SkullMeta) this.getItemMeta();
         meta.setOwningPlayer(Bukkit.getOfflinePlayer(owner));
         setItemMeta(meta);
         return this;
@@ -154,12 +131,7 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder setItemStack(ItemStack stack) {
-        this.stack = stack;
-        return this;
-    }
-
-    public ItemBuilder setLore(List<String> lore) {
+    public ItemBuilder builderLore(List<String> lore) {
         ItemMeta meta = getItemMeta();
         meta.setLore(lore);
         setItemMeta(meta);
@@ -167,12 +139,12 @@ public class ItemBuilder {
     }
 
     public ItemBuilder setMaterial(Material material) {
-        stack.setType(material);
+        this.setType(material);
         return this;
     }
 
     public Material getMaterial() {
-        return stack.getType();
+        return getType();
     }
 
     public ItemBuilder setCustomModelData(int data) {
@@ -212,36 +184,22 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder addNBT(String key, Object value) {
-        NBT.modify(stack, readWriteItemNBT -> {
-            switch (value.getClass().getSimpleName()) {
-                case "String" -> readWriteItemNBT.setString(key, (String) value);
-                case "Integer" -> readWriteItemNBT.setInteger(key, (Integer) value);
-                case "Double" -> readWriteItemNBT.setDouble(key, (Double) value);
-                case "Float" -> readWriteItemNBT.setFloat(key, (Float) value);
-                case "Long" -> readWriteItemNBT.setLong(key, (Long) value);
-                case "Short" -> readWriteItemNBT.setShort(key, (Short) value);
-                case "Byte" -> readWriteItemNBT.setByte(key, (Byte) value);
-                case "Boolean" -> readWriteItemNBT.setBoolean(key, (Boolean) value);
-                case "int[]" -> readWriteItemNBT.setIntArray(key, (int[]) value);
-                case "byte[]" -> readWriteItemNBT.setByteArray(key, (byte[]) value);
-                case "UUID" -> readWriteItemNBT.setUUID(key, (UUID) value);
-                case "ItemStack" -> readWriteItemNBT.setItemStack(key, (ItemStack) value);
-                case "ItemStack[]" -> readWriteItemNBT.setItemStackArray(key, (ItemStack[]) value);
-            }
-        });
-        return this;
+    public NamespacedKey keyFromCache(String key) {
+        if (keysCache.containsKey(key)) {
+            return keysCache.get(key);
+        }
+        NamespacedKey namespacedKey = new NamespacedKey("amethyst", key);
+        keysCache.put(key, namespacedKey);
+        return namespacedKey;
     }
 
-    public ItemBuilder removeNBT(String key) {
-        NBT.modify(stack, readWriteItemNBT -> {
-            readWriteItemNBT.removeKey(key);
-        });
-        return this;
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
     @Override
     public ItemBuilder clone() {
-        return new ItemBuilder(this.stack);
+        return new ItemBuilder(this);
     }
 }

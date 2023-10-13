@@ -154,9 +154,10 @@ public class IntelligentItemNameAnimator {
                 updateDisplayName(contents, currentName);
             }
 
-            private char [] updateFramesWhenRequired() {
+            private char[] updateFramesWhenRequired() {
                 char[] currentFrames = framesCopy.get(this.currentFrameIndex).toCharArray();
-                if (this.colorState < currentFrames.length) return currentFrames;
+                if (this.colorState < currentFrames.length)
+                    return currentFrames;
 
                 this.colorState = 0;
 
@@ -254,10 +255,11 @@ public class IntelligentItemNameAnimator {
                 return false;
             }
 
-            private char [] updateFramesWhenRequired() {
+            private char[] updateFramesWhenRequired() {
                 char[] currentFrames = framesCopy.get(this.currentFrameIndex).toCharArray();
 
-                if (this.colorState < currentFrames.length) return currentFrames;
+                if (this.colorState < currentFrames.length)
+                    return currentFrames;
 
                 this.colorState = 0;
                 if (this.framesCopy.size() > 1 && (this.currentFrameIndex + 1 != this.framesCopy.size())) {
@@ -328,9 +330,10 @@ public class IntelligentItemNameAnimator {
                 updateDisplayName(contents, this.currentName);
             }
 
-            private char [] updateFramesWhenRequired() {
+            private char[] updateFramesWhenRequired() {
                 char[] currentFrames = framesCopy.get(this.currentFrameIndex).toCharArray();
-                if (this.colorState < currentFrames.length) return currentFrames;
+                if (this.colorState < currentFrames.length)
+                    return currentFrames;
 
                 this.colorState = 0;
                 if (this.framesCopy.size() > 1 && (this.currentFrameIndex + 1 != this.framesCopy.size())) {
@@ -503,7 +506,7 @@ public class IntelligentItemNameAnimator {
          * @return The Builder to perform further editing.
          * @throws IllegalArgumentException If the parameters are not equal.
          */
-        public @NotNull Builder colors(@NotNull List<Character> frames, IntelligentItemColor ... color) throws IllegalArgumentException {
+        public @NotNull Builder colors(@NotNull List<Character> frames, IntelligentItemColor... color) throws IllegalArgumentException {
             Preconditions.checkArgument(frames.size() == color.length, StringConstants.INVALID_COLOR_FRAME);
 
             for (int i = 0; i < frames.size(); i++)
@@ -520,7 +523,7 @@ public class IntelligentItemNameAnimator {
          * @return The Builder to perform further editing.
          * @throws IllegalArgumentException If the parameters are not equal.
          */
-        public @NotNull Builder colors(Character [] frames, IntelligentItemColor ... color) {
+        public @NotNull Builder colors(Character[] frames, IntelligentItemColor... color) {
             Preconditions.checkArgument(frames.length == color.length, StringConstants.INVALID_COLOR_FRAME);
 
             for (int i = 0; i < frames.length; i++)
@@ -537,7 +540,7 @@ public class IntelligentItemNameAnimator {
          * @return The Builder to perform further editing.
          * @throws IllegalArgumentException If the parameters are not equal.
          */
-        public @NotNull Builder colors(Character [] frames, @NotNull List<IntelligentItemColor> color) {
+        public @NotNull Builder colors(Character[] frames, @NotNull List<IntelligentItemColor> color) {
             Preconditions.checkArgument(frames.length == color.size(), StringConstants.INVALID_COLOR_FRAME);
 
             for (int i = 0; i < frames.length; i++)
@@ -570,7 +573,7 @@ public class IntelligentItemNameAnimator {
          * @return The Builder to perform further editing.
          * @throws IllegalArgumentException If no color has been assigned to the frame yet. e.g {@link Builder#colors(List, IntelligentItemColor...)}
          */
-        public @NotNull Builder frames(String ... frames) {
+        public @NotNull Builder frames(String... frames) {
             for (String frame : frames)
                 frame(frame);
 

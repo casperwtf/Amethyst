@@ -29,12 +29,12 @@ public class PlaceholderReplacer {
     }
 
     public PlaceholderReplacer center(String key) {
-        center = "{" + key + "}";
+        center = "%" + key + "%";
         return this;
     }
 
     public PlaceholderReplacer add(String key, String value) {
-        placeholders.put("{" + key + "}", value);
+        placeholders.put("%" + key + "%", value);
         return this;
     }
 

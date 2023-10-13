@@ -2,7 +2,9 @@ package wtf.casper.amethyst.core.cache;
 
 import wtf.casper.amethyst.core.utils.AmethystLogger;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MapCache<K, V> implements Cache<K, V> {
@@ -13,8 +15,8 @@ public class MapCache<K, V> implements Cache<K, V> {
         if (object instanceof Map) {
             this.map = (Map<K, V>) object;
         } else {
-            AmethystLogger.error("Cache must be a java.util.Map, creating a new ConcurrentHashMap");
-            this.map = new ConcurrentHashMap<>();
+            AmethystLogger.error("Cache must be a java.util.Map, creating a new synchronized WeakHashMap.");
+            this.map = Collections.synchronizedMap(new WeakHashMap<>());
         }
     }
 

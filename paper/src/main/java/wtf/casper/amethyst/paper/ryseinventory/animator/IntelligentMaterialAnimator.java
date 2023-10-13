@@ -127,8 +127,9 @@ public class IntelligentMaterialAnimator {
                 contents.update(slot, this.itemStack);
             }
 
-            private char [] updateFramesWhenRequired(char [] currentFrames) {
-                if (this.materialState < currentFrames.length) return currentFrames;
+            private char[] updateFramesWhenRequired(char[] currentFrames) {
+                if (this.materialState < currentFrames.length)
+                    return currentFrames;
 
                 this.materialState = 0;
                 if (this.framesCopy.size() > 1 && (this.currentFrameIndex + 1 != this.framesCopy.size())) {
@@ -280,7 +281,7 @@ public class IntelligentMaterialAnimator {
          * @return The Builder to perform further editing.
          * @throws IllegalArgumentException If the parameters are not equal.
          */
-        public @NotNull Builder materials(@NotNull List<Character> frames, Material ... materials) throws IllegalArgumentException {
+        public @NotNull Builder materials(@NotNull List<Character> frames, Material... materials) throws IllegalArgumentException {
             Preconditions.checkArgument(frames.size() == materials.length, StringConstants.INVALID_MATERIAL_FRAME);
 
             for (int i = 0; i < frames.size(); i++)
@@ -297,7 +298,7 @@ public class IntelligentMaterialAnimator {
          * @return The Builder to perform further editing.
          * @throws IllegalArgumentException If the parameters are not equal.
          */
-        public @NotNull Builder materials(Character [] frames, Material ... materials) {
+        public @NotNull Builder materials(Character[] frames, Material... materials) {
             Preconditions.checkArgument(frames.length == materials.length, StringConstants.INVALID_MATERIAL_FRAME);
 
             for (int i = 0; i < frames.length; i++)
@@ -314,7 +315,7 @@ public class IntelligentMaterialAnimator {
          * @return The Builder to perform further editing.
          * @throws IllegalArgumentException If the parameters are not equal.
          */
-        public @NotNull Builder materials(Character [] frames, @NotNull List<Material> materials) {
+        public @NotNull Builder materials(Character[] frames, @NotNull List<Material> materials) {
             Preconditions.checkArgument(frames.length == materials.size(), StringConstants.INVALID_MATERIAL_FRAME);
 
             for (int i = 0; i < frames.length; i++)
@@ -342,7 +343,7 @@ public class IntelligentMaterialAnimator {
          * @return The Builder to perform further editing.
          * @throws IllegalArgumentException If no material has been assigned to the frame yet. e.g {@link Builder#material(char, Material)}
          */
-        public @NotNull Builder frames(String ... frames) {
+        public @NotNull Builder frames(String... frames) {
             for (String frame : frames)
                 frame(frame);
 

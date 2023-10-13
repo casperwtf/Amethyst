@@ -29,7 +29,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import wtf.casper.amethyst.paper.ryseinventory.content.IntelligentItem;
 
 import javax.annotation.Nonnegative;
 

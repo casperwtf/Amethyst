@@ -15,43 +15,38 @@ public class PasteProvider {
         return CompletableFuture.supplyAsync(() -> {
 
             for (PasteType enabledPasteType : enabledPasteTypes) {
-                switch (enabledPasteType) {
-                    case PASTESDEV -> {
-                        CompletableFuture<String> paste = PastesDev.paste(content);
-                        String join = paste.join();
-                        if (join == null) {
-                            continue;
-                        }
-                        return join;
-                    }
-                    case HASTEBIN -> {
-                        CompletableFuture<String> paste = Hastebin.paste(content);
-                        String join = paste.join();
-                        if (join == null) {
-                            continue;
-                        }
-                        return join;
-                    }
-                    case PASTEBIN -> {
-                        CompletableFuture<String> paste = Pastebin.paste(content);
-                        String join = paste.join();
-                        if (join == null) {
-                            continue;
-                        }
-                        return join;
-                    }
-                    case MCLOGS -> {
-                        CompletableFuture<String> paste = MCLogs.paste(content);
-                        String join = paste.join();
-                        if (join == null) {
-                            continue;
-                        }
-                        return join;
-                    }
+                CompletableFuture<String> paste = paste(content, enabledPasteType);
+                String join = paste.join();
+                if (join != null) {
+                    return join;
                 }
             }
 
             return null;
+        });
+    }
+
+    public static CompletableFuture<String> paste(String content, PasteType type) {
+        return CompletableFuture.supplyAsync(() -> {
+            switch (type) {
+                case PASTESDEV -> {
+                    CompletableFuture<String> paste = PastesDev.paste(content);
+                    return paste.join();
+                }
+                case HASTEBIN -> {
+                    CompletableFuture<String> paste = Hastebin.paste(content);
+                    return paste.join();
+                }
+                case PASTEBIN -> {
+                    CompletableFuture<String> paste = Pastebin.paste(content);
+                    return paste.join();
+                }
+                case MCLOGS -> {
+                    CompletableFuture<String> paste = MCLogs.paste(content);
+                    return paste.join();
+                }
+            }
+            throw new NullPointerException("PasteType is invalid. " + type);
         });
     }
 

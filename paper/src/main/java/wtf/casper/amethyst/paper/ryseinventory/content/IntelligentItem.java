@@ -33,7 +33,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import wtf.casper.amethyst.paper.ryseinventory.content.IntelligentItemError;
 import wtf.casper.amethyst.paper.ryseinventory.pagination.InventoryManager;
 
 import java.util.HashMap;
@@ -292,11 +291,12 @@ public class IntelligentItem {
     public @NotNull IntelligentItem update(@NotNull IntelligentItem newIntelligentItem) {
         return new IntelligentItem(newIntelligentItem.getItemStack(), this.delay, newIntelligentItem.getDefaultConsumer(), this.error);
     }
+
     /**
      * Changes the ItemStack of an existing Intelligent with changing the consumer.
      *
      * @param newIntelligentItem The new IntelligentItem
-     * @param delayInTicks The delay in ticks before the consumer is called. (1 Sec = 20 Ticks)
+     * @param delayInTicks       The delay in ticks before the consumer is called. (1 Sec = 20 Ticks)
      * @return The new intelligent ItemStack
      */
     public @NotNull IntelligentItem update(@NotNull IntelligentItem newIntelligentItem, int delayInTicks) {

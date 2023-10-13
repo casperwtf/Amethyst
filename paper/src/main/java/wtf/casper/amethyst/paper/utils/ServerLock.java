@@ -38,6 +38,7 @@ public class ServerLock extends AmethystListener<JavaPlugin> {
 
         if (reason.isPresent())
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Component.text(reason.get()));
-        else event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Component.text("Server is locked"));
+        else
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Component.text("Server is locked"));
     }
 }

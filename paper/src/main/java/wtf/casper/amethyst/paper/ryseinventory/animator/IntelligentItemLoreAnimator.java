@@ -171,7 +171,7 @@ public class IntelligentItemLoreAnimator {
                     return false;
                 }
 
-                private void resetWhenFrameFinished(@Nonnegative int loreIndex, char [] currentFrames) {
+                private void resetWhenFrameFinished(@Nonnegative int loreIndex, char[] currentFrames) {
                     if (this.subStringIndex < currentFrames.length) return;
 
                     if (!loop)
@@ -179,7 +179,8 @@ public class IntelligentItemLoreAnimator {
                     this.colorState = 0;
                     this.subStringIndex = 0;
 
-                    if (this.currentFrameIndex + 1 < this.framesCopy.size()) return;
+                    if (this.currentFrameIndex + 1 < this.framesCopy.size())
+                        return;
                     this.currentFrameIndex = 0;
                 }
 
@@ -265,7 +266,7 @@ public class IntelligentItemLoreAnimator {
                     return false;
                 }
 
-                private void resetWhenFrameFinished(char [] letters) {
+                private void resetWhenFrameFinished(char[] letters) {
                     if (this.subStringIndex < letters.length) return;
 
                     if (!loop)
@@ -274,7 +275,8 @@ public class IntelligentItemLoreAnimator {
                     this.subStringIndex = 0;
                     this.previous.clear();
 
-                    if (this.currentFrameIndex + 1 < this.framesCopy.size()) return;
+                    if (this.currentFrameIndex + 1 < this.framesCopy.size())
+                        return;
                     this.currentFrameIndex = 0;
                 }
             }, this.delay, this.period);
@@ -337,8 +339,9 @@ public class IntelligentItemLoreAnimator {
                             letter;
                 }
 
-                private char [] updateFramesWhenRequired(char [] currentFrames) {
-                    if (this.colorState < currentFrames.length) return currentFrames;
+                private char[] updateFramesWhenRequired(char[] currentFrames) {
+                    if (this.colorState < currentFrames.length)
+                        return currentFrames;
 
                     this.colorState = 0;
                     if (this.framesCopy.size() > 1 && (this.currentFrameIndex + 1 != this.framesCopy.size())) {
@@ -356,7 +359,7 @@ public class IntelligentItemLoreAnimator {
                     return false;
                 }
 
-                private void resetWhenFrameFinished(char [] letters) {
+                private void resetWhenFrameFinished(char[] letters) {
                     if (this.subStringIndex < letters.length) return;
 
                     if (!loop)
@@ -365,7 +368,8 @@ public class IntelligentItemLoreAnimator {
                     this.subStringIndex = 0;
                     this.currentLore = "";
 
-                    if (this.currentFrameIndex + 1 < this.framesCopy.size()) return;
+                    if (this.currentFrameIndex + 1 < this.framesCopy.size())
+                        return;
                     this.currentFrameIndex = 0;
                 }
             }, this.delay, this.period);
@@ -540,7 +544,7 @@ public class IntelligentItemLoreAnimator {
          * @return The Builder to perform further editing.
          * @throws IllegalArgumentException If the parameters are not equal.
          */
-        public @NotNull Builder colors(@NotNull List<Character> frames, IntelligentItemColor ... color) throws IllegalArgumentException {
+        public @NotNull Builder colors(@NotNull List<Character> frames, IntelligentItemColor... color) throws IllegalArgumentException {
             Preconditions.checkArgument(frames.size() == color.length, StringConstants.INVALID_COLOR_FRAME);
 
             for (int i = 0; i < frames.size(); i++)
@@ -557,7 +561,7 @@ public class IntelligentItemLoreAnimator {
          * @return The Builder to perform further editing.
          * @throws IllegalArgumentException If the parameters are not equal.
          */
-        public @NotNull Builder colors(Character [] frames, IntelligentItemColor ... color) {
+        public @NotNull Builder colors(Character[] frames, IntelligentItemColor... color) {
             Preconditions.checkArgument(frames.length == color.length, StringConstants.INVALID_COLOR_FRAME);
 
             for (int i = 0; i < frames.length; i++)
@@ -574,7 +578,7 @@ public class IntelligentItemLoreAnimator {
          * @return The Builder to perform further editing.
          * @throws IllegalArgumentException If the parameters are not equal.
          */
-        public @NotNull Builder colors(Character [] frames, @NotNull List<IntelligentItemColor> color) {
+        public @NotNull Builder colors(Character[] frames, @NotNull List<IntelligentItemColor> color) {
             Preconditions.checkArgument(frames.length == color.size(), StringConstants.INVALID_COLOR_FRAME);
 
             for (int i = 0; i < frames.length; i++)

@@ -1,7 +1,6 @@
 package wtf.casper.amethyst.paper.listeners;
 
 import com.jeff_media.customblockdata.CustomBlockData;
-import org.bson.io.BsonOutput;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -74,15 +73,7 @@ public class PlayerSmeltItemEventListener extends AmethystListener<JavaPlugin> {
         }
 
         SchedulerUtil.run(() -> {
-            AmethystLogger.debug("--------------------");
-            AmethystLogger.debug("Cursor " + event.getCursor());
-            AmethystLogger.debug("Current " + event.getCurrentItem());
-            AmethystLogger.debug("Slot " + event.getSlot());
-            AmethystLogger.debug("Slot Type " + event.getSlotType());
-            AmethystLogger.debug("Action " + event.getAction());
-            AmethystLogger.debug("Hotbar Button " + event.getHotbarButton());
             ItemStack smelted = furnaceInventory.getItem(0);
-            AmethystLogger.debug("Smelted " + smelted);
             setItem(smelted, player, furnaceInventory);
         }, null);
     }

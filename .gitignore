@@ -20,4 +20,4 @@ bungee/target/
 target/
 
 dependency-reduced-pom.xml
-folia/folia.iml
+*.iml

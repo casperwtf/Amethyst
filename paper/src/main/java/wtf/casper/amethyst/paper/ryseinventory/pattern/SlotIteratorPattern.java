@@ -61,7 +61,7 @@ public class SlotIteratorPattern {
          * @throws IllegalArgumentException If the line length is not 9.
          */
         @Contract("_ -> this")
-        public @NotNull Builder define(String ... lines) throws IllegalArgumentException {
+        public @NotNull Builder define(String... lines) throws IllegalArgumentException {
             long count = Arrays.stream(lines).filter(line -> line.length() != 9).count();
             if (count > 0)
                 throw new IllegalArgumentException("Passed pattern must contain 9 characters");
@@ -127,7 +127,8 @@ public class SlotIteratorPattern {
                 }
             }
 
-            if (!foundChar) throw new IllegalStateException("The attached frame is not in the pattern.");
+            if (!foundChar)
+                throw new IllegalStateException("The attached frame is not in the pattern.");
 
             pattern.lines = this.lines;
             pattern.attachedChar = this.attachedChar;
