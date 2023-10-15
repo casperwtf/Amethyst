@@ -1,6 +1,6 @@
 name: Amethyst
 version: '${project.version}'
-main: wtf.casper.amethyst.paper.AmethystActual
+main: wtf.casper.amethyst.paper.InternalAmethystPlugin
 api-version: 1.13
 load: STARTUP
 depend:

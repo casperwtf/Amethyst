@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.milkbowl.vault.economy.EconomyResponse;
 
-@Getter @RequiredArgsConstructor @AllArgsConstructor
+@Getter @AllArgsConstructor
 public class BankWithdrawEvent extends VaultEconomyEvent {
 
     private final String accountName;

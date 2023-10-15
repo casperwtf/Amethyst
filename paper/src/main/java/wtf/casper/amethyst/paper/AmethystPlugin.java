@@ -15,7 +15,7 @@ import wtf.casper.amethyst.paper.providers.ConfigProvider;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.core.utils.ReflectionUtil;
 import wtf.casper.amethyst.core.utils.ServiceUtil;
-import wtf.casper.amethyst.paper.command.CloudCommandProvider;
+import wtf.casper.amethyst.paper.command.CloudCommand;
 
 public abstract class AmethystPlugin extends JavaPlugin {
 
@@ -54,7 +54,7 @@ public abstract class AmethystPlugin extends JavaPlugin {
     }
 
     public void registerCommands(ClassLoader classLoader) {
-        ServiceUtil.getServices(CloudCommandProvider.class, classLoader).forEach(CloudCommandProvider::registerCommands);
+        ServiceUtil.getServices(CloudCommand.class, classLoader).forEach(CloudCommand::registerCommands);
     }
 
     public void registerListeners() {

@@ -12,11 +12,8 @@ import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.permission.Permission;
 import org.bukkit.*;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import wtf.casper.amethyst.core.AmethystCore;
@@ -35,6 +32,7 @@ import wtf.casper.amethyst.paper.listeners.LoggerListener;
 import wtf.casper.amethyst.paper.listeners.PlayerBlockListener;
 import wtf.casper.amethyst.paper.listeners.PlayerSmeltItemEventListener;
 import wtf.casper.amethyst.paper.providers.CloudCommandProvider;
+import wtf.casper.amethyst.paper.providers.VaultProvider;
 import wtf.casper.amethyst.paper.ryseinventory.pagination.InventoryManager;
 import wtf.casper.amethyst.paper.scheduler.SchedulerUtil;
 import wtf.casper.amethyst.paper.serialized.SerializableItem;
@@ -46,8 +44,6 @@ import wtf.casper.amethyst.paper.utils.ArmorstandUtils;
 import wtf.casper.amethyst.paper.utils.GeneralUtils;
 import wtf.casper.amethyst.paper.utils.GeyserUtils;
 import wtf.casper.amethyst.paper.utils.ServerLock;
-import wtf.casper.amethyst.paper.vault.EventEconomyWrapper;
-import wtf.casper.amethyst.paper.vault.EventPermissionWrapper;
 
 import java.awt.Color;
 import java.io.File;
@@ -240,28 +236,10 @@ public class AmethystPaper {
         }, 2L);
 
         // Handle vault events
-
-        Economy provider = plugin.getServer().getServicesManager().getRegistration(Economy.class).getProvider();
-        if (provider != null && !(provider instanceof EventEconomyWrapper)) {
-            plugin.getServer().getServicesManager().register(Economy.class, new EventEconomyWrapper(provider), plugin, ServicePriority.Highest);
+        if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
+            new VaultProvider(plugin);
         }
 
-        Permission permissionProvider = plugin.getServer().getServicesManager().getRegistration(Permission.class).getProvider();
-        if (permissionProvider != null && !(permissionProvider instanceof EventPermissionWrapper)) {
-            plugin.getServer().getServicesManager().register(Permission.class, new EventPermissionWrapper(permissionProvider), plugin, ServicePriority.Highest);
-        }
-
-        SchedulerUtil.run(() -> {
-            Economy economy = plugin.getServer().getServicesManager().getRegistration(Economy.class).getProvider();
-            if (economy != null && !(economy instanceof EventEconomyWrapper)) {
-                plugin.getServer().getServicesManager().register(Economy.class, new EventEconomyWrapper(provider), plugin, ServicePriority.Highest);
-            }
-
-            Permission permission = plugin.getServer().getServicesManager().getRegistration(Permission.class).getProvider();
-            if (permission != null && !(permission instanceof EventPermissionWrapper)) {
-                plugin.getServer().getServicesManager().register(Permission.class, new EventPermissionWrapper(permission), plugin, ServicePriority.Highest);
-            }
-        });
     }
 
     public void disableAmethyst() {

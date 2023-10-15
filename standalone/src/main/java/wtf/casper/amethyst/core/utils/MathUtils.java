@@ -256,7 +256,7 @@ public class MathUtils {
     public static double lerp(double a, double b, double f) {
         return a + f * (b - a);
     }
-
+    
     /**
      * <a href="https://www.desmos.com/calculator/cahqdxeshd">Cubic Bézier Curves...</a>
      * Also see <a href="https://en.wikipedia.org/wiki/B%C3%A9zier_curve">Bézier curve</a> and <a href="https://create.roblox.com/docs/mechanics/bezier-curves">the lua version</a>

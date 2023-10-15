@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.OfflinePlayer;
 
-@Getter @RequiredArgsConstructor @AllArgsConstructor
+@Getter @AllArgsConstructor
 public class BankCreateEvent extends VaultEconomyEvent {
 
     private final String bankName;
