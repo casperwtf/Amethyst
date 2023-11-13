@@ -19,8 +19,11 @@ import org.jetbrains.annotations.NotNull;
 import wtf.casper.amethyst.core.AmethystCore;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.core.utils.DiscordWebhook;
+import wtf.casper.amethyst.core.utils.ServiceUtil;
 import wtf.casper.amethyst.core.utils.pastes.PasteProvider;
 import wtf.casper.amethyst.core.utils.pastes.Pastebin;
+import wtf.casper.amethyst.paper.command.CloudCommand;
+import wtf.casper.amethyst.paper.command.internal.ItemSerializationCommands;
 import wtf.casper.amethyst.paper.hologrambridge.HologramBridge;
 import wtf.casper.amethyst.paper.hooks.GeyserExpansion;
 import wtf.casper.amethyst.paper.hooks.combat.CombatManager;
@@ -224,6 +227,8 @@ public class AmethystPaper {
                     "Debug mode is enabled, this will cause a lot of spam in the console.",
                     "Please disable debug mode in the amethyst-config.yml if you do not need it."
             );
+
+            new ItemSerializationCommands().register(plugin);
         }
 
         // initialize these
