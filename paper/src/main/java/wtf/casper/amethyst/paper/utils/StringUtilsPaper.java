@@ -459,9 +459,6 @@ public class StringUtilsPaper extends StringUtils {
     }
 
     /**
-     * #scanTags is a method that scans a string for a specific tag and returns the value of the same message after the function is run on the tag.
-     * The code for this method is not the prettiest, but it runs ~ 75% faster than using the regex method you commonly see on the internet.
-     *
      * @param message       is the message that will be scanned for the tag.
      * @param messageLength is the length of the message if needed. You can set it to -1 if you don't need it. You will need it if you don't have an end tag.
      * @param startTag      The start tag that will be scanned for. This is required for the scanning.

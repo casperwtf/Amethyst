@@ -30,6 +30,8 @@ import org.bukkit.entity.Player;
 import wtf.casper.amethyst.paper.ryseinventory.animator.SlideAnimation;
 import wtf.casper.amethyst.paper.ryseinventory.pagination.RyseInventory;
 
+import java.util.concurrent.CompletableFuture;
+
 /**
  * @author Rysefoxx | Rysefoxx#6772
  * @since 2/17/2022
@@ -67,6 +69,10 @@ public interface InventoryProvider {
      *                  This method is called 1x. Namely, when the inventory is opened for the player. Another parameter is the animation that can be started.
      */
     default void init(Player player, InventoryContents contents, SlideAnimation animation) {
+    }
+
+    default CompletableFuture<Void> asyncPreload(Player player) {
+        return CompletableFuture.runAsync(() -> {});
     }
 
     /**

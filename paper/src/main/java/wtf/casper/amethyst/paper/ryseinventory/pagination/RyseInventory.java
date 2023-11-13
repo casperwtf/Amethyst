@@ -188,7 +188,6 @@ public class RyseInventory {
         this.pages.addAll(inventory.pages);
         this.keepOriginal = inventory.keepOriginal;
         this.originalInventory = inventory;
-
     }
 
     /**
@@ -671,28 +670,36 @@ public class RyseInventory {
         contents.pagination().setPage(page);
 
         transferData(optional.orElse(null), contents, keys, values);
-        setupData(player, contents);
-        initProvider(player, contents);
+        int finalPage1 = page;
+        provider.asyncPreload(player).whenComplete((unused, throwable) -> {
+            if (throwable != null) {
+                throwable.printStackTrace();
+                return;
+            }
 
-        if (optional.isPresent() && optional.get().equals(contents)) return;
+            setupData(player, contents);
+            initProvider(player, contents);
 
-        wtf.casper.amethyst.paper.ryseinventory.pagination.Pagination pagination = contents.pagination();
+            if (optional.isPresent() && optional.get().equals(contents)) return;
 
-        checkIfIllegalPaginationData(pagination);
+            wtf.casper.amethyst.paper.ryseinventory.pagination.Pagination pagination = contents.pagination();
 
-        this.manager.stopUpdate(player.getUniqueId());
+            checkIfIllegalPaginationData(pagination);
 
-        loadByPage(contents);
+            this.manager.stopUpdate(player.getUniqueId());
 
-        if (page > pagination.lastPage()) {
-            close(player);
-            throw new IllegalArgumentException("There is no " + page + " side. Last page is " + pagination.lastPage());
-        }
+            loadByPage(contents);
 
-        loadDelay(page, pagination, player);
-        closeInventoryWhenEnabled(player);
+            if (finalPage1 > pagination.lastPage()) {
+                close(player);
+                throw new IllegalArgumentException("There is no " + finalPage1 + " side. Last page is " + pagination.lastPage());
+            }
 
-        finalizeInventoryAndOpen(player, contents);
+            loadDelay(finalPage1, pagination, player);
+            closeInventoryWhenEnabled(player);
+
+            finalizeInventoryAndOpen(player, contents);
+        });
     }
 
     /**

@@ -203,6 +203,10 @@
                                     <shadedPattern>
                                         wtf.casper.amethyst.libs.kyori
                                     </shadedPattern>
+                                    <excludes>
+                                        <exclude>com.github.retrooper.packetevents</exclude>
+                                        <exclude>io.github.retrooper.packetevents</exclude>
+                                    </excludes>
                                 </relocation>
                                 <relocation>
                                     <pattern>net.wesjd.anvilgui</pattern>
@@ -590,6 +594,18 @@
             <version>2.0.1</version>
             <scope>system</scope>
             <systemPath>${pom.basedir}/libs/FancyHolograms-2.0.1.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.google.auto.service</groupId>
+            <artifactId>auto-service-annotations</artifactId>
+            <version>1.0.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.auto.service</groupId>
+            <artifactId>auto-service-annotations</artifactId>
+            <version>1.0.1</version>
+            <scope>compile</scope>
         </dependency>
 
         <!--        https://www.spigotmc.org/resources/proholographicdisplays-holographic-displays-continued-now-on-spigot.112186/ TODO look into this support?-->

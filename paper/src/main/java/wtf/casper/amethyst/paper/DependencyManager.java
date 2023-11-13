@@ -55,7 +55,7 @@ public class DependencyManager {
         String javaassist = "jav";
 
         List<Library> libraries = Lists.newArrayList(
-                this.getLibrary("net{}wesjd", "anvilgui", "1.9.0-20230924.153836-3", // 1.9.0-SNAPSHOT but CodeMC is weird
+                this.getLibrary("net{}wesjd", "anvilgui", "1.9.1-SNAPSHOT", // https://repo.codemc.io/#browse/browse:maven-snapshots:net%2Fwesjd%2Fanvilgui%2F1.9.1-SNAPSHOT
                         "net{}wesjd{}anvilgui", amethystPackage + "{}libs{}anvilgui"
                 ),
                 this.getLibrary("org{}mariadb{}jdbc", "mariadb-java-client", "3.1.3",
