@@ -3,6 +3,8 @@ package wtf.casper.amethyst.paper.utils;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -127,6 +129,14 @@ public class ItemBuilder extends ItemStack {
     public ItemBuilder setDisplayName(String displayname) {
         ItemMeta meta = getItemMeta();
         meta.setDisplayName(displayname);
+        setItemMeta(meta);
+        return this;
+    }
+
+
+    public ItemBuilder addAttribute(Attribute attribute, AttributeModifier modifier) {
+        ItemMeta meta = getItemMeta();
+        meta.addAttributeModifier(attribute, modifier);
         setItemMeta(meta);
         return this;
     }

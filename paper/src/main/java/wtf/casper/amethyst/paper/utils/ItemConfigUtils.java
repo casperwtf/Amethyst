@@ -3,7 +3,10 @@ package wtf.casper.amethyst.paper.utils;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -13,6 +16,7 @@ import wtf.casper.amethyst.core.utils.MathUtils;
 
 import javax.annotation.Nullable;
 import java.util.Locale;
+import java.util.UUID;
 
 public class ItemConfigUtils {
 
@@ -91,6 +95,26 @@ public class ItemConfigUtils {
                 }
             }
         });
+
+        section.getOptionalSection("attributes").ifPresent(section1 -> {
+            for (String key : section1.getRoutesAsStrings(false)) {
+                Section attributeModifier = section1.getSection(key);
+                AttributeModifier modifier = new AttributeModifier(
+                        attributeModifier.getOptionalString("uuid").map(UUID::fromString).orElse(UUID.randomUUID()),
+                        attributeModifier.getString("name"),
+                        attributeModifier.getDouble("amount"),
+                        AttributeModifier.Operation.valueOf(attributeModifier.getString("operation")),
+                        attributeModifier.getOptionalString("slot").map(string -> {
+                            if (StringUtilsPaper.validateEnum(string.toUpperCase(Locale.ROOT), EquipmentSlot.class)) {
+                                return EquipmentSlot.valueOf(string.toUpperCase(Locale.ROOT));
+                            }
+                            return null;
+                        }).orElse(null)
+                );
+                builder.addAttribute(Attribute.valueOf(key.toUpperCase(Locale.ROOT)), modifier);
+            }
+        });
+
         section.getOptionalBoolean("unbreakable").ifPresent(builder::setUnbreakable);
         section.getOptionalInt("amount").ifPresent(builder::setAmount);
         section.getOptionalInt("color").ifPresent(color -> builder.setColor(Color.fromRGB(color)));
