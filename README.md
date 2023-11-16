@@ -13,6 +13,7 @@ not credited to the original author, please let me know.
   math utils, string utils, pasting service utils and more.
 
 ## Useful Stuff
+![yourkit logo](https://www.yourkit.com/images/yklogo.png)
 
 YourKit supports open source projects with innovative and intelligent tools
 for monitoring and profiling Java and .NET applications.
