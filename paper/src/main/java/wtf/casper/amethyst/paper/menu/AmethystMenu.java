@@ -1,10 +1,12 @@
 package wtf.casper.amethyst.paper.menu;
 
+import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import net.wesjd.anvilgui.AnvilGUI;
+import org.apache.commons.lang.ObjectUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -21,10 +23,7 @@ import wtf.casper.amethyst.paper.ryseinventory.content.InventoryProvider;
 import wtf.casper.amethyst.paper.ryseinventory.enums.InventoryOpenerType;
 import wtf.casper.amethyst.paper.ryseinventory.enums.TimeSetting;
 import wtf.casper.amethyst.paper.ryseinventory.pagination.RyseInventory;
-import wtf.casper.amethyst.paper.utils.GeyserUtils;
-import wtf.casper.amethyst.paper.utils.ItemConfigUtils;
-import wtf.casper.amethyst.paper.utils.MenuUtil;
-import wtf.casper.amethyst.paper.utils.PlaceholderReplacer;
+import wtf.casper.amethyst.paper.utils.*;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -48,6 +47,10 @@ public abstract class AmethystMenu implements InventoryProvider {
         this.floodgateApi = GeyserUtils.floodgate();
         this.slots = slots;
         this.title = title;
+    }
+
+    public CompletableFuture<Void> asyncPreload(Player player) {
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
@@ -141,14 +144,6 @@ public abstract class AmethystMenu implements InventoryProvider {
     }
 
 
-    protected SimpleForm.Builder getGeyserMenu() {
-        if (getFloodgateApi() == null) {
-            throw new IllegalStateException("Floodgate API is null!");
-        }
-
-        return AmethystGeyserMenu.simpleFormBuilder();
-    }
-
     protected void setTitle(String title) {
         if (inventory == null) {
             this.title = title;
@@ -163,27 +158,41 @@ public abstract class AmethystMenu implements InventoryProvider {
     }
 
     @SneakyThrows
-    public void open(JavaPlugin plugin, Player... targets) {
-        RyseInventory inventory = MenuUtil.getInventory(plugin, this, slots, title);
-        this.inventory = inventory;
-        for (Player target : targets) {
-            inventory.open(target);
-        }
+    public void open(JavaPlugin plugin, Player target) {
+        open(plugin, null, target);
     }
 
     @SneakyThrows
-    public void open(JavaPlugin plugin, PlaceholderReplacer replacer, Player... targets) {
-        RyseInventory inventory = MenuUtil.getInventory(plugin, this, slots, replacer.parse(title));
-        this.inventory = inventory;
-        for (Player target : targets) {
+    public void open(JavaPlugin plugin, PlaceholderReplacer replacer, Player target) {
+
+        CompletableFuture<Void> asyncPreload = asyncPreload(target);
+        if (asyncPreload.isDone()) {
+            RyseInventory inventory = MenuUtil.getInventory(plugin, this, slots, StringUtilsPaper.parsePlaceholders(title, replacer, target));
             inventory.open(target);
+            return;
         }
+
+        asyncPreload.thenRun(() -> {
+            RyseInventory inventory = MenuUtil.getInventory(plugin, this, slots, StringUtilsPaper.parsePlaceholders(title, replacer, target));
+            inventory.open(target);
+        });
     }
 
     public void openAnvil(JavaPlugin plugin, Player player, PlaceholderReplacer replacer, String title) {
-        RyseInventory ryseInventory = MenuUtil.getInventory(plugin, this, slots, replacer.parse(title), InventoryOpenerType.ANVIL);
-        this.inventory = ryseInventory;
-        ryseInventory.open(player);
+        CompletableFuture<Void> asyncPreload = asyncPreload(player);
+
+        if (asyncPreload.isDone()) {
+            RyseInventory ryseInventory = MenuUtil.getInventory(plugin, this, slots, replacer.parse(title), InventoryOpenerType.ANVIL);
+            this.inventory = ryseInventory;
+            ryseInventory.open(player);
+            return;
+        }
+
+        asyncPreload.thenRun(() -> {
+            RyseInventory ryseInventory = MenuUtil.getInventory(plugin, this, slots, replacer.parse(title), InventoryOpenerType.ANVIL);
+            this.inventory = ryseInventory;
+            ryseInventory.open(player);
+        });
     }
 
     protected void disableUpdating() {
