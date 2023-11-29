@@ -386,7 +386,7 @@
         <dependency>
             <groupId>com.github.WhipDevelopment</groupId>
             <artifactId>CrashClaim</artifactId>
-            <version>344ef20be5</version>
+            <version>75abe3b665</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
