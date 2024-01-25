@@ -193,16 +193,6 @@
                                     </shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>net.kyori</pattern>
-                                    <shadedPattern>
-                                        wtf.casper.amethyst.libs.kyori
-                                    </shadedPattern>
-                                    <excludes>
-                                        <exclude>com.github.retrooper.packetevents</exclude>
-                                        <exclude>io.github.retrooper.packetevents</exclude>
-                                    </excludes>
-                                </relocation>
-                                <relocation>
                                     <pattern>net.wesjd.anvilgui</pattern>
                                     <shadedPattern>
                                         wtf.casper.amethyst.libs.anvilgui
@@ -477,12 +467,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-api</artifactId>
-            <version>4.14.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-bukkit</artifactId>
             <version>7.2.7</version>
@@ -494,6 +478,14 @@
             <version>1.18.26</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>xyz.xenondevs.invui</groupId>
+            <artifactId>invui</artifactId>
+            <version>1.23</version>
+            <type>pom</type>
+        </dependency>
+
         <dependency>
             <groupId>com.github.retrooper.packetevents</groupId>
             <artifactId>spigot</artifactId>
@@ -528,6 +520,8 @@
             <version>${holographicdisplays.version}</version>
             <scope>provided</scope>
         </dependency>
+
+
 
         <!--        CMI Connector-->
 
@@ -584,18 +578,6 @@
             <groupId>com.google.auto.service</groupId>
             <artifactId>auto-service-annotations</artifactId>
             <version>1.0.1</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-api</artifactId>
-            <version>4.14.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-api</artifactId>
-            <version>4.14.0</version>
             <scope>compile</scope>
         </dependency>
 
@@ -682,6 +664,16 @@
             <id>sonatype-snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
+        <repository>
+            <id>oraxen</id>
+            <name>Oraxen Repository</name>
+            <url>https://repo.oraxen.com/releases</url>
+        </repository>
+        <repository>
+            <id>xenondevs</id>
+            <url>https://repo.xenondevs.xyz/releases</url>
+        </repository>
+
     </repositories>
 
 </project>
