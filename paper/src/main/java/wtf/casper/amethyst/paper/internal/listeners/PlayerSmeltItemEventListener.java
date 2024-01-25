@@ -29,10 +29,12 @@ public class PlayerSmeltItemEventListener extends AmethystListener<JavaPlugin> {
 
     @EventHandler
     public void onFurnaceSmeltEvent(FurnaceSmeltEvent event) {
+        if (PlayerSmeltItemEvent.getHandlerList().getRegisteredListeners().length == 0) {
+            return;
+        }
+
         Block block = event.getBlock();
-
         PersistentDataContainer customBlockData = new CustomBlockData(block, getPlugin());
-
         String key = customBlockData.get(AmethystPaper.getPlayerSmeltItemKey(), PersistentDataType.STRING);
 
         if (key == null) {

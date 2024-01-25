@@ -7,24 +7,21 @@ import wtf.casper.amethyst.paper.hooks.IHook;
 import wtf.casper.amethyst.paper.hooks.IHookController;
 
 import javax.annotation.Nullable;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @AutoService(IHookController.class)
 public class EconomyController implements IHookController {
 
     @Getter
-    private final static Set<IEconomy> economies = new HashSet<>();
+    private final static Map<String, IEconomy> economies = new HashMap<>();
 
     @Nullable
     public static IEconomy getEconomy(String name) {
-        for (IEconomy economy : economies) {
-            if (economy.getName().equalsIgnoreCase(name)) {
-                return economy;
-            }
+        if (economies.isEmpty()) {
+            return null;
         }
-        return null;
+
+        return economies.getOrDefault(name, null);
     }
 
     @Override
@@ -35,7 +32,7 @@ public class EconomyController implements IHookController {
             }
 
             economy.enable();
-            economies.add(economy);
+            economies.put(economy.getName(), economy);
         }
     }
 
@@ -57,7 +54,7 @@ public class EconomyController implements IHookController {
             return;
         }
 
-        for (IEconomy economy : economies) {
+        for (IEconomy economy : economies.values()) {
             economy.disable();
         }
 
@@ -83,7 +80,7 @@ public class EconomyController implements IHookController {
         for (IEconomy economy : services) {
             if (economy.canEnable()) {
                 economy.enable();
-                economies.add(economy);
+                economies.put(economy.getName(), economy);
             }
         }
     }

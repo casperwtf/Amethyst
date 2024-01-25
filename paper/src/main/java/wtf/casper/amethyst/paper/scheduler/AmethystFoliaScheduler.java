@@ -7,9 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import wtf.casper.amethyst.paper.AmethystPaper;
-import wtf.casper.amethyst.paper.AmethystPlugin;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
