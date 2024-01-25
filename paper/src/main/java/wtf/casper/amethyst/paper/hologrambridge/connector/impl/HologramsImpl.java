@@ -82,7 +82,7 @@ public final class HologramsImpl implements Connector {
         final HologramLine hologramLine = saintHologram.getLine(lineIndex);
 
         if (line instanceof ItemLine
-            && hologramLine instanceof com.sainttx.holograms.api.line.ItemLine) {
+                && hologramLine instanceof com.sainttx.holograms.api.line.ItemLine) {
             final ItemStack itemStack = ((ItemLine) line).getItemStack();
             ((com.sainttx.holograms.api.line.ItemLine) hologramLine).setItem(itemStack);
 
@@ -90,7 +90,7 @@ public final class HologramsImpl implements Connector {
         }
 
         if (line instanceof TextLine
-            && hologramLine instanceof com.sainttx.holograms.api.line.TextLine) {
+                && hologramLine instanceof com.sainttx.holograms.api.line.TextLine) {
             final String text = ((TextLine) line).getText();
             ((com.sainttx.holograms.api.line.TextLine) hologramLine).setText(text);
         }

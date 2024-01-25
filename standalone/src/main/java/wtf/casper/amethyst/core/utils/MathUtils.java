@@ -12,10 +12,10 @@ import java.util.concurrent.ThreadLocalRandom;
 public class MathUtils {
 
     /**
-     * @param value The value to round
+     * @param value  The value to round
      * @param places The number of decimal places to round to
      * @return The rounded value
-     * */
+     */
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
 
@@ -39,7 +39,7 @@ public class MathUtils {
 
 
     /**
-     * @param mean The mean of the distribution
+     * @param mean   The mean of the distribution
      * @param stdDev The standard deviation of the distribution
      * @return A random integer between min and max, inclusive in a gaussian distribution.
      */
@@ -56,10 +56,10 @@ public class MathUtils {
     }
 
     /*
-    * @param min The minimum value
-    * @param max The maximum value
-    * @return A random double between min and max, inclusive.
-    * */
+     * @param min The minimum value
+     * @param max The maximum value
+     * @return A random double between min and max, inclusive.
+     * */
     public static double randomDouble(double min, double max) {
         if (min == max) {
             return min;
@@ -71,7 +71,7 @@ public class MathUtils {
     }
 
     /**
-     * @param mean The mean of the distribution
+     * @param mean   The mean of the distribution
      * @param stdDev The standard deviation of the distribution
      * @return A random double between min and max, inclusive in a gaussian distribution.
      */
@@ -80,10 +80,10 @@ public class MathUtils {
     }
 
     /**
-     * @param mean The mean of the distribution
+     * @param mean   The mean of the distribution
      * @param stdDev The standard deviation of the distribution
-     * @param min The minimum value
-     * @param max The maximum value
+     * @param min    The minimum value
+     * @param max    The maximum value
      * @return A random double between min and max, inclusive in a gaussian distribution.
      */
     public static double gaussianRandomDouble(double mean, double stdDev, double min, double max) {
@@ -256,7 +256,7 @@ public class MathUtils {
     public static double lerp(double a, double b, double f) {
         return a + f * (b - a);
     }
-    
+
     /**
      * <a href="https://www.desmos.com/calculator/cahqdxeshd">Cubic Bézier Curves...</a>
      * Also see <a href="https://en.wikipedia.org/wiki/B%C3%A9zier_curve">Bézier curve</a> and <a href="https://create.roblox.com/docs/mechanics/bezier-curves">the lua version</a>
@@ -273,8 +273,8 @@ public class MathUtils {
 
     /**
      * @param value The value to clamp
-     * @param min The minimum value
-     * @param max The maximum value
+     * @param min   The minimum value
+     * @param max   The maximum value
      * @return The value if between min and max, otherwise the closest bound
      */
     public static int clamp(int value, int min, int max) {
@@ -283,8 +283,8 @@ public class MathUtils {
 
     /**
      * @param value The value to clamp
-     * @param min The minimum value
-     * @param max The maximum value
+     * @param min   The minimum value
+     * @param max   The maximum value
      * @return The value if between min and max, otherwise the closest bound
      */
     public static double clamp(double value, double min, double max) {
@@ -293,9 +293,10 @@ public class MathUtils {
 
     /**
      * https://github.com/Redempt/Crunch
+     *
      * @param input A string with a math equation.
      * @return The result of the equation.
-     * */
+     */
     public static double parseCrunch(String input) {
         return Crunch.compileExpression(input).evaluate();
     }

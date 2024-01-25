@@ -9,8 +9,8 @@ public interface ItemSerializer {
     Optional<ItemStack> initialStack(String first);
 
     /**
-    * @return true if the itemStack was modified
-    * */
+     * @return true if the itemStack was modified
+     */
     boolean tryAppend(ItemStack itemStack, String next);
 
     Optional<String> deserializeType(ItemStack item);

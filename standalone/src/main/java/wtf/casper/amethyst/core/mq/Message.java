@@ -1,9 +1,7 @@
 package wtf.casper.amethyst.core.mq;
 
 import com.google.gson.JsonObject;
-import lombok.extern.java.Log;
 import wtf.casper.amethyst.core.AmethystCore;
-import wtf.casper.amethyst.core.utils.AmethystLogger;
 
 public interface Message {
 
@@ -16,7 +14,8 @@ public interface Message {
      */
     default String jsonSerialize() {
         JsonObject jsonObject = AmethystCore.getGson().fromJson(AmethystCore.getGson().toJson(this), JsonObject.class);
-        if (jsonObject == null) throw new NullPointerException("Failed to serialize message");
+        if (jsonObject == null)
+            throw new NullPointerException("Failed to serialize message");
         jsonObject.addProperty("amethyst_class_type", this.getClass().getSimpleName());
         return jsonObject.toString();
     }

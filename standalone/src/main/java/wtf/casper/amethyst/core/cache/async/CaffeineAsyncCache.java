@@ -11,7 +11,7 @@ public class CaffeineAsyncCache<K, V> implements AsyncCache<K, V> {
     private final com.github.benmanes.caffeine.cache.AsyncCache<K, V> cache;
 
     public CaffeineAsyncCache(Object cache) {
-        if (cache instanceof com.github.benmanes.caffeine.cache.AsyncCache<?,?>) {
+        if (cache instanceof com.github.benmanes.caffeine.cache.AsyncCache<?, ?>) {
             this.cache = (com.github.benmanes.caffeine.cache.AsyncCache<K, V>) cache;
         } else {
             throw new IllegalArgumentException("Cache must be a com.github.benmanes.caffeine.cache.Cache");

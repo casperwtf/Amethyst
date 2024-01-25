@@ -11,7 +11,8 @@
     <properties>
         <amethyst.version>2.0.0</amethyst.version>
         <!--        Connector Versions-->
-        <holographicdisplays.legacyversion>2.4.9</holographicdisplays.legacyversion>
+        <holographicdisplays.legacyversion>2.4.9
+        </holographicdisplays.legacyversion>
         <holographicdisplays.version>3.0.0</holographicdisplays.version>
         <decentholograms.version>2.7.5</decentholograms.version>
     </properties>
@@ -522,7 +523,6 @@
         </dependency>
 
 
-
         <!--        CMI Connector-->
 
         <dependency>
@@ -566,7 +566,8 @@
             <artifactId>fancyholograms</artifactId>
             <version>2.0.1</version>
             <scope>system</scope>
-            <systemPath>${pom.basedir}/libs/FancyHolograms-2.0.1.jar</systemPath>
+            <systemPath>${pom.basedir}/libs/FancyHolograms-2.0.1.jar
+            </systemPath>
         </dependency>
         <dependency>
             <groupId>com.google.auto.service</groupId>

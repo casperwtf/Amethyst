@@ -5,7 +5,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.OfflinePlayer;
 
-@Getter @AllArgsConstructor @RequiredArgsConstructor
+@Getter
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class PlayerPermissionRemoveEvent extends VaultPermissionEvent {
 
     private String world;

@@ -1,7 +1,6 @@
 package wtf.casper.amethyst.paper.utils;
 
 import net.kyori.adventure.text.Component;
-import wtf.casper.amethyst.core.utils.AmethystLogger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +12,7 @@ public class Placeholders {
 
     private final static Map<String, Pattern> regexCache = new HashMap<>();
 
-    private final Map<String, Component> placeholders = new HashMap<>();;
+    private final Map<String, Component> placeholders = new HashMap<>();
 
     public Placeholders add(String key, Component value) {
         placeholders.put("%" + key + "%", value);

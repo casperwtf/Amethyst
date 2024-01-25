@@ -20,7 +20,8 @@ public class MinecraftItemSerializer implements ItemSerializer {
         try {
             Material material = Material.valueOf(first.toUpperCase());
             return Optional.of(new ItemStack(material));
-        } catch (IllegalArgumentException ignored) {}
+        } catch (IllegalArgumentException ignored) {
+        }
 
         return Optional.empty();
     }

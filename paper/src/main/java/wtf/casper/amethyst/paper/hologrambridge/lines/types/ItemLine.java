@@ -23,12 +23,14 @@ public interface ItemLine extends Line {
 
     /**
      * Get the {@link ItemStack} that the {@link ItemLine} currently represents
+     *
      * @return The current displayed {@link ItemStack}
      */
     ItemStack getItemStack();
 
     /**
      * Set the {@link ItemStack} the {@link ItemLine} displays
+     *
      * @param itemStack The {@link ItemStack} to display
      */
     void setItemStack(final ItemStack itemStack);

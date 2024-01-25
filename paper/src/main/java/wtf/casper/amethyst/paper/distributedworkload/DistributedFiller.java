@@ -8,8 +8,8 @@ import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
-import wtf.casper.amethyst.core.distributedworkload.WorkloadRunnable;
 import wtf.casper.amethyst.core.collections.RandomCollection;
+import wtf.casper.amethyst.core.distributedworkload.WorkloadRunnable;
 
 import java.util.List;
 

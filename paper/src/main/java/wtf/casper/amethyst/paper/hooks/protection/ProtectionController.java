@@ -10,7 +10,8 @@ import wtf.casper.amethyst.paper.hooks.IHookController;
 import java.util.List;
 import java.util.Set;
 
-@AutoService(IHookController.class) @Log
+@AutoService(IHookController.class)
+@Log
 public class ProtectionController implements IHookController {
 
     @Getter private static IProtection protections;

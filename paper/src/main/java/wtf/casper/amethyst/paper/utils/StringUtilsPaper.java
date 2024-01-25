@@ -207,7 +207,7 @@ public class StringUtilsPaper extends StringUtils {
                 );
 
                 Title title = Title.title(parseMini(
-                        section.getString("title"), player, placeholderReplacer),
+                                section.getString("title"), player, placeholderReplacer),
                         parseMini(section.getString("subtitle"), player, placeholderReplacer),
                         times
                 );

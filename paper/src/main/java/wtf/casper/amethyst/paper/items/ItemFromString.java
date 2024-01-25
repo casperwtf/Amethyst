@@ -3,10 +3,14 @@ package wtf.casper.amethyst.paper.items;
 import org.bukkit.inventory.ItemStack;
 import wtf.casper.amethyst.core.utils.ServiceUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 public class ItemFromString {
     private final static List<ItemSerializer> serializers = new ArrayList<>();
+
     static {
         ServiceUtil.getServices(ItemSerializer.class).forEach(ItemFromString::register);
     }
@@ -22,7 +26,7 @@ public class ItemFromString {
 
         StringBuilder builder = new StringBuilder();
 
-        for (int i = serializers.size()-1; i >= 0; i--) {
+        for (int i = serializers.size() - 1; i >= 0; i--) {
             ItemSerializer serializer = serializers.get(i);
             String serialized = serializer.deserializeType(itemStack).orElse(null);
             if (serialized != null) {
@@ -35,7 +39,7 @@ public class ItemFromString {
             throw new IllegalStateException("No serializer found for item: " + itemStack);
         }
 
-        for (int i = serializers.size()-1; i >= 0; i--) {
+        for (int i = serializers.size() - 1; i >= 0; i--) {
             ItemSerializer serializer = serializers.get(i);
             String serialized = serializer.deserializeMeta(itemStack).orElse(null);
             if (serialized != null) {

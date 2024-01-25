@@ -6,7 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Cancellable;
 
-@Getter @RequiredArgsConstructor @AllArgsConstructor
+@Getter
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class PreBankCreateEvent extends VaultEconomyEvent implements Cancellable {
 
     private final String bankName;

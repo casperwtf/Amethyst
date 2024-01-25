@@ -6,7 +6,9 @@ import lombok.RequiredArgsConstructor;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.OfflinePlayer;
 
-@Getter @RequiredArgsConstructor @AllArgsConstructor
+@Getter
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class PlayerWithdrawEvent extends VaultEconomyEvent {
 
     private final OfflinePlayer player;

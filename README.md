@@ -20,7 +20,8 @@ not credited to the original author, please let me know.
 
 YourKit supports open source projects with innovative and intelligent tools
 for monitoring and profiling Java and .NET applications.
-YourKit is the creator of (YourKit Java Profiler)[https://www.yourkit.com/java/profiler/],
+YourKit is the creator of (YourKit Java
+Profiler)[https://www.yourkit.com/java/profiler/],
 (YourKit .NET Profiler)[https://www.yourkit.com/dotnet-profiler/],
 and (YourKit YouMonitor)[https://www.yourkit.com/youmonitor/].
 
@@ -38,9 +39,14 @@ and (YourKit YouMonitor)[https://www.yourkit.com/youmonitor/].
 
 ## Highlights + Useful Tips
 
-When working with the packetevents API, converting spigot objects to packet event objects is used in [this class](https://github.com/retrooper/packetevents/blob/2.0/spigot/src/main/java/io/github/retrooper/packetevents/util/SpigotConversionUtil.java)
+When working with the packetevents API, converting spigot objects to packet
+event objects is used
+in [this class](https://github.com/retrooper/packetevents/blob/2.0/spigot/src/main/java/io/github/retrooper/packetevents/util/SpigotConversionUtil.java)
 
-wtf.casper.amethyst.core.inject.Inject exists because I don't like Spring Dependency Injection or Guice Dependency Injection. I like to keep things simple and easy to use. This is why I created my own dependency injection system. It is very simple and easy to use. Here is an example of how to use it:
+wtf.casper.amethyst.core.inject.Inject exists because I don't like Spring
+Dependency Injection or Guice Dependency Injection. I like to keep things simple
+and easy to use. This is why I created my own dependency injection system. It is
+very simple and easy to use. Here is an example of how to use it:
 
 ```java
 public class Main {
@@ -83,7 +89,8 @@ public class Main {
 }
 ```
 
-I include BCrypt so you can hash passwords easily. Here is an example of how to use it:
+I include BCrypt so you can hash passwords easily. Here is an example of how to
+use it:
 
 ```java
 public class Main {

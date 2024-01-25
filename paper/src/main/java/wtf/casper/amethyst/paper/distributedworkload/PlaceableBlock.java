@@ -1,7 +1,6 @@
 package wtf.casper.amethyst.paper.distributedworkload;
 
 import com.google.common.base.Preconditions;
-import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;

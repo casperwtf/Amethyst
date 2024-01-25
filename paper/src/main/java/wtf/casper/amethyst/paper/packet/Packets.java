@@ -24,7 +24,9 @@ public class Packets {
         packetHandlers.add(handler);
     }
 
-    public record SinglePacketHandler<T extends PacketWrapper<?>>(PacketTypeCommon packetType, int priority, BiFunction<User, PacketEvent, PacketWrapper<T>> callback) {
+    public record SinglePacketHandler<T extends PacketWrapper<?>>(
+            PacketTypeCommon packetType, int priority,
+            BiFunction<User, PacketEvent, PacketWrapper<T>> callback) {
         public SinglePacketHandler(PacketTypeCommon packetType, int priority, BiFunction<User, PacketEvent, PacketWrapper<T>> callback) {
             this.packetType = packetType;
             this.priority = priority;

@@ -7,17 +7,15 @@ import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.json.JsonWriterSettings;
+import wtf.casper.amethyst.core.gson.RuntimeTypeAdapterFactory;
 import wtf.casper.amethyst.core.gson.UUIDTypeAdapter;
 import wtf.casper.amethyst.core.mq.Message;
-import wtf.casper.amethyst.core.utils.AmethystLogger;
-import wtf.casper.amethyst.core.gson.RuntimeTypeAdapterFactory;
 import wtf.casper.storageapi.id.Transient;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 public class AmethystCore {
 

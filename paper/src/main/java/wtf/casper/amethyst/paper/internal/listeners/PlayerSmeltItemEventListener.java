@@ -13,7 +13,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
-import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.paper.AmethystPaper;
 import wtf.casper.amethyst.paper.events.PlayerSmeltItemEvent;
 import wtf.casper.amethyst.paper.scheduler.SchedulerUtil;

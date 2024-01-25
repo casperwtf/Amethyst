@@ -11,11 +11,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import wtf.casper.amethyst.paper.providers.ConfigProvider;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.core.utils.ReflectionUtil;
 import wtf.casper.amethyst.core.utils.ServiceUtil;
 import wtf.casper.amethyst.paper.command.CloudCommand;
+import wtf.casper.amethyst.paper.providers.ConfigProvider;
 
 public abstract class AmethystPlugin extends JavaPlugin {
 

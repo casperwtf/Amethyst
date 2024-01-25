@@ -2,13 +2,9 @@ package wtf.casper.amethyst.paper.vault;
 
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import wtf.casper.amethyst.paper.AmethystPaper;
-import wtf.casper.amethyst.paper.AmethystPlugin;
 import wtf.casper.amethyst.paper.events.vault.permissions.*;
-
-import java.util.List;
 
 /**
  * Wrapper around Permission implementation to fire events.

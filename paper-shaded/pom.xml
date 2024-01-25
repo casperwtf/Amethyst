@@ -466,7 +466,9 @@
         </repository>
         <repository>
             <id>placeholderapi</id>
-            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+            <url>
+                https://repo.extendedclip.com/content/repositories/placeholderapi/
+            </url>
         </repository>
         <repository>
             <id>minebench-repo</id>

@@ -20,7 +20,7 @@ public class Base64Utils {
         String offHand = serializeItem(playerInventory.getItemInOffHand());
         String armor = itemStackArrayToBase64(playerInventory.getArmorContents());
 
-        return new String[] { content, offHand, armor };
+        return new String[]{content, offHand, armor};
     }
 
     public static String itemStackArrayToBase64(ItemStack... items) throws IllegalStateException {

@@ -66,16 +66,16 @@ public class Holographic3 implements Connector {
                     final HologramLine hologramLine = hologramLines.get(lineIndex);
 
                     if (line instanceof ItemLine
-                        &&
-                        hologramLine instanceof me.filoghost.holographicdisplays.api.hologram.line.ItemHologramLine) {
+                            &&
+                            hologramLine instanceof me.filoghost.holographicdisplays.api.hologram.line.ItemHologramLine) {
                         final ItemStack itemStack = ((ItemLine) line).getItemStack();
                         ((me.filoghost.holographicdisplays.api.hologram.line.ItemHologramLine) hologramLine).setItemStack(itemStack);
                         return;
                     }
 
                     if (line instanceof TextLine
-                        &&
-                        hologramLine instanceof me.filoghost.holographicdisplays.api.hologram.line.TextHologramLine) {
+                            &&
+                            hologramLine instanceof me.filoghost.holographicdisplays.api.hologram.line.TextHologramLine) {
                         final String text = ((TextLine) line).getText();
                         ((me.filoghost.holographicdisplays.api.hologram.line.TextHologramLine) hologramLine).setText(text);
                     }

@@ -4,7 +4,6 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import wtf.casper.amethyst.paper.AmethystPlugin;
 
 import java.util.*;
 

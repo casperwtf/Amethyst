@@ -17,7 +17,6 @@ import de.oliver.fancyholograms.api.HologramData;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import wtf.casper.amethyst.paper.hologrambridge.connector.Connector;
 import wtf.casper.amethyst.paper.hologrambridge.hologram.Hologram;
 import wtf.casper.amethyst.paper.hologrambridge.hologram.VisibilityManager;

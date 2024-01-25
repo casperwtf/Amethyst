@@ -1,7 +1,5 @@
 package wtf.casper.amethyst.core.unsafe;
 
-import lombok.SneakyThrows;
-
 import java.util.concurrent.Callable;
 
 @FunctionalInterface

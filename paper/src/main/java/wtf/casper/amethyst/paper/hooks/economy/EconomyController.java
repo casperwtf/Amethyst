@@ -7,7 +7,10 @@ import wtf.casper.amethyst.paper.hooks.IHook;
 import wtf.casper.amethyst.paper.hooks.IHookController;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @AutoService(IHookController.class)
 public class EconomyController implements IHookController {
@@ -98,8 +101,7 @@ public class EconomyController implements IHookController {
     public enum Economies {
         EXPERIENCE("EXP"),
         VAULT("VAULT"),
-        SQL_ESSENTIALS("SQLESS")
-        ;
+        SQL_ESSENTIALS("SQLESS");
 
         private final String name;
 

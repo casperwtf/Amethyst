@@ -5,7 +5,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.OfflinePlayer;
 
-@Getter @RequiredArgsConstructor @AllArgsConstructor
+@Getter
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class PlayerAccountCreateFailedEvent extends VaultEconomyEvent {
 
     private final OfflinePlayer player;

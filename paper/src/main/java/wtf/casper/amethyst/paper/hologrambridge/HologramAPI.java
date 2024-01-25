@@ -21,7 +21,7 @@ import wtf.casper.amethyst.paper.hologrambridge.hologram.Hologram;
  * A class which handles Hologram data for external plugins
  */
 public final class HologramAPI {
-    
+
     private static Connector connector;
     private static JavaPlugin javaPlugin;
 
@@ -50,6 +50,7 @@ public final class HologramAPI {
 
     /**
      * Get the current {@link Connector} source
+     *
      * @return The {@link Connector}
      */
     public static Connector getConnector() {
@@ -58,6 +59,7 @@ public final class HologramAPI {
 
     /**
      * Set the {@link Connector} source
+     *
      * @param connector The {@link Connector} source
      */
     public static void setConnector(final Connector connector) {
@@ -66,6 +68,7 @@ public final class HologramAPI {
 
     /**
      * Get the {@link JavaPlugin} used
+     *
      * @return The {@link JavaPlugin}
      */
     public static JavaPlugin getJavaPlugin() {
@@ -74,6 +77,7 @@ public final class HologramAPI {
 
     /**
      * Set the current {@link JavaPlugin} instance
+     *
      * @param javaPlugin The {@link JavaPlugin}
      */
     public static void setJavaPlugin(final JavaPlugin javaPlugin) {

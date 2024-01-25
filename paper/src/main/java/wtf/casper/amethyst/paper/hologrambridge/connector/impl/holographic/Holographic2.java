@@ -64,14 +64,14 @@ public final class Holographic2 implements Connector {
             final HologramLine hologramLine = holo.getLine(lineIndex);
 
             if (line instanceof ItemLine
-                && hologramLine instanceof com.gmail.filoghost.holographicdisplays.api.line.ItemLine) {
+                    && hologramLine instanceof com.gmail.filoghost.holographicdisplays.api.line.ItemLine) {
                 final ItemStack itemStack = ((ItemLine) line).getItemStack();
                 ((com.gmail.filoghost.holographicdisplays.api.line.ItemLine) hologramLine).setItemStack(itemStack);
                 return;
             }
 
             if (line instanceof TextLine
-                && hologramLine instanceof com.gmail.filoghost.holographicdisplays.api.line.TextLine) {
+                    && hologramLine instanceof com.gmail.filoghost.holographicdisplays.api.line.TextLine) {
                 final String text = ((TextLine) line).getText();
                 ((com.gmail.filoghost.holographicdisplays.api.line.TextLine) hologramLine).setText(text);
             }

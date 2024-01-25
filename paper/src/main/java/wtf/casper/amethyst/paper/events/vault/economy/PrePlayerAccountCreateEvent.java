@@ -6,7 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Cancellable;
 
-@RequiredArgsConstructor @AllArgsConstructor @Getter
+@RequiredArgsConstructor
+@AllArgsConstructor
+@Getter
 public class PrePlayerAccountCreateEvent extends VaultEconomyEvent implements Cancellable {
 
     private final OfflinePlayer offlinePlayer;
@@ -25,6 +27,6 @@ public class PrePlayerAccountCreateEvent extends VaultEconomyEvent implements Ca
 
     @Override
     public void setCancelled(boolean cancel) {
-         this.cancelled = cancel;
+        this.cancelled = cancel;
     }
 }

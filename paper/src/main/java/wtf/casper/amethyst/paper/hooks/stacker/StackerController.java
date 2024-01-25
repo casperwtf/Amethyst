@@ -10,7 +10,8 @@ import wtf.casper.amethyst.paper.hooks.IHookController;
 import java.util.HashSet;
 import java.util.Set;
 
-@AutoService(IHookController.class) @Log
+@AutoService(IHookController.class)
+@Log
 public class StackerController implements IHookController {
 
     @Getter private static IStacker stacker = null;

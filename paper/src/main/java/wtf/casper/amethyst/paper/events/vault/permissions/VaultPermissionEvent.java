@@ -1,6 +1,5 @@
 package wtf.casper.amethyst.paper.events.vault.permissions;
 
-import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
