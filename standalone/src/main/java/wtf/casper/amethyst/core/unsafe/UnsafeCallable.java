@@ -8,9 +8,13 @@ import java.util.concurrent.Callable;
 public interface UnsafeCallable<R> extends Callable<R> {
 
     @Override
-    @SneakyThrows
     default R call() {
-        return this.callThrows();
+        try {
+            return this.callThrows();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     R callThrows() throws Exception;

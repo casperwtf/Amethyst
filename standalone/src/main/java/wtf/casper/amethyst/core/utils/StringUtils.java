@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class StringUtils {
 
@@ -36,7 +35,12 @@ public class StringUtils {
      * @return a list of all enum names
      */
     public static List<String> getEnumNames(Class<? extends Enum<?>> enumType) {
-        return Arrays.stream(enumType.getEnumConstants()).map(Enum::toString).collect(Collectors.toList());
+        List<String> list = new ArrayList<>();
+        for (Enum<?> anEnum : enumType.getEnumConstants()) {
+            String string = anEnum.toString();
+            list.add(string);
+        }
+        return list;
     }
 
     /**

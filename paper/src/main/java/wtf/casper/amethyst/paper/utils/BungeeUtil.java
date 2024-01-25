@@ -22,7 +22,7 @@ public class BungeeUtil {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("Connect");
         out.writeUTF(server);
-        player.sendPluginMessage(AmethystPaper.getCallingPlugin(), "BungeeCord", out.toByteArray());
+        player.sendPluginMessage(AmethystPaper.getInstance(), "BungeeCord", out.toByteArray());
     }
 
     public static void sendPlayerToServer(Player player, AmethystPlugin plugin, String server) {

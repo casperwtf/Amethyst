@@ -9,6 +9,7 @@ import java.lang.reflect.Type;
 import java.util.UUID;
 
 public class UUIDTypeAdapter extends TypeAdapter<UUID> implements JsonSerializer<UUID>, JsonDeserializer<UUID> {
+
     @Override
     public void write(JsonWriter out, UUID value) throws IOException {
         out.value(value.toString());

@@ -1,5 +1,6 @@
 package wtf.casper.amethyst.paper.hooks.economy.impl;
 
+import com.google.auto.service.AutoService;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import wtf.casper.amethyst.paper.hooks.economy.IEconomy;
@@ -7,6 +8,7 @@ import wtf.casper.amethyst.paper.utils.ExperienceUtils;
 
 import java.util.UUID;
 
+@AutoService(IEconomy.class)
 public class ExpEconomy implements IEconomy {
     @Override
     public boolean canEnable() {

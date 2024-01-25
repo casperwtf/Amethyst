@@ -1,5 +1,6 @@
 package wtf.casper.amethyst.paper.hooks.economy.impl;
 
+import com.google.auto.service.AutoService;
 import net.craftersland.essentials.mysql.EMS;
 import net.craftersland.essentials.mysql.storage.MysqlSetup;
 import net.craftersland.essentials.mysql.storage.StorageHandler;
@@ -11,6 +12,7 @@ import java.lang.reflect.Field;
 import java.util.Optional;
 import java.util.UUID;
 
+@AutoService(IEconomy.class)
 public class SQLEssEconomy implements IEconomy {
 
     private StorageHandler ems;

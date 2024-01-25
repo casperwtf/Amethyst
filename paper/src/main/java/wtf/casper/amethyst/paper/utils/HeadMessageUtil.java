@@ -1,6 +1,5 @@
 package wtf.casper.amethyst.paper.utils;
 
-import de.themoep.minedown.adventure.MineDown;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
@@ -156,78 +155,78 @@ public class HeadMessageUtil {
     }
 
     public static void sendHeadMessage(Player player, List<String> message) {
-        UUID uuid = player.getUniqueId();
-
-        int headCount = 0;
-        for (String s : message) {
-            if (s.contains("{head}")) {
-                headCount++;
-            }
-        }
-
-        if (headCount == 0) {
-            for (String s : message) {
-                player.sendMessage(MineDown.parse(s));
-            }
-            return;
-        }
-
-        getHeadMessage(uuid, headCount).whenCompleteAsync((lines, throwable) -> {
-            if (throwable != null) {
-                throwable.printStackTrace();
-            } else {
-                PlaceholderReplacer replacer = new PlaceholderReplacer().center("center");
-                int headI = 0;
-                for (String s : message) {
-                    if (s.contains("{head}")) {
-                        s = s.replace("{head}", MineDown.stringify(lines.get(headI)));
-                        if (s.contains("{center}")) {
-                            int len = ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH - MineDown.stringify(lines.get(headI)).length();
-                            s = MineDown.stringify(lines.get(headI)) + centerMessage(s.replace("{center}", ""), len);
-                        }
-                        headI++;
-                    }
-                    player.sendMessage(MineDown.parse(replacer.parse(s)));
-                }
-            }
-        });
+//        UUID uuid = player.getUniqueId();
+//
+//        int headCount = 0;
+//        for (String s : message) {
+//            if (s.contains("{head}")) {
+//                headCount++;
+//            }
+//        }
+//
+//        if (headCount == 0) {
+//            for (String s : message) {
+//                player.sendMessage(MineDown.parse(s));
+//            }
+//            return;
+//        }
+//
+//        getHeadMessage(uuid, headCount).whenCompleteAsync((lines, throwable) -> {
+//            if (throwable != null) {
+//                throwable.printStackTrace();
+//            } else {
+//                Placeholders replacer = new Placeholders().center("center");
+//                int headI = 0;
+//                for (String s : message) {
+//                    if (s.contains("{head}")) {
+//                        s = s.replace("{head}", MineDown.stringify(lines.get(headI)));
+//                        if (s.contains("{center}")) {
+//                            int len = ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH - MineDown.stringify(lines.get(headI)).length();
+//                            s = MineDown.stringify(lines.get(headI)) + centerMessage(s.replace("{center}", ""), len);
+//                        }
+//                        headI++;
+//                    }
+//                    player.sendMessage(MineDown.parse(replacer.parse(s)));
+//                }
+//            }
+//        });
     }
 
     public static void broadcastHeadMessage(UUID player, List<String> message) {
 
-        int headCount = 0;
-        for (String s : message) {
-            if (s.contains("{head}")) {
-                headCount++;
-            }
-        }
-
-        if (headCount == 0) {
-            for (String s : message) {
-                Bukkit.broadcast(MineDown.parse(s));
-            }
-            return;
-        }
-
-        getHeadMessage(player, headCount).whenCompleteAsync((lines, throwable) -> {
-            if (throwable != null) {
-                throwable.printStackTrace();
-            } else {
-                PlaceholderReplacer replacer = new PlaceholderReplacer().center("center");
-                int headI = 0;
-                for (String s : message) {
-                    if (s.contains("{head}")) {
-                        s = s.replace("{head}", MineDown.stringify(lines.get(headI)));
-                        if (s.contains("{center}")) {
-                            int len = ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH - MineDown.stringify(lines.get(headI)).length();
-                            s = MineDown.stringify(lines.get(headI)) + centerMessage(s.replace("{center}", ""), len);
-                        }
-                        headI++;
-                    }
-                    Bukkit.broadcast(MineDown.parse(replacer.parse(s)));
-                }
-            }
-        });
+//        int headCount = 0;
+//        for (String s : message) {
+//            if (s.contains("{head}")) {
+//                headCount++;
+//            }
+//        }
+//
+//        if (headCount == 0) {
+//            for (String s : message) {
+//                Bukkit.broadcast(MineDown.parse(s));
+//            }
+//            return;
+//        }
+//
+//        getHeadMessage(player, headCount).whenCompleteAsync((lines, throwable) -> {
+//            if (throwable != null) {
+//                throwable.printStackTrace();
+//            } else {
+//                Placeholders replacer = new Placeholders().center("center");
+//                int headI = 0;
+//                for (String s : message) {
+//                    if (s.contains("{head}")) {
+//                        s = s.replace("{head}", MineDown.stringify(lines.get(headI)));
+//                        if (s.contains("{center}")) {
+//                            int len = ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH - MineDown.stringify(lines.get(headI)).length();
+//                            s = MineDown.stringify(lines.get(headI)) + centerMessage(s.replace("{center}", ""), len);
+//                        }
+//                        headI++;
+//                    }
+//                    Bukkit.broadcast(MineDown.parse(replacer.parse(s)));
+//                }
+//            }
+//        });
     }
 
     public static CompletableFuture<List<TextComponent>> getFileImageMessage(File file) {
@@ -291,76 +290,77 @@ public class HeadMessageUtil {
         });
     }
 
-    public static void sendFileImageMessage(Player player, File file, List<String> message, PlaceholderReplacer replacer) {
-        int headCount = 0;
-        for (String s : message) {
-            if (s.contains("{image}")) {
-                headCount++;
-            }
-        }
-
-        if (headCount == 0) {
-            for (String s : message) {
-                player.sendMessage(StringUtilsPaper.colorify(replacer.parse(s)));
-            }
-            return;
-        }
-
-        getFileImageMessageStr(file).whenComplete((lines, throwable) -> {
-            if (throwable != null) {
-                throwable.printStackTrace();
-            } else {
-                int headI = 0;
-                for (String s : message) {
-                    if (s.contains("{image}")) {
-                        if (s.contains("{center}")) {
-                            int len = ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH - lines.get(headI).length();
-                            s = lines.get(headI) + centerMessage(s.replace("{image}", "").replace("{center}", ""), len);
-                        } else {
-                            s = s.replace("{image}", lines.get(headI));
-                        }
-                        headI++;
-                    }
-                    player.sendMessage(StringUtilsPaper.colorify(replacer.parse(s)));
-                }
-            }
-        });
-    }
-
-    public static void broadcastFileImageMessage(File file, List<String> message, PlaceholderReplacer replacer) {
-        int headCount = 0;
-        for (String s : message) {
-            if (s.contains("{image}")) {
-                headCount++;
-            }
-        }
-
-        if (headCount == 0) {
-            for (String s : message) {
-                Bukkit.broadcastMessage(StringUtilsPaper.colorify(replacer.parse(s)));
-            }
-            return;
-        }
-
-        getFileImageMessageStr(file).whenComplete((lines, throwable) -> {
-            if (throwable != null) {
-                throwable.printStackTrace();
-                return;
-            }
-
-            int headI = 0;
-            for (String s : message) {
-                if (s.contains("{image}")) {
-                    if (s.contains("{center}")) {
-                        int len = ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH - lines.get(headI).length();
-                        s = lines.get(headI) + centerMessage(s.replace("{image}", "").replace("{center}", ""), len);
-                    } else {
-                        s = s.replace("{image}", lines.get(headI));
-                    }
-                    headI++;
-                }
-                Bukkit.broadcastMessage(StringUtilsPaper.colorify(replacer.parse(s)));
-            }
-        });
-    }
+    //TODO: Fix this
+//    public static void sendFileImageMessage(Player player, File file, List<String> message, Placeholders replacer) {
+//        int headCount = 0;
+//        for (String s : message) {
+//            if (s.contains("{image}")) {
+//                headCount++;
+//            }
+//        }
+//
+//        if (headCount == 0) {
+//            for (String s : message) {
+//                player.sendMessage(StringUtilsPaper.colorify(replacer.parse(s)));
+//            }
+//            return;
+//        }
+//
+//        getFileImageMessageStr(file).whenComplete((lines, throwable) -> {
+//            if (throwable != null) {
+//                throwable.printStackTrace();
+//            } else {
+//                int headI = 0;
+//                for (String s : message) {
+//                    if (s.contains("{image}")) {
+//                        if (s.contains("{center}")) {
+//                            int len = ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH - lines.get(headI).length();
+//                            s = lines.get(headI) + centerMessage(s.replace("{image}", "").replace("{center}", ""), len);
+//                        } else {
+//                            s = s.replace("{image}", lines.get(headI));
+//                        }
+//                        headI++;
+//                    }
+//                    player.sendMessage(StringUtilsPaper.colorify(replacer.parse(s)));
+//                }
+//            }
+//        });
+//    }
+//
+//    public static void broadcastFileImageMessage(File file, List<String> message, Placeholders replacer) {
+//        int headCount = 0;
+//        for (String s : message) {
+//            if (s.contains("{image}")) {
+//                headCount++;
+//            }
+//        }
+//
+//        if (headCount == 0) {
+//            for (String s : message) {
+//                Bukkit.broadcastMessage(StringUtilsPaper.colorify(replacer.parse(s)));
+//            }
+//            return;
+//        }
+//
+//        getFileImageMessageStr(file).whenComplete((lines, throwable) -> {
+//            if (throwable != null) {
+//                throwable.printStackTrace();
+//                return;
+//            }
+//
+//            int headI = 0;
+//            for (String s : message) {
+//                if (s.contains("{image}")) {
+//                    if (s.contains("{center}")) {
+//                        int len = ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH - lines.get(headI).length();
+//                        s = lines.get(headI) + centerMessage(s.replace("{image}", "").replace("{center}", ""), len);
+//                    } else {
+//                        s = s.replace("{image}", lines.get(headI));
+//                    }
+//                    headI++;
+//                }
+//                Bukkit.broadcastMessage(StringUtilsPaper.colorify(replacer.parse(s)));
+//            }
+//        });
+//    }
 }

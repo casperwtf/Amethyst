@@ -1,5 +1,6 @@
 package wtf.casper.amethyst.paper.hooks.protection.protections;
 
+import com.google.auto.service.AutoService;
 import me.angeschossen.lands.api.flags.Flags;
 import me.angeschossen.lands.api.integration.LandsIntegration;
 import me.angeschossen.lands.api.land.Area;
@@ -12,6 +13,7 @@ import org.bukkit.inventory.InventoryHolder;
 import wtf.casper.amethyst.paper.AmethystPaper;
 import wtf.casper.amethyst.paper.hooks.protection.IProtection;
 
+@AutoService(IProtection.class)
 public class LandsProtection implements IProtection {
     private LandsIntegration landsIntegration;
 

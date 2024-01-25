@@ -1,6 +1,6 @@
 package wtf.casper.amethyst.core.inject;
 
-import wtf.casper.amethyst.core.utils.LazyReference;
+import wtf.casper.amethyst.core.utils.Lazy;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -46,15 +46,15 @@ public class Inject {
         return t;
     }
 
-    public static <T> LazyReference<T> getLater(Class<T> clazz) {
+    public static <T> Lazy<T> getLater(Class<T> clazz) {
         return getLater(clazz, null);
     }
 
-    public static <T> LazyReference<T> getLater(Class<T> clazz, InjectionContainer container) {
+    public static <T> Lazy<T> getLater(Class<T> clazz, InjectionContainer container) {
         if (container == null) container = InjectionContainer.GLOBAL;
 
         InjectionContainer finalContainer = container;
-        return new LazyReference<>(() -> {
+        return new Lazy<>(() -> {
             return get(clazz, finalContainer);
         });
     }

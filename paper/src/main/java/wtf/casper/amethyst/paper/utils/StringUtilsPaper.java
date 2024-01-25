@@ -1,27 +1,42 @@
 package wtf.casper.amethyst.paper.utils;
 
-import de.themoep.minedown.adventure.MineDown;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.kyori.adventure.text.*;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.SoundCategory;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
 import wtf.casper.amethyst.core.utils.StringUtils;
+import wtf.casper.amethyst.paper.AmethystPaper;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+@SuppressWarnings("unused")
 public class StringUtilsPaper extends StringUtils {
 
-    public static void broadcast(YamlDocument configuration, String path, PlaceholderReplacer placeholderReplacer) {
+    private final static Pattern PAPI_PATTERN = Pattern.compile("%(.+?)%");
+    private final static Pattern HEX_PATTERN = Pattern.compile("&(#\\w{6})");
+    private final static MiniMessageCache MINI_MESSAGE_CACHE = new MiniMessageCache();
+
+    private StringUtilsPaper() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
+
+    public static void broadcast(YamlDocument configuration, String path, Placeholders placeholderReplacer) {
         if (!configuration.contains(path)) return;
         if (!configuration.contains(path + ".message")) return;
 
@@ -34,7 +49,7 @@ public class StringUtilsPaper extends StringUtils {
 
     }
 
-    public static void broadcast(@Nullable List<String> message, @Nullable List<String> geyser, PlaceholderReplacer placeholderReplacer) {
+    public static void broadcast(@Nullable List<String> message, @Nullable List<String> geyser, Placeholders placeholderReplacer) {
         if (message == null && geyser == null) return;
 
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -42,7 +57,7 @@ public class StringUtilsPaper extends StringUtils {
         }
     }
 
-    public static void broadcast(Section section, PlaceholderReplacer replacer) {
+    public static void broadcast(Section section, Placeholders replacer) {
         if (section == null) return;
         if (!section.contains("message")) return;
         if (section.isList("message")) {
@@ -52,7 +67,7 @@ public class StringUtilsPaper extends StringUtils {
         section.getOptionalString("message").ifPresent(s -> broadcast(s, null, replacer));
     }
 
-    public static void broadcast(@Nullable String message, @Nullable String geyser, PlaceholderReplacer placeholderReplacer) {
+    public static void broadcast(@Nullable String message, @Nullable String geyser, Placeholders placeholderReplacer) {
         if (message == null && geyser == null) return;
         if (message == null) {
             broadcast(null, List.of(geyser), placeholderReplacer);
@@ -65,7 +80,7 @@ public class StringUtilsPaper extends StringUtils {
         broadcast(List.of(message), List.of(geyser), placeholderReplacer);
     }
 
-    public static void sendMessage(YamlDocument configuration, CommandSender player, String path, PlaceholderReplacer placeholderReplacer) {
+    public static void sendMessage(YamlDocument configuration, CommandSender player, String path, Placeholders placeholderReplacer) {
         if (!configuration.contains(path)) return;
         if (!configuration.contains(path + ".message")) return;
 
@@ -76,7 +91,7 @@ public class StringUtilsPaper extends StringUtils {
         configuration.getOptionalString(path + ".message").ifPresent(s -> sendMessage(s, null, player, placeholderReplacer));
     }
 
-    public static void sendMessage(Section section, CommandSender player, PlaceholderReplacer placeholderReplacer) {
+    public static void sendMessage(Section section, CommandSender player, Placeholders placeholderReplacer) {
         if (section == null) return;
         if (!section.contains("message")) return;
 
@@ -87,8 +102,9 @@ public class StringUtilsPaper extends StringUtils {
         section.getOptionalString("message").ifPresent(s -> sendMessage(s, null, player, placeholderReplacer));
     }
 
-    public static void sendMessage(@Nullable String message, @Nullable String geyser, CommandSender player, PlaceholderReplacer placeholderReplacer) {
+    public static void sendMessage(@Nullable String message, @Nullable String geyser, CommandSender player, Placeholders placeholderReplacer) {
         if (message == null && geyser == null) return;
+
         if (message == null) {
             sendMessage(null, List.of(geyser), player, placeholderReplacer);
             return;
@@ -100,36 +116,24 @@ public class StringUtilsPaper extends StringUtils {
         sendMessage(List.of(message), List.of(geyser), player, placeholderReplacer);
     }
 
-    public static void sendMessage(@Nullable List<String> message, @Nullable List<String> geyser, CommandSender player, PlaceholderReplacer placeholderReplacer) {
+    public static void sendMessage(@Nullable List<String> message, @Nullable List<String> geyser, CommandSender player, Placeholders placeholderReplacer) {
         if (message == null && geyser == null) return;
 
         if (geyser != null) {
-            if (placeholderReplacer != null) {
-                for (String s : geyser) {
-                    player.sendMessage(MineDown.parse(parsePlaceholders(s, placeholderReplacer, null)));
-                }
-                return;
-            }
             for (String s : geyser) {
-                player.sendMessage(MineDown.parse(s));
+                player.sendMessage(parseMini(s, null, placeholderReplacer));
             }
+            return;
         }
 
-        if (message != null) {
-            if (placeholderReplacer != null) {
-                for (String s : message) {
-                    player.sendMessage(MineDown.parse(parsePlaceholders(s, placeholderReplacer, null)));
-                }
-                return;
-            }
-            for (String s : message) {
-                player.sendMessage(MineDown.parse(s));
-            }
+        for (String s : message) {
+            player.sendMessage(parseMini(s, null, placeholderReplacer));
         }
     }
 
-    public static void sendMessage(@Nullable String message, @Nullable String geyser, Player player, PlaceholderReplacer placeholderReplacer) {
+    public static void sendMessage(@Nullable String message, @Nullable String geyser, Player player, Placeholders placeholderReplacer) {
         if (message == null && geyser == null) return;
+
         if (message == null) {
             sendMessage(null, List.of(geyser), player, placeholderReplacer);
             return;
@@ -138,109 +142,91 @@ public class StringUtilsPaper extends StringUtils {
             sendMessage(List.of(message), null, player, placeholderReplacer);
             return;
         }
+
         sendMessage(List.of(message), List.of(geyser), player, placeholderReplacer);
     }
 
-    public static void sendMessage(@Nullable List<String> message, @Nullable List<String> geyser, Player player, PlaceholderReplacer placeholderReplacer) {
+    public static void sendMessage(@Nullable List<String> message, @Nullable List<String> geyser, Player player, Placeholders placeholderReplacer) {
         if (message == null && geyser == null) return;
 
         if (geyser != null) {
-            if (placeholderReplacer != null) {
-                for (String s : geyser) {
-                    player.sendMessage(MineDown.parse(parsePlaceholders(s, placeholderReplacer, player)));
-                }
-                return;
-            }
             for (String s : geyser) {
-                player.sendMessage(MineDown.parse(s));
+                player.sendMessage(parseMini(s, player, placeholderReplacer));
             }
+            return;
         }
 
-        if (message != null) {
-            if (placeholderReplacer != null) {
-                for (String s : message) {
-                    player.sendMessage(MineDown.parse(parsePlaceholders(s, placeholderReplacer, player)));
-                }
-                return;
-            }
-            for (String s : message) {
-                player.sendMessage(MineDown.parse(s));
-            }
+        for (String s : message) {
+            player.sendMessage(parseMini(s, player, placeholderReplacer));
         }
     }
 
-    public static void sendMessage(YamlDocument configuration, Player player, String path, PlaceholderReplacer placeholderReplacer) {
+    public static void sendMessage(YamlDocument configuration, @NotNull Player player, String path, @Nullable Placeholders placeholderReplacer) {
         configuration.getOptionalSection(path).ifPresent(section -> sendMessage(section, player, placeholderReplacer));
     }
 
-    public static void sendMessage(Section sec, Player player, PlaceholderReplacer placeholderReplacer) {
+    public static void sendMessage(Section sec, @NotNull Player player, @Nullable Placeholders placeholderReplacer) {
 
         sec.getOptionalSection("sound").ifPresent(section ->
-                player.playSound(player.getLocation(), section.getString("id", "minecraft:block.amethyst_block.hit"),
+                player.playSound(
+                        player.getLocation(),
+                        section.getString("id", "minecraft:block.amethyst_block.hit"),
+                        SoundCategory.valueOf(section.getString("category", "master").toUpperCase()),
                         section.getFloat("pitch", 1.0f),
-                        section.getFloat("volume", 1.0f))
+                        section.getFloat("volume", 1.0f)
+                )
         );
 
         sec.getOptionalSection("title").ifPresent(section -> {
-
-            if (sec.getSection("geyser-title", null) != null && GeyserUtils.isFloodgateEnabled() && GeyserUtils.isUserBedrock(player.getUniqueId())) {
+            if (sec.getSection("geyser-title", null) != null
+                    && GeyserUtils.isUserBedrock(player.getUniqueId())) {
                 return;
             }
 
-            Title.Times times = Title.Times.times(Ticks.duration(section.getInt("fadeIn", 10)),
+            Title.Times times = Title.Times.times(
+                    Ticks.duration(section.getInt("fadeIn", 10)),
                     Ticks.duration(section.getInt("stay", 70)),
-                    Ticks.duration(section.getInt("fadeOut", 20)));
-            Title title;
+                    Ticks.duration(section.getInt("fadeOut", 20))
+            );
 
-            if (placeholderReplacer == null) {
-                title = Title.title(MineDown.parse(section.getString("title", "")),
-                        MineDown.parse(section.getString("subtitle", "")), times);
-            } else {
-                title = Title.title(MineDown.parse(parsePlaceholders(section.getString("title", ""), placeholderReplacer, player)),
-                        MineDown.parse(parsePlaceholders(section.getString("subtitle", ""), placeholderReplacer, player)), times);
-            }
+            Title title = Title.title(
+                    parseMini(section.getString("title", ""), player, placeholderReplacer),
+                    parseMini(section.getString("subtitle", ""), player, placeholderReplacer),
+                    times
+            );
 
             player.showTitle(title);
         });
 
         sec.getOptionalSection("geyser-title").ifPresent(section -> {
             if (GeyserUtils.isFloodgateEnabled() && GeyserUtils.isUserBedrock(player.getUniqueId())) {
-                Title.Times times = Title.Times.times(Ticks.duration(section.getInt("fadeIn", 10)),
+                Title.Times times = Title.Times.times(
+                        Ticks.duration(section.getInt("fadeIn", 10)),
                         Ticks.duration(section.getInt("stay", 70)),
-                        Ticks.duration(section.getInt("fadeOut", 20)));
+                        Ticks.duration(section.getInt("fadeOut", 20))
+                );
 
-                Title title;
-
-                if (placeholderReplacer == null) {
-                    title = Title.title(MineDown.parse(section.getString("title", "")), MineDown.parse(section.getString("subtitle", "")), times);
-                } else {
-                    title = Title.title(MineDown.parse(parsePlaceholders(section.getString("title", ""), placeholderReplacer, player)), MineDown.parse(parsePlaceholders(section.getString("subtitle", ""), placeholderReplacer, player)), times);
-                }
+                Title title = Title.title(parseMini(
+                        section.getString("title"), player, placeholderReplacer),
+                        parseMini(section.getString("subtitle"), player, placeholderReplacer),
+                        times
+                );
 
                 player.showTitle(title);
             }
         });
 
         sec.getOptionalString("actionbar").ifPresent(message -> {
-
-            if (sec.getString("geyser-actionbar", null) != null && GeyserUtils.isFloodgateEnabled() && GeyserUtils.isUserBedrock(player.getUniqueId())) {
+            if (sec.getString("geyser-actionbar", null) != null && GeyserUtils.isUserBedrock(player.getUniqueId())) {
                 return;
             }
 
-            if (placeholderReplacer == null) {
-                player.sendActionBar(MineDown.parse(message));
-            } else {
-                player.sendActionBar(MineDown.parse(parsePlaceholders(message, placeholderReplacer, player)));
-            }
+            player.sendActionBar(parseMini(message, player, placeholderReplacer));
         });
 
         sec.getOptionalString("geyser-actionbar").ifPresent(message -> {
             if (GeyserUtils.isFloodgateEnabled() && GeyserUtils.isUserBedrock(player.getUniqueId())) {
-                if (placeholderReplacer == null) {
-                    player.sendActionBar(MineDown.parse(message));
-                } else {
-                    player.sendActionBar(MineDown.parse(parsePlaceholders(message, placeholderReplacer, player)));
-                }
+                player.sendActionBar(parseMini(message, player, placeholderReplacer));
             }
         });
 
@@ -251,11 +237,7 @@ public class StringUtilsPaper extends StringUtils {
                 });
                 return;
             }
-            if (placeholderReplacer != null) {
-                sec.getOptionalString("geyser").ifPresent(s -> sendMessage(null, s, player, placeholderReplacer));
-                return;
-            }
-            sec.getOptionalString("geyser").ifPresent(s -> sendMessage(null, s, player, null));
+            sec.getOptionalString("geyser").ifPresent(s -> sendMessage(null, s, player, placeholderReplacer));
             return;
         }
 
@@ -266,13 +248,10 @@ public class StringUtilsPaper extends StringUtils {
                 });
                 return;
             }
-            if (placeholderReplacer != null) {
-                sec.getOptionalString("message").ifPresent(s -> sendMessage(s, null, player, placeholderReplacer));
-                return;
-            }
-            sec.getOptionalString("message").ifPresent(s -> sendMessage(s, null, player, null));
+            sec.getOptionalString("message").ifPresent(s -> sendMessage(s, null, player, placeholderReplacer));
         }
     }
+
 
     /**
      * @param text     The text to parse
@@ -280,19 +259,29 @@ public class StringUtilsPaper extends StringUtils {
      * @param player   The player to parse for
      * @return The parsed text
      */
-    public static String parsePlaceholders(String text, @Nullable PlaceholderReplacer replacer, Player player) {
-
+    public static Component parseMini(String text, @Nullable OfflinePlayer player, @Nullable Placeholders replacer) {
         if (replacer == null) {
-            if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
-                return PlaceholderAPI.setPlaceholders(player, text);
-            }
-            return text;
+            replacer = Placeholders.EMPTY;
         }
 
-        if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            return replacer.parse(PlaceholderAPI.setPlaceholders(player, text));
+        Component component = MINI_MESSAGE_CACHE.get(text);
+
+        if (AmethystPaper.getInstance().getServer().getPluginManager().isPluginEnabled("PlaceholderAPI") && player != null) {
+            component = parsePAPI(component, player);
         }
-        return replacer.parse(text);
+
+        return replacer.parse(component);
+    }
+
+    public static Component parsePAPI(Component component, OfflinePlayer player) {
+        return component.replaceText(
+                TextReplacementConfig.builder().match(PAPI_PATTERN)
+                        .replacement((matchResult, builder) -> {
+                            String placeholder = matchResult.group(1);
+                            String value = PlaceholderAPI.setPlaceholders(player, placeholder);
+                            return builder.content(value);
+                        }).build()
+        );
     }
 
     /**
@@ -315,15 +304,23 @@ public class StringUtilsPaper extends StringUtils {
      * @return The colorified message
      */
     public static String colorify(String message) {
-        message = hexColor(message);
-        return ChatColor.translateAlternateColorCodes('&', message);
+        Matcher matcher = HEX_PATTERN.matcher(message);
+        StringBuilder buffer = new StringBuilder(message.length() + 4 * 8);
+        while (matcher.find()) {
+            String group = matcher.group(1);
+            matcher.appendReplacement(buffer, ChatColor.COLOR_CHAR + "x"
+                    + ChatColor.COLOR_CHAR + group.charAt(0) + ChatColor.COLOR_CHAR + group.charAt(1)
+                    + ChatColor.COLOR_CHAR + group.charAt(2) + ChatColor.COLOR_CHAR + group.charAt(3)
+                    + ChatColor.COLOR_CHAR + group.charAt(4) + ChatColor.COLOR_CHAR + group.charAt(5)
+            );
+        }
+        return ChatColor.translateAlternateColorCodes('&', matcher.appendTail(buffer).toString());
     }
 
     /**
      * @param message The messages to colorify
      * @return The colorified messages
      */
-
     public static List<String> colorify(List<String> message) {
         message.replaceAll(StringUtilsPaper::colorify);
         return message;
@@ -354,17 +351,17 @@ public class StringUtilsPaper extends StringUtils {
 
     /**
      * @param message The message to center
-     * @return The centered message
+     * @return The spaces needed for the message
      */
-    public static String centerMessage(String message) {
-        if (message == null || message.equals("")) return "";
+    public static String centerMessageSpaces(String message) {
+        if (message == null || message.isEmpty()) return "";
 
         int messagePxSize = 0;
         boolean previousCode = false;
         boolean isBold = false;
 
         for (char c : message.toCharArray()) {
-            if (c == '§') {
+            if (c == ChatColor.COLOR_CHAR) {
                 previousCode = true;
             } else if (previousCode) {
                 previousCode = false;
@@ -388,150 +385,47 @@ public class StringUtilsPaper extends StringUtils {
             sb.append(" ");
             compensated += spaceLength;
         }
-        return sb + message;
+        return sb.toString();
     }
 
+    /**
+     * @param message The message to center
+     * @return The spaces needed for the message
+     */
+    public static String centerMessageSpaces(Component message) {
+        return centerMessageSpaces(getContent(message, true));
+    }
 
     /**
-     * @param chatChar The chat character to use
-     * @param message  The message to convert
-     *                 This function takes the &x formatting and converts it into the normal hex color formatting.
+     * @param component The component to get the content of (keeps bold intact)
+     * @return The content of the component
      */
-    public static String legacyHexToNormal(String chatChar, String message) {
-        return scanTags(chatChar + "x", "", message, 12, group -> {
-            StringBuilder builder = new StringBuilder();
-            builder.append("&#");
-            for (int i = 0; i < group.length(); i++) {
-                if (i % 2 == 1) {
-                    builder.append(group.charAt(i));
-                }
+    public static String getContent(Component component, boolean leaveBold) {
+        if (component instanceof TextComponent textComponent) {
+            if (leaveBold && textComponent.hasDecoration(TextDecoration.BOLD)) {
+                return ChatColor.COLOR_CHAR + ChatColor.BOLD.getChar() + textComponent.content();
             }
-            return builder.toString();
-        });
-    }
-
-    /**
-     * This method will convert into the minedown hex formatting instead of the regular hex color formatting.
-     * This is solely for my personal development uses, if you never use this method, I dont blame you.
-     *
-     * @param startingTag is the starting tag that will be used to scan for the hex color.
-     * @param endTag      is the end tag that will be used to scan for the hex color. (if it's empty, it will scan the next 6 characters after the starting tag)
-     * @param message     is the message that will be scanned for the tag.
-     */
-    public static String hexColorMineDown(String startingTag, String endTag, String message) {
-        return scanTags(startingTag, endTag, message, 6, group -> "&#"
-                + group.charAt(0) + group.charAt(1)
-                + group.charAt(2) + group.charAt(3)
-                + group.charAt(4) + group.charAt(5) + "&");
-    }
-
-    public static String hexColorMineDown(String message) {
-        return hexColorMineDown("&#", "", message);
-    }
-
-    /**
-     * @param startingTag is the starting tag that will be used to scan for the hex color.
-     * @param endTag      is the end tag that will be used to scan for the hex color. (if it's empty, it will scan the next 6 characters after the starting tag)
-     * @param message     is the message that will be scanned for the tag.
-     * @param chatColor   is the chat color code that will be used when generating the hex color.
-     * @return the message with the hex color replaced with the chat color code.
-     */
-    public static String hexColor(String startingTag, String endTag, String message, String chatColor) {
-        return scanTags(startingTag, endTag, message, 6, group -> chatColor + "x"
-                + chatColor + group.charAt(0) + chatColor + group.charAt(1)
-                + chatColor + group.charAt(2) + chatColor + group.charAt(3)
-                + chatColor + group.charAt(4) + chatColor + group.charAt(5));
-    }
-
-    /**
-     * @param message   is the message that will be scanned for the tag.
-     * @param chatColor is the chat color code that will be used when generating the hex color.
-     */
-    public static String hexColor(String message, String chatColor) {
-        return hexColor("&#", "", message, chatColor);
-    }
-
-    /**
-     * @param message is the message that will be scanned for the tag.
-     */
-    public static String hexColor(String message) {
-        return hexColor(message, ChatColor.COLOR_CHAR + "");
-    }
-
-    /**
-     * @param message       is the message that will be scanned for the tag.
-     * @param messageLength is the length of the message if needed. You can set it to -1 if you don't need it. You will need it if you don't have an end tag.
-     * @param startTag      The start tag that will be scanned for. This is required for the scanning.
-     * @param endTag        The end tag that will be scanned for. This is not required for the scanning. If not provided, you will need a message length.
-     * @param function      The function that will be run on the tag.
-     * @return The message after the function is run on the tag.
-     */
-    public static String scanTags(String startTag, String endTag, String message, int messageLength, Function<String, String> function) {
-        // initialize the character arrays
-        char[] chars = message.toCharArray();
-        char[] startTagChars = startTag.toCharArray();
-        char[] endTagChars = endTag.toCharArray();
-
-        if (startTagChars.length == 0) { // If the start tag is not provided, return the message
-            return message;
+            return textComponent.content();
         }
 
-        if (endTagChars.length == 0 && messageLength == -1) { // If the end tag is not provided and the message length is not provided, return the message
-            return message;
+        if (component instanceof TranslatableComponent translatableComponent) {
+            return translatableComponent.fallback();
         }
 
-        StringBuilder builder = new StringBuilder();
-        boolean found = false;
-        StringBuilder tag = new StringBuilder();
-
-        for (int i = 0; i < chars.length; i++) { // Loop through the characters
-
-            if (chars[i] == startTagChars[0]) { // If the first char of the start tag is found
-                boolean foundStart = true;
-                for (int j = 1; j < startTagChars.length; j++) { // Check if the rest of the start tag is found
-                    if (chars[i + j] != startTagChars[j]) {
-                        foundStart = false;
-                        break;
-                    }
-                }
-                if (foundStart) {
-                    found = true;
-                    i += startTagChars.length;
-                }
-            }
-            if (!found) { // If the start tag is not found, just add the char to the builder
-                builder.append(chars[i]);
-                continue;
-            }
-
-            if (endTagChars.length == 0) { // If there is no end tag, just check the length of the tag
-                if (tag.length() == messageLength) {
-                    builder.append(function.apply(tag.toString()));
-                    tag = new StringBuilder();
-                    found = false;
-                    builder.append(chars[i]);
-                }
-            } else if (chars[i] == endTagChars[0]) { // If the first char of the end tag is found
-                boolean foundEnd = true;
-                for (int j = 1; j < endTagChars.length; j++) { // Check if the rest of the end tag is found
-                    if (chars[i + j] != endTagChars[j]) {
-                        foundEnd = false;
-                        break;
-                    }
-                }
-                if (foundEnd) { // If the end tag is found, run the function on the tag and reset the tag
-                    found = false;
-                    i += endTagChars.length;
-
-                    builder.append(function.apply(tag.toString()));
-                    tag = new StringBuilder();
-                }
-            }
-            if (found) { // If the start tag is found, add the char to the tag
-                tag.append(chars[i]);
-            }
+        if (component instanceof KeybindComponent keybindComponent) {
+            return keybindComponent.keybind();
         }
 
-        return builder.toString();
+        if (component instanceof ScoreComponent scoreComponent) {
+            return scoreComponent.name();
+        }
+
+        StringBuilder content = new StringBuilder();
+        for (Component child : component.children()) {
+            content.append(getContent(child, leaveBold));
+        }
+
+        return content.toString();
     }
+
 }

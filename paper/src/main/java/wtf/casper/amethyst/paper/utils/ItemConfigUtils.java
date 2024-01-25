@@ -1,7 +1,10 @@
 package wtf.casper.amethyst.paper.utils;
 
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -10,17 +13,22 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataType;
 import wtf.casper.amethyst.core.exceptions.AmethystException;
 import wtf.casper.amethyst.core.utils.MathUtils;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
 public class ItemConfigUtils {
 
-    public static ItemBuilder getItemBuilder(Section section, @Nullable OfflinePlayer player, @Nullable PlaceholderReplacer replacer) {
+    public static ItemBuilder getItemBuilder(Section section, @Nullable OfflinePlayer player, @Nullable Placeholders replacer) {
 
         if (!section.contains("material")) {
             try {
@@ -46,25 +54,31 @@ public class ItemConfigUtils {
         }
 
         section.getOptionalString("name").ifPresent(s -> {
+
+            Component component = StringUtilsPaper.parseMini(s, player, replacer);
             if (player != null && Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                s = PlaceholderAPI.setPlaceholders(player, s);
-            }
-            if (replacer != null) {
-                s = replacer.parse(s);
+                component = StringUtilsPaper.parsePAPI(component, player);
             }
 
-            builder.setDisplayName(StringUtilsPaper.colorify(s));
+            ItemMeta meta = builder.getItemMeta();
+            meta.displayName(component);
+            builder.setItemMeta(meta);
         });
+
         section.getOptionalStringList("lore").ifPresent(lore -> {
-            if (player != null && Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                lore = PlaceholderAPI.setPlaceholders(player, lore);
-            }
-            if (replacer != null) {
-                lore.replaceAll(replacer::parse);
+            ItemMeta meta = builder.getItemMeta();
+            List<Component> components = new ArrayList<>();
+            for (String s : lore) {
+                Component component = StringUtilsPaper.parseMini(s, player, replacer);
+                if (player != null && Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                    component = StringUtilsPaper.parsePAPI(component, player);
+                }
+                components.add(component);
             }
 
-            builder.setLore(StringUtilsPaper.colorify(lore));
+            builder.setItemMeta(meta);
         });
+
         section.getOptionalStringList("itemFlags").ifPresent(itemFlags -> {
             for (String itemFlag : itemFlags) {
                 if (StringUtilsPaper.validateEnum(itemFlag.toUpperCase(Locale.ROOT), ItemFlag.class)) {
@@ -72,6 +86,7 @@ public class ItemConfigUtils {
                 }
             }
         });
+
         section.getOptionalStringList("enchantments").ifPresent(enchantments -> {
             for (String enchants : enchantments) {
                 String[] enchantName = enchants.split(":");
@@ -81,6 +96,7 @@ public class ItemConfigUtils {
                 }
             }
         });
+
         section.getOptionalSection("nbt").ifPresent(section1 -> {
             for (String key : section1.getRoutesAsStrings(false)) {
                 Object oTemp = section1.get(key + ".value");
@@ -127,7 +143,7 @@ public class ItemConfigUtils {
         return getItemBuilder(section, player, null);
     }
 
-    public static ItemBuilder getItemBuilder(Section section, PlaceholderReplacer replacer) {
+    public static ItemBuilder getItemBuilder(Section section, Placeholders replacer) {
         return getItemBuilder(section, null, replacer);
     }
 
@@ -135,7 +151,7 @@ public class ItemConfigUtils {
         return getItemBuilder(section, null, null);
     }
 
-    public static ItemStack getItem(Section section, OfflinePlayer player, PlaceholderReplacer replacer) {
+    public static ItemStack getItem(Section section, OfflinePlayer player, Placeholders replacer) {
         return getItemBuilder(section, player, replacer);
     }
 
@@ -143,7 +159,7 @@ public class ItemConfigUtils {
         return getItem(section, player, null);
     }
 
-    public static ItemStack getItem(Section section, PlaceholderReplacer replacer) {
+    public static ItemStack getItem(Section section, Placeholders replacer) {
         return getItem(section, null, replacer);
     }
 
@@ -192,6 +208,25 @@ public class ItemConfigUtils {
             }
         }
         return freeSlots;
+    }
+
+    public static ItemStack getCustomSkull(String headURL) {
+        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
+        if (headURL.isEmpty())
+            return head;
+        SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
+        GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+        profile.getProperties().put("textures", new Property("textures", headURL));
+        Field profileField;
+        try {
+            profileField = skullMeta.getClass().getDeclaredField("profile");
+            profileField.setAccessible(true);
+            profileField.set(skullMeta, profile);
+        } catch (IllegalAccessException | NoSuchFieldException ex) {
+            ex.printStackTrace();
+        }
+        head.setItemMeta(skullMeta);
+        return head;
     }
 
 }

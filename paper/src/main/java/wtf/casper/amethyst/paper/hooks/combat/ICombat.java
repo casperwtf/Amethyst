@@ -3,8 +3,10 @@ package wtf.casper.amethyst.paper.hooks.combat;
 import org.bukkit.entity.Player;
 import wtf.casper.amethyst.paper.hooks.IHook;
 
+import java.util.Optional;
+
 public interface ICombat extends IHook {
 
-    Player getAttacker(Player player);
+    Optional<Player> getAttacker(Player player);
 
 }

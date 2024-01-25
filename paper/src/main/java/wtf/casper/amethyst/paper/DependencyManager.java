@@ -35,7 +35,6 @@ public class DependencyManager {
                 .artifactId(artifactId)
                 .version(version);
 
-
         if (patterns != null && patterns.length % 2 == 0 && patterns.length > 0) {
             for (int i = 0; i < patterns.length; i += 2) {
                 builder.relocate(new Relocation(patterns[i], patterns[i + 1]));
@@ -47,17 +46,14 @@ public class DependencyManager {
 
     public void loadDependencies() {
         this.plugin.getLogger().log(Level.INFO, "Loading dependencies...");
-        String amethystPackage = "wtf.casper.amethyst";
-        amethystPackage = amethystPackage.replace(".", "{}");
+        String amethystPackage = "wtf.casper.amethyst"; // done as string so relocation changes this to the correct package
+        amethystPackage = amethystPackage.replace(".", "{}"); // need the {} because relocation would relocate the string literal
 
         // gets split up because relocation is weird, this gets converted to "wtf.casper.amethyst.libs.reactor" if this doesn't happen
         String reactor = "re";
         String javaassist = "jav";
 
         List<Library> libraries = Lists.newArrayList(
-                this.getLibrary("net{}wesjd", "anvilgui", "1.9.1-SNAPSHOT", // https://repo.codemc.io/#browse/browse:maven-snapshots:net%2Fwesjd%2Fanvilgui%2F1.9.1-SNAPSHOT
-                        "net{}wesjd{}anvilgui", amethystPackage + "{}libs{}anvilgui"
-                ),
                 this.getLibrary("org{}mariadb{}jdbc", "mariadb-java-client", "3.1.3",
                         "org{}mariadb{}jdbc", amethystPackage + "{}libs{}mariadb"
                 ),
@@ -78,9 +74,6 @@ public class DependencyManager {
                 ),
                 this.getLibrary("dev{}dejvokep", "boosted-yaml", "1.3",
                         "dev{}dejvokep{}boostedyaml", amethystPackage + "{}libs{}boostedyaml"
-                ),
-                this.getLibrary("de{}themoep", "minedown-adventure", "1.7.1-SNAPSHOT",
-                        "de{}themoep{}minedown", amethystPackage + "{}libs{}minedown"
                 ),
                 this.getLibrary("com{}github{}chubbyduck1", "HologramBridge", "1.1.0",
                         "gg{}optimalgames{}hologrambridge", amethystPackage + "{}libs{}hologrambridge"

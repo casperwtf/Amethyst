@@ -1,5 +1,6 @@
 package wtf.casper.amethyst.paper.hooks.protection.protections;
 
+import com.google.auto.service.AutoService;
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.TownyPermission;
 import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
@@ -8,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import wtf.casper.amethyst.paper.hooks.protection.IProtection;
 
+@AutoService(IProtection.class)
 public class TownyProtection implements IProtection {
     @Override
     public boolean canEnable() {

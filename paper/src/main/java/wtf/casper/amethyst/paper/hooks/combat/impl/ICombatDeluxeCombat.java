@@ -1,15 +1,19 @@
 package wtf.casper.amethyst.paper.hooks.combat.impl;
 
+import com.google.auto.service.AutoService;
 import nl.marido.deluxecombat.DeluxeCombat;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import wtf.casper.amethyst.paper.hooks.combat.ICombat;
 
+import java.util.Optional;
+
+@AutoService(ICombat.class)
 public class ICombatDeluxeCombat implements ICombat {
 
     @Override
-    public Player getAttacker(Player player) {
-        return DeluxeCombat.getAPI().getCurrentOpponent(player);
+    public Optional<Player> getAttacker(Player player) {
+        return Optional.ofNullable(DeluxeCombat.getAPI().getCurrentOpponent(player));
     }
 
     @Override

@@ -25,7 +25,7 @@ public class RedisManager {
 
     public void sendRedisMessage(String channel, Message message) {
         if (connection != null && connection.isOpen()) {
-            connection.async().publish(channel, message.serialize());
+            connection.async().publish(channel, message.jsonSerialize());
         }
     }
 }

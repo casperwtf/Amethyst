@@ -1,11 +1,10 @@
 package wtf.casper.amethyst.paper.hooks.vanish.impl;
 
-import org.bukkit.Bukkit;
+import com.google.auto.service.AutoService;
 import org.bukkit.entity.Player;
-import org.bukkit.metadata.FixedMetadataValue;
-import wtf.casper.amethyst.paper.AmethystPaper;
 import wtf.casper.amethyst.paper.hooks.vanish.IVanish;
 
+@AutoService(IVanish.class)
 public class DefaultVanishImpl implements IVanish {
 
     @Override
@@ -15,18 +14,12 @@ public class DefaultVanishImpl implements IVanish {
 
     @Override
     public void setVanished(Player player, boolean vanished) {
+        throw new RuntimeException("Missing run-time dependency to handle IVanish#setVanished(Player, boolean)");
+    }
 
-        if (vanished) {
-            player.removeMetadata("vanished", AmethystPaper.getInstance());
-            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                onlinePlayer.hidePlayer(AmethystPaper.getInstance(), player);
-            }
-        } else {
-            player.setMetadata("vanished", new FixedMetadataValue(AmethystPaper.getInstance(), true));
-            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                onlinePlayer.showPlayer(AmethystPaper.getInstance(), player);
-            }
-        }
+    @Override
+    public long getVanishPriority(Player player) {
+        return 0;
     }
 
     @Override

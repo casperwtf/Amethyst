@@ -1,9 +1,12 @@
 package wtf.casper.amethyst.paper.scheduler;
 
-import wtf.casper.amethyst.core.scheduler.AmethystScheduler;
 import wtf.casper.amethyst.paper.utils.FoliaUtil;
 
 public class SchedulerUtil {
+
+    private SchedulerUtil() {
+        throw new IllegalStateException("Utility class");
+    }
 
     public static AmethystScheduler run(Runnable runnable, Object subject) {
         if (FoliaUtil.isFolia()) {
@@ -13,7 +16,6 @@ public class SchedulerUtil {
         }
     }
 
-
     public static AmethystScheduler runAsync(Runnable runnable, Object subject) {
         if (FoliaUtil.isFolia()) {
             return new AmethystFoliaScheduler().runAsync(runnable, subject);
@@ -21,7 +23,6 @@ public class SchedulerUtil {
             return new AmethystBukkitScheduler().runAsync(runnable, subject);
         }
     }
-
 
     public static AmethystScheduler runLater(Runnable runnable, Object subject, long ticks) {
         if (FoliaUtil.isFolia()) {
@@ -31,7 +32,6 @@ public class SchedulerUtil {
         }
     }
 
-
     public static AmethystScheduler runLaterAsync(Runnable runnable, Object subject, long ticks) {
         if (FoliaUtil.isFolia()) {
             return new AmethystFoliaScheduler().runLaterAsync(runnable, subject, ticks);
@@ -39,7 +39,6 @@ public class SchedulerUtil {
             return new AmethystBukkitScheduler().runLaterAsync(runnable, subject, ticks);
         }
     }
-
 
     public static AmethystScheduler runDelayedTimer(Runnable runnable, Object subject, long delay, long ticks) {
         if (FoliaUtil.isFolia()) {
@@ -49,7 +48,6 @@ public class SchedulerUtil {
         }
     }
 
-
     public static AmethystScheduler runDelayedTimerAsync(Runnable runnable, Object subject, long delay, long ticks) {
         if (FoliaUtil.isFolia()) {
             return new AmethystFoliaScheduler().runDelayedTimerAsync(runnable, subject, delay, ticks);
@@ -58,8 +56,7 @@ public class SchedulerUtil {
         }
     }
 
-
-    public AmethystScheduler runDelayedRepeatedTimer(Runnable runnable, Object subject, long delay, long ticks, long repeats) {
+    public static AmethystScheduler runDelayedRepeatedTimer(Runnable runnable, Object subject, long delay, long ticks, long repeats) {
         if (FoliaUtil.isFolia()) {
             return new AmethystFoliaScheduler().runDelayedRepeatedTimer(runnable, subject, delay, ticks, repeats);
         } else {
@@ -67,8 +64,7 @@ public class SchedulerUtil {
         }
     }
 
-
-    public AmethystScheduler runDelayedRepeatedTimerAsync(Runnable runnable, Object subject, long delay, long ticks, long repeats) {
+    public static AmethystScheduler runDelayedRepeatedTimerAsync(Runnable runnable, Object subject, long delay, long ticks, long repeats) {
         if (FoliaUtil.isFolia()) {
             return new AmethystFoliaScheduler().runDelayedRepeatedTimerAsync(runnable, subject, delay, ticks, repeats);
         } else {

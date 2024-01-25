@@ -2,6 +2,7 @@ package wtf.casper.amethyst.paper.utils;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -37,33 +38,33 @@ public class ItemBuilder extends ItemStack {
         return this;
     }
 
-    public ItemBuilder getStack(PlaceholderReplacer replacer) {
+    public ItemBuilder getStack(Placeholders replacer) {
         ItemMeta meta = this.getItemMeta();
         if (meta.hasDisplayName()) {
-            meta.setDisplayName(replacer.parse(meta.getDisplayName()));
+            meta.displayName(replacer.parse(meta.displayName()));
         }
         if (meta.hasLore()) {
-            List<String> lore = new ArrayList<>();
-            for (String s : meta.getLore()) {
+            List<Component> lore = new ArrayList<>();
+            for (Component s : meta.lore()) {
                 lore.add(replacer.parse(s));
             }
-            meta.setLore(lore);
+            meta.lore(lore);
         }
         this.setItemMeta(meta);
         return this;
     }
 
-    public ItemBuilder getStack(Player player, PlaceholderReplacer replacer) {
+    public ItemBuilder getStack(Player player, Placeholders replacer) {
         ItemMeta meta = this.getItemMeta();
         if (meta.hasDisplayName()) {
-            meta.setDisplayName(StringUtilsPaper.parsePlaceholders(meta.getDisplayName(), replacer, player));
+            meta.displayName(replacer.parse(meta.displayName()));
         }
         if (meta.hasLore()) {
-            List<String> lore = new ArrayList<>();
-            for (String s : meta.getLore()) {
-                lore.add(StringUtilsPaper.parsePlaceholders(s, replacer, player));
+            List<Component> lore = new ArrayList<>();
+            for (Component s : meta.lore()) {
+                lore.add((StringUtilsPaper.parsePAPI(replacer.parse(s), player)));
             }
-            meta.setLore(lore);
+            meta.lore(lore);
         }
         this.setItemMeta(meta);
         return this;
@@ -141,12 +142,22 @@ public class ItemBuilder extends ItemStack {
         return this;
     }
 
-    public ItemBuilder builderLore(List<String> lore) {
+    public ItemBuilder builderLore(List<Component> lore) {
         ItemMeta meta = getItemMeta();
-        meta.setLore(lore);
+        meta.lore(lore);
         setItemMeta(meta);
         return this;
     }
+
+    public ItemBuilder setLore(Component lore) {
+        List<Component> loreList = new ArrayList<>();
+        loreList.add(lore);
+        ItemMeta meta = getItemMeta();
+        meta.lore(loreList);
+        setItemMeta(meta);
+        return this;
+    }
+
 
     public ItemBuilder setMaterial(Material material) {
         this.setType(material);
@@ -160,15 +171,6 @@ public class ItemBuilder extends ItemStack {
     public ItemBuilder setCustomModelData(int data) {
         ItemMeta meta = getItemMeta();
         meta.setCustomModelData(data);
-        setItemMeta(meta);
-        return this;
-    }
-
-    public ItemBuilder setLore(String lore) {
-        ArrayList<String> loreList = new ArrayList<>();
-        loreList.add(lore);
-        ItemMeta meta = getItemMeta();
-        meta.setLore(loreList);
         setItemMeta(meta);
         return this;
     }

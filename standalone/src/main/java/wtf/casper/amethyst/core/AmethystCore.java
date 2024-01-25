@@ -10,13 +10,14 @@ import org.bson.json.JsonWriterSettings;
 import wtf.casper.amethyst.core.gson.UUIDTypeAdapter;
 import wtf.casper.amethyst.core.mq.Message;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
-import wtf.casper.amethyst.core.utils.RuntimeTypeAdapterFactory;
+import wtf.casper.amethyst.core.gson.RuntimeTypeAdapterFactory;
 import wtf.casper.storageapi.id.Transient;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 public class AmethystCore {
 
@@ -40,8 +41,12 @@ public class AmethystCore {
     };
     @Getter @Setter private static Gson gson = null;
 
+
+    static {
+        init();
+    }
+
     public static void init() {
-        // no longer need to recreate gson on init because this recreates it
         registerTypeAdapter(UUID.class, new UUIDTypeAdapter());
     }
 
@@ -76,12 +81,11 @@ public class AmethystCore {
     public static void typeFactoryMessage(Class<? extends Message> clazz) {
         String[] split = clazz.getSimpleName().split("\\.");
         messages.put(clazz, split[split.length - 1]);
-        AmethystLogger.debug("Registered message type " + split[split.length - 1]);
         recreateGson();
     }
 
     public static void removeTypeFactoryMessage(Class<? extends Message> clazz) {
-        AmethystLogger.debug("Removed message type " + messages.remove(clazz));
+        messages.remove(clazz);
         recreateGson();
     }
 }

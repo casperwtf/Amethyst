@@ -1,5 +1,6 @@
 package wtf.casper.amethyst.paper.hooks.stacker.impl;
 
+import com.google.auto.service.AutoService;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
@@ -7,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import wtf.casper.amethyst.paper.hooks.stacker.IStacker;
 
+@AutoService(IStacker.class)
 public class DefaultStacker implements IStacker {
     @Override
     public boolean canEnable() {

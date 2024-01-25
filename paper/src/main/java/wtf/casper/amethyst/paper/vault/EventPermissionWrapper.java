@@ -4,6 +4,8 @@ import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
+import wtf.casper.amethyst.paper.AmethystPaper;
+import wtf.casper.amethyst.paper.AmethystPlugin;
 import wtf.casper.amethyst.paper.events.vault.permissions.*;
 
 import java.util.List;
@@ -22,13 +24,10 @@ public class EventPermissionWrapper extends Permission {
     }
 
     // returns true if not cancelled
-    private <T extends Event> boolean callEvent(T event) {
-        Bukkit.getPluginManager().callEvent(event);
-        if (event instanceof Cancellable) {
-            return !((Cancellable) event).isCancelled();
-        }
-
-        return true;
+    private <T extends Event> void callEvent(T event) {
+        Bukkit.getScheduler().runTaskAsynchronously(AmethystPaper.getInstance(), () -> {
+            Bukkit.getPluginManager().callEvent(event);
+        });
     }
 
 

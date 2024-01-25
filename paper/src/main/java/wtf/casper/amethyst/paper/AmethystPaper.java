@@ -21,22 +21,15 @@ import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.core.utils.DiscordWebhook;
 import wtf.casper.amethyst.core.utils.ServiceUtil;
 import wtf.casper.amethyst.core.utils.pastes.PasteProvider;
-import wtf.casper.amethyst.core.utils.pastes.Pastebin;
-import wtf.casper.amethyst.paper.command.CloudCommand;
-import wtf.casper.amethyst.paper.command.internal.ItemSerializationCommands;
+import wtf.casper.amethyst.paper.internal.commands.ItemSerializationCommands;
 import wtf.casper.amethyst.paper.hologrambridge.HologramBridge;
 import wtf.casper.amethyst.paper.hooks.GeyserExpansion;
-import wtf.casper.amethyst.paper.hooks.combat.CombatManager;
-import wtf.casper.amethyst.paper.hooks.economy.EconomyManager;
-import wtf.casper.amethyst.paper.hooks.protection.ProtectionManager;
-import wtf.casper.amethyst.paper.hooks.stacker.StackerManager;
-import wtf.casper.amethyst.paper.hooks.vanish.VanishManager;
-import wtf.casper.amethyst.paper.listeners.LoggerListener;
-import wtf.casper.amethyst.paper.listeners.PlayerBlockListener;
-import wtf.casper.amethyst.paper.listeners.PlayerSmeltItemEventListener;
+import wtf.casper.amethyst.paper.hooks.IHookController;
+import wtf.casper.amethyst.paper.internal.listeners.LoggerListener;
+import wtf.casper.amethyst.paper.internal.listeners.PlayerBlockListener;
+import wtf.casper.amethyst.paper.internal.listeners.PlayerSmeltItemEventListener;
 import wtf.casper.amethyst.paper.providers.CloudCommandProvider;
 import wtf.casper.amethyst.paper.providers.VaultProvider;
-import wtf.casper.amethyst.paper.ryseinventory.pagination.InventoryManager;
 import wtf.casper.amethyst.paper.scheduler.SchedulerUtil;
 import wtf.casper.amethyst.paper.serialized.SerializableItem;
 import wtf.casper.amethyst.paper.serialized.SerializableItemTypeAdapter;
@@ -44,15 +37,13 @@ import wtf.casper.amethyst.paper.serialized.serializer.*;
 import wtf.casper.amethyst.paper.tracker.PlayerTracker;
 import wtf.casper.amethyst.paper.tracker.PlayerTrackerListener;
 import wtf.casper.amethyst.paper.utils.ArmorstandUtils;
-import wtf.casper.amethyst.paper.utils.GeneralUtils;
+import wtf.casper.amethyst.paper.utils.ServerUtils;
 import wtf.casper.amethyst.paper.utils.GeyserUtils;
 import wtf.casper.amethyst.paper.utils.ServerLock;
 
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Filter;
 
 /**
@@ -63,10 +54,9 @@ public class AmethystPaper {
     // this is to prevent relocation from changing the package name here, which would break the relocation check
     private final char[] DEFAULT_PACKAGE = new char[]{'w', 't', 'f', '.', 'c', 'a', 's', 'p', 'e', 'r', '.', 'a', 'm', 'e', 't', 'h', 'y', 's', 't', '.', 'p', 'a', 'p', 'e', 'r'};
 
-    @Getter private static final Map<JavaPlugin, InventoryManager> inventoryManagers = new HashMap<>();
     @Getter private static Filter filter;
-    @Getter @Setter private static NamespacedKey playerPlacedBlockKey;
-    @Getter @Setter private static NamespacedKey playerSmeltItemKey;
+    @Getter @Setter private static NamespacedKey playerPlacedBlockKey = new NamespacedKey("amethyst", "PLAYER_PLACED_BLOCK");
+    @Getter @Setter private static NamespacedKey playerSmeltItemKey = new NamespacedKey("amethyst", "PLAYER_SMELT_ITEM");
     @Getter private YamlDocument amethystConfig;
     private static JavaPlugin instance;
     @Getter private CloudCommandProvider cloudCommandHandler;
@@ -85,9 +75,6 @@ public class AmethystPaper {
         }
 
         instance = plugin;
-
-        setPlayerPlacedBlockKey(new NamespacedKey(plugin, "PLAYER_PLACED_BLOCK"));
-        setPlayerSmeltItemKey(new NamespacedKey(plugin, "PLAYER_SMELT_ITEM"));
 
         DependencyManager dependencyManager = new DependencyManager(plugin);
         dependencyManager.loadDependencies();
@@ -114,7 +101,7 @@ public class AmethystPaper {
         this.amethystConfig = getYamlDocument(plugin, "amethyst-config.yml");
 
         CustomBlockData.registerListener(plugin);
-        new PlayerBlockListener(plugin, this);
+        new PlayerBlockListener(plugin);
         new PlayerSmeltItemEventListener(plugin);
 
         new ServerLock(plugin);
@@ -142,9 +129,9 @@ public class AmethystPaper {
             File log = new File("logs" + File.separator + "latest.log");
             PasteProvider.paste(
                     "Server Version: " + Bukkit.getVersionMessage() + "\n" +
-                            "Server Jar: " + GeneralUtils.getServerJar(log) + "\n" +
+                            "Server Jar: " + ServerUtils.getServerJar(log) + "\n" +
                             "Java Version: " + System.getProperty("java.version") + "\n\n\n" +
-                            GeneralUtils.readLog(log)
+                            ServerUtils.readLog(log)
             ).whenComplete((link, throwable) -> {
                 if (throwable != null) {
                     AmethystLogger.error("Failed to paste log to pasting service");
@@ -195,7 +182,7 @@ public class AmethystPaper {
         AmethystLogger.setFilter(filter);
 
         new PlayerTrackerListener(plugin);
-        instance.getServer().getScheduler().runTaskTimer(plugin, new PlayerTracker(), 0L, 1L);
+        instance.getServer().getScheduler().runTaskTimerAsynchronously(plugin, new PlayerTracker(), 0L, 1L);
 
         new ArmorstandUtils(plugin);
 
@@ -233,11 +220,7 @@ public class AmethystPaper {
 
         // initialize these
         SchedulerUtil.runLater(() -> {
-            new EconomyManager();
-            new CombatManager();
-            new ProtectionManager();
-            new StackerManager();
-            new VanishManager();
+            ServiceUtil.getServices(IHookController.class).forEach(IHookController::enable);
         }, 2L);
 
         // Handle vault events
@@ -248,10 +231,8 @@ public class AmethystPaper {
     }
 
     public void disableAmethyst() {
-        EconomyManager.disable();
-        VanishManager.disable();
-        CombatManager.disable();
-        ProtectionManager.disable();
+        ServiceUtil.getServices(IHookController.class).forEach(IHookController::disable);
+        PacketEvents.getAPI().terminate();
     }
 
     @NotNull
@@ -259,22 +240,8 @@ public class AmethystPaper {
         return amethystConfig;
     }
 
-    public static InventoryManager getInventoryManager(JavaPlugin plugin) {
-        if (inventoryManagers.containsKey(plugin)) {
-            return inventoryManagers.get(plugin);
-        }
-
-        InventoryManager inventoryManager = new InventoryManager(plugin);
-        inventoryManagers.put(plugin, inventoryManager);
-        inventoryManager.invoke();
-        return inventoryManager;
-    }
-
     public void setupConfigOptions() {
         AmethystLogger.setDebug(getYamlConfig().getBoolean("debug"));
-
-        Pastebin.setAPI_KEY(getYamlConfig().getString("pastebin.api-key"));
-        Pastebin.setUSER_API_KEY(getYamlConfig().getString("pastebin.user-api-key"));
 
         PasteProvider.getEnabledPasteTypes().clear();
         for (String key : getYamlConfig().getSection("paste-services").getRoutesAsStrings(false)) {

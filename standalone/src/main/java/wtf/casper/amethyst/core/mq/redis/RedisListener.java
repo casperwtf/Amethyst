@@ -3,13 +3,25 @@ package wtf.casper.amethyst.core.mq.redis;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import io.lettuce.core.pubsub.RedisPubSubListener;
+import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import wtf.casper.amethyst.core.AmethystCore;
 import wtf.casper.amethyst.core.mq.Message;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
 
+import java.util.function.Consumer;
+
 public abstract class RedisListener<T> implements RedisPubSubListener<String, String> {
 
     private final Class<T> clazz;
+
+    public static <T> void listen(StatefulRedisPubSubConnection<String, String> connection, Class<T> clazz, Consumer<T> callback) {
+        connection.addListener(new RedisListener<>(clazz) {
+            @Override
+            public void onMessage(T t) {
+                callback.accept(t);
+            }
+        });
+    }
 
     public RedisListener(Class<T> clazz) {
         this.clazz = clazz;

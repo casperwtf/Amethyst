@@ -1,6 +1,5 @@
 package wtf.casper.amethyst.paper.providers;
 
-import cloud.commandframework.CloudCapability;
 import cloud.commandframework.CommandManager;
 import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.bukkit.CloudBukkitCapabilities;

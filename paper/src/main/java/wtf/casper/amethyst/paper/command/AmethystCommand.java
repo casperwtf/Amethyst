@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
@@ -12,7 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import wtf.casper.amethyst.paper.utils.CommandUtil;
-import wtf.casper.amethyst.paper.utils.PlaceholderReplacer;
+import wtf.casper.amethyst.paper.utils.Placeholders;
 import wtf.casper.amethyst.paper.utils.StringUtilsPaper;
 
 import java.util.ArrayList;
@@ -32,10 +33,10 @@ public abstract class AmethystCommand extends BukkitCommand {
     private boolean consoleOnly = false;
     private String playerOnlyMessage = null;
 
-    private String consoleOnlyMessage = null;
-    private String noPermissionMessage = null;
+    private Component consoleOnlyMessage = null;
+    private Component noPermissionMessage = null;
     private Section noPermissionMessageSection = null;
-    private PlaceholderReplacer noPermissionMessageReplacer = new PlaceholderReplacer();
+    private Placeholders noPermissionMessageReplacer = new Placeholders();
 
     public AmethystCommand(@NotNull String name) {
         super(name);
@@ -158,8 +159,6 @@ public abstract class AmethystCommand extends BukkitCommand {
 
     public void runDefault(@NotNull CommandSender sender, String label, @NotNull String[] args) {
     }
-
-    ;
 
     public List<String> defaultTab(@NotNull CommandSender sender, String commandLabel, @NotNull String[] args) {
         return null;

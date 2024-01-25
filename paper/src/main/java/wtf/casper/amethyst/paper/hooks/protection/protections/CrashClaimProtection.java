@@ -1,5 +1,6 @@
 package wtf.casper.amethyst.paper.hooks.protection.protections;
 
+import com.google.auto.service.AutoService;
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
@@ -8,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import wtf.casper.amethyst.paper.hooks.protection.IProtection;
 
+@AutoService(IProtection.class)
 public class CrashClaimProtection implements IProtection {
 
     @Override

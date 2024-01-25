@@ -1,5 +1,6 @@
 package wtf.casper.amethyst.paper.items.serializers;
 
+import com.google.auto.service.AutoService;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -11,6 +12,7 @@ import wtf.casper.amethyst.paper.utils.StringUtilsPaper;
 
 import java.util.Optional;
 
+@AutoService(ItemSerializer.class)
 public class MinecraftItemSerializer implements ItemSerializer {
 
     @Override

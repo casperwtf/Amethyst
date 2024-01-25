@@ -48,6 +48,7 @@ public class PlayerListener implements Listener {
         if (event.isCancelled()) {
             return;
         }
+
         if (event.getPlayer().getServer() != null) {
             return;
         }

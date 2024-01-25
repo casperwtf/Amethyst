@@ -14,5 +14,4 @@ public interface IProtection extends IHook {
     boolean canAttack(Player player, Location location);
 
     boolean isClaimed(Location location);
-
 }

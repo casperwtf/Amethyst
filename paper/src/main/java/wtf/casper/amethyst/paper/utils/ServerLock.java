@@ -10,7 +10,7 @@ import java.util.*;
 
 public class ServerLock extends AmethystListener<JavaPlugin> {
 
-    private final static List<JavaPlugin> lockingPlugins = new ArrayList<>();
+    private final static Set<JavaPlugin> lockingPlugins = new HashSet<>();
     private static boolean locked = false;
     private static Map<String, String> reason = new HashMap<>();
 
@@ -18,13 +18,13 @@ public class ServerLock extends AmethystListener<JavaPlugin> {
         super(plugin);
     }
 
-    public static void lock(AmethystPlugin plugin, String reason) {
+    public static void lock(JavaPlugin plugin, String reason) {
         locked = true;
         lockingPlugins.add(plugin);
         ServerLock.reason.put(plugin.getName(), reason);
     }
 
-    public static void unlock(AmethystPlugin plugin) {
+    public static void unlock(JavaPlugin plugin) {
         lockingPlugins.remove(plugin);
         ServerLock.reason.remove(plugin.getName());
         if (lockingPlugins.isEmpty()) locked = false;
@@ -34,11 +34,12 @@ public class ServerLock extends AmethystListener<JavaPlugin> {
     @EventHandler
     public void onPlayerJoin(AsyncPlayerPreLoginEvent event) {
         if (!locked) return;
-        Optional<String> reason = ServerLock.reason.values().stream().findFirst();
+        Optional<String> reason = Optional.ofNullable(ServerLock.reason.get(lockingPlugins.iterator().next().getName()));
 
-        if (reason.isPresent())
+        if (reason.isPresent()) {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Component.text(reason.get()));
-        else
+        } else {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Component.text("Server is locked"));
+        }
     }
 }

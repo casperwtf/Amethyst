@@ -11,6 +11,10 @@ import wtf.casper.amethyst.paper.vault.EventPermissionWrapper;
 
 public class VaultProvider {
     public VaultProvider(JavaPlugin plugin) {
+        init(plugin);
+    }
+
+    private void init(JavaPlugin plugin) {
         RegisteredServiceProvider<Economy> registration = plugin.getServer().getServicesManager().getRegistration(Economy.class);
         if (registration != null) {
             Economy provider = registration.getProvider();
@@ -44,5 +48,6 @@ public class VaultProvider {
                 }
             }
         });
+
     }
 }

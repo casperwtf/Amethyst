@@ -15,12 +15,6 @@ public class AsyncPlayerMoveEvent extends PlayerEvent implements Cancellable {
     @Getter private final Location from;
     private boolean cancelled = false;
 
-    public AsyncPlayerMoveEvent(@NotNull Player who, Location to, Location from) {
-        super(who);
-        this.to = to;
-        this.from = from;
-    }
-
     public AsyncPlayerMoveEvent(@NotNull Player who, boolean async, Location to, Location from) {
         super(who, async);
         this.to = to;

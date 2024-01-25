@@ -37,10 +37,6 @@ public class PasteProvider {
                     CompletableFuture<String> paste = Hastebin.paste(content);
                     return paste.join();
                 }
-                case PASTEBIN -> {
-                    CompletableFuture<String> paste = Pastebin.paste(content);
-                    return paste.join();
-                }
                 case MCLOGS -> {
                     CompletableFuture<String> paste = MCLogs.paste(content);
                     return paste.join();
@@ -51,7 +47,6 @@ public class PasteProvider {
     }
 
     public enum PasteType {
-        PASTEBIN,
         HASTEBIN,
         MCLOGS,
         PASTESDEV

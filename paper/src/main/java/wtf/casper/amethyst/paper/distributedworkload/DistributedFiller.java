@@ -9,7 +9,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import wtf.casper.amethyst.core.distributedworkload.WorkloadRunnable;
-import wtf.casper.amethyst.core.utils.RandomCollection;
+import wtf.casper.amethyst.core.collections.RandomCollection;
 
 import java.util.List;
 

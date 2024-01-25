@@ -6,9 +6,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
+import wtf.casper.amethyst.paper.AmethystPaper;
 import wtf.casper.amethyst.paper.events.vault.economy.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Wrapper around Economy implementation to fire events.
@@ -24,13 +26,9 @@ public class EventEconomyWrapper implements Economy {
     }
 
     // returns true if not cancelled
-    private <T extends Event> boolean callEvent(T event) {
+    private <T extends Event> Boolean callEvent(T event) {
         Bukkit.getPluginManager().callEvent(event);
-        if (event instanceof Cancellable) {
-            return !((Cancellable) event).isCancelled();
-        }
-
-        return true;
+        return !(event instanceof Cancellable) || !((Cancellable) event).isCancelled();
     }
 
     public boolean isEnabled() {

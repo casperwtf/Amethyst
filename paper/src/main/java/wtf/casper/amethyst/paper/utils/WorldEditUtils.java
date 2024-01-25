@@ -13,6 +13,10 @@ import wtf.casper.amethyst.paper.AmethystPaper;
 
 public class WorldEditUtils {
 
+    private WorldEditUtils() {
+        throw new UnsupportedOperationException("Cannot instantiate utility class.");
+    }
+
     @Nullable
     public static Region getSelection(org.bukkit.entity.Player player) {
 

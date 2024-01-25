@@ -2,7 +2,6 @@ package wtf.casper.amethyst.paper.scheduler;
 
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
-import wtf.casper.amethyst.core.scheduler.AmethystScheduler;
 import wtf.casper.amethyst.paper.AmethystPaper;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -67,6 +66,11 @@ public class AmethystBukkitScheduler extends AmethystScheduler {
     @Override
     public void cancel() {
         task.cancel();
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return task.isCancelled();
     }
 
     protected Runnable repeatedRunnable(Runnable runnable, long repeats) {

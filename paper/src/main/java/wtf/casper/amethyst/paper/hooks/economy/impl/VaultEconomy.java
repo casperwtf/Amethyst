@@ -1,5 +1,6 @@
 package wtf.casper.amethyst.paper.hooks.economy.impl;
 
+import com.google.auto.service.AutoService;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -7,6 +8,7 @@ import wtf.casper.amethyst.paper.hooks.economy.IEconomy;
 
 import java.util.UUID;
 
+@AutoService(IEconomy.class)
 public class VaultEconomy implements IEconomy {
 
     private Economy economy;

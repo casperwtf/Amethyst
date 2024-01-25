@@ -14,49 +14,29 @@ public class GeyserUtils extends AmethystListener<JavaPlugin> {
         super(plugin);
     }
 
-    @Nullable
-    public static FloodgateApi floodgate() {
-        if (Bukkit.getServer().getPluginManager().isPluginEnabled("Floodgate")) {
-            return FloodgateApi.getInstance();
-        }
-        return null;
-    }
-
     public static boolean isFloodgateEnabled() {
-        return floodgate() != null;
+        return Bukkit.getPluginManager().isPluginEnabled("floodgate");
     }
 
     public static String getName(UUID uuid) {
         return Bukkit.getOfflinePlayer(uuid).getName();
-        //TODO: Implement this with geyser support
-
-//        if (isFloodgateEnabled() && isUserBedrock(uuid)) {
-//            GeyserPlayer join = getGeyserStorage().get(uuid).join();
-//            if (join != null && join.getName() != null) {
-//                return join.getName();
-//            }
-//            return Bukkit.getOfflinePlayer(uuid).getName();
-//        }
-//        return Bukkit.getOfflinePlayer(uuid).getName();
     }
 
     public static Optional<UUID> getUUID(String name) {
-
-        //TODO: There is a better way to do this with geyser support
-
         if (GeyserUtils.isFloodgateEnabled()) {
-            return Optional.of(GeyserUtils.floodgate().getUuidFor(name).join());
+            return Optional.of(FloodgateApi.getInstance().getUuidFor(name).join());
         }
 
         UUID uniqueId = Bukkit.getOfflinePlayer(name).getUniqueId();
-        return Optional.ofNullable(uniqueId);
+        return Optional.of(uniqueId);
     }
 
     public static boolean isUserBedrock(UUID uuid) {
         if (GeyserUtils.isFloodgateEnabled()) {
-            return floodgate().isFloodgatePlayer(uuid);
+            return FloodgateApi.getInstance().isFloodgatePlayer(uuid);
         }
-        return uuid.getMostSignificantBits() == 0;
+
+        return uuid.getMostSignificantBits() == 0; // fallback
     }
 
 }

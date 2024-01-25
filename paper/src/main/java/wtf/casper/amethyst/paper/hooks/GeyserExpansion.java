@@ -38,7 +38,7 @@ public class GeyserExpansion extends PlaceholderExpansion implements Relational 
         player.getTargetBlockExact(5);
 
         if (args.length == 0) return "";
-        if (GeyserUtils.floodgate() == null) return "";
+        if (!GeyserUtils.isFloodgateEnabled()) return "";
 
         switch (args[0].toLowerCase(Locale.ROOT)) {
             case "isbedrock" -> {
@@ -61,7 +61,7 @@ public class GeyserExpansion extends PlaceholderExpansion implements Relational 
         String[] args = params.split("(?<!\\\\)_"); // match "_" but not "\_"
 
         if (args.length != 3) return "";
-        if (GeyserUtils.floodgate() == null) return "";
+        if (!GeyserUtils.isFloodgateEnabled()) return "";
 
         if (args[0].toLowerCase(Locale.ROOT).equals("replace")) {
             // if both are bedrock
@@ -92,7 +92,7 @@ public class GeyserExpansion extends PlaceholderExpansion implements Relational 
         String[] args = params.split("_");
 
         if (args.length == 0) return "";
-        if (GeyserUtils.floodgate() == null) return "";
+        if (!GeyserUtils.isFloodgateEnabled()) return "";
 
         StringBuilder builder = new StringBuilder();
         for (String arg : args) {

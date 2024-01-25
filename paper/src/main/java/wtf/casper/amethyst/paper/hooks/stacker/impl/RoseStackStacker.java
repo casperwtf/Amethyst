@@ -1,5 +1,6 @@
 package wtf.casper.amethyst.paper.hooks.stacker.impl;
 
+import com.google.auto.service.AutoService;
 import dev.rosewood.rosestacker.api.RoseStackerAPI;
 import dev.rosewood.rosestacker.stack.StackedBlock;
 import dev.rosewood.rosestacker.stack.StackedEntity;
@@ -14,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import wtf.casper.amethyst.paper.hooks.stacker.IStacker;
 
+@AutoService(IStacker.class)
 public class RoseStackStacker implements IStacker {
 
     @Override

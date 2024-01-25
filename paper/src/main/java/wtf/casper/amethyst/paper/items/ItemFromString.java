@@ -1,22 +1,20 @@
 package wtf.casper.amethyst.paper.items;
 
 import org.bukkit.inventory.ItemStack;
-import wtf.casper.amethyst.paper.items.serializers.MinecraftItemSerializer;
+import wtf.casper.amethyst.core.utils.ServiceUtil;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class ItemFromString {
-
     private final static List<ItemSerializer> serializers = new ArrayList<>();
-
     static {
-        register(new MinecraftItemSerializer());
+        ServiceUtil.getServices(ItemSerializer.class).forEach(ItemFromString::register);
     }
 
     public static void register(ItemSerializer serializer) {
+        if (serializers.contains(serializer)) {
+            return;
+        }
         serializers.add(serializer);
     }
 

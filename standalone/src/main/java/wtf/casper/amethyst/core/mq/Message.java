@@ -1,6 +1,7 @@
 package wtf.casper.amethyst.core.mq;
 
 import com.google.gson.JsonObject;
+import lombok.extern.java.Log;
 import wtf.casper.amethyst.core.AmethystCore;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
 
@@ -13,14 +14,9 @@ public interface Message {
      *
      * @return The message serialized to JSON
      */
-    default String serialize() {
-        String json = AmethystCore.getGson().toJson(this);
-        JsonObject jsonObject = AmethystCore.getGson().fromJson(json, JsonObject.class);
-        if (jsonObject == null) return json;
-        if (jsonObject.has("amethyst_class_type")) {
-            AmethystLogger.debug("Message " + this.getClass().getSimpleName() + " already has a property called \"amethyst_class_type\". This will cause issues with deserialization.");
-            return json;
-        }
+    default String jsonSerialize() {
+        JsonObject jsonObject = AmethystCore.getGson().fromJson(AmethystCore.getGson().toJson(this), JsonObject.class);
+        if (jsonObject == null) throw new NullPointerException("Failed to serialize message");
         jsonObject.addProperty("amethyst_class_type", this.getClass().getSimpleName());
         return jsonObject.toString();
     }
