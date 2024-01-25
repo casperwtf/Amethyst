@@ -18,23 +18,28 @@ public class PlayerTracker implements Runnable {
 
     @Override
     public void run() {
+        if (AsyncPlayerMoveEvent.getHandlerList().getRegisteredListeners().length == 0) {
+            return;
+        }
+
         for (Player player : Bukkit.getOnlinePlayers()) {
+            Location location = player.getLocation(); // get location is not a reference & is a new object apparently
             if (!cache.containsKey(player.getUniqueId())) {
-                cache.put(player.getUniqueId(), player.getLocation());
+                cache.put(player.getUniqueId(), location);
                 continue;
             }
 
             Location lastLocation = cache.get(player.getUniqueId());
 
-            if (WorldUtils.locationSoftEquals(player.getLocation(), lastLocation, false, true)) {
+            if (WorldUtils.locationSoftEquals(location, lastLocation, false, true)) {
                 continue;
             }
 
             // this returns true if the event is not cancelled, to avoid declaring a variable for the event we can just use the return value
-            if (!new AsyncPlayerMoveEvent(player, true, player.getLocation(), lastLocation).callEvent()) {
+            if (!new AsyncPlayerMoveEvent(player, true, location, lastLocation).callEvent()) {
                 player.teleport(lastLocation);
             } else {
-                cache.put(player.getUniqueId(), player.getLocation());
+                cache.put(player.getUniqueId(), location);
             }
         }
     }
