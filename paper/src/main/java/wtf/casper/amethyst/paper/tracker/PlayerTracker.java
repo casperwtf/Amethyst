@@ -36,7 +36,7 @@ public class PlayerTracker implements Runnable {
             }
 
             // this returns true if the event is not cancelled, to avoid declaring a variable for the event we can just use the return value
-            if (!new AsyncPlayerMoveEvent(player, true, location, lastLocation).callEvent()) {
+            if (!new AsyncPlayerMoveEvent(player, false, location, lastLocation).callEvent()) {
                 player.teleport(lastLocation);
             } else {
                 cache.put(player.getUniqueId(), location);

@@ -12,42 +12,30 @@ import java.util.List;
 
 public class CommandUtil {
 
-    public static void registerCommand(Plugin plugin, BukkitCommand executor) {
-        CommandMap commandMap;
-        try {
-            final Field field = Bukkit.getServer().getClass().getDeclaredField("commandMap");
-            field.setAccessible(true);
-            commandMap = (CommandMap) field.get(Bukkit.getServer());
+    private static Field commandMapField;
+    private static CommandMap commandMap;
 
+    static {
+        try {
+            commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
+            commandMapField.setAccessible(true);
+            commandMap = (CommandMap) commandMapField.get(Bukkit.getServer());
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
+    }
+
+    public static void registerCommand(Plugin plugin, BukkitCommand executor) {
         assert commandMap != null;
         commandMap.register(plugin.getName(), executor);
     }
 
     public static void registerCommand(String fallbackPrefix, BukkitCommand executor) {
-        CommandMap commandMap;
-        try {
-            final Field field = Bukkit.getServer().getClass().getDeclaredField("commandMap");
-            field.setAccessible(true);
-            commandMap = (CommandMap) field.get(Bukkit.getServer());
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
         assert commandMap != null;
         commandMap.register(fallbackPrefix, executor);
     }
 
     public static void unregisterCommand(String cmd, String label, List<String> alias) {
-        CommandMap commandMap;
-        try {
-            final Field field = Bukkit.getServer().getClass().getDeclaredField("commandMap");
-            field.setAccessible(true);
-            commandMap = (CommandMap) field.get(Bukkit.getServer());
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
         assert commandMap != null;
         commandMap.getKnownCommands().remove(cmd);
         for (String s : alias) {
@@ -58,14 +46,6 @@ public class CommandUtil {
     }
 
     public static void unregisterCommand(PluginCommand cmd) {
-        CommandMap commandMap;
-        try {
-            final Field field = Bukkit.getServer().getClass().getDeclaredField("commandMap");
-            field.setAccessible(true);
-            commandMap = (CommandMap) field.get(Bukkit.getServer());
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
         assert commandMap != null;
         commandMap.getKnownCommands().remove(cmd.getName());
         for (String alias : cmd.getAliases()) {
@@ -76,14 +56,6 @@ public class CommandUtil {
     }
 
     public static void unregisterCommand(BukkitCommand cmd) {
-        CommandMap commandMap;
-        try {
-            final Field field = Bukkit.getServer().getClass().getDeclaredField("commandMap");
-            field.setAccessible(true);
-            commandMap = (CommandMap) field.get(Bukkit.getServer());
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
         assert commandMap != null;
         commandMap.getKnownCommands().remove(cmd.getName());
         for (String alias : cmd.getAliases()) {
@@ -94,14 +66,6 @@ public class CommandUtil {
     }
 
     public static Command getCommand(String cmd) {
-        CommandMap commandMap;
-        try {
-            final Field field = Bukkit.getServer().getClass().getDeclaredField("commandMap");
-            field.setAccessible(true);
-            commandMap = (CommandMap) field.get(Bukkit.getServer());
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
         assert commandMap != null;
         return commandMap.getCommand(cmd);
     }

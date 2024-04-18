@@ -37,6 +37,9 @@ and (YourKit YouMonitor)[https://www.yourkit.com/youmonitor/].
 * [Gson](https://github.com/google/gson)
 * [Fastboard](https://github.com/MrMicky-FR/FastBoard)
 
+## Spigot Resource I want to look back on
+* https://www.spigotmc.org/threads/arithmetical-optimisations-for-intense-scenario.633915/
+
 ## Highlights + Useful Tips
 
 When working with the packetevents API, converting spigot objects to packet

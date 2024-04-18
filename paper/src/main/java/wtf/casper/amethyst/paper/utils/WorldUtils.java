@@ -1,11 +1,6 @@
 package wtf.casper.amethyst.paper.utils;
 
-import com.jeff_media.customblockdata.CustomBlockData;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
-import wtf.casper.amethyst.paper.AmethystPaper;
 
 public class WorldUtils {
 
@@ -45,11 +40,6 @@ public class WorldUtils {
                 location1.getBlockY() == location2.getBlockY() &&
                 location1.getBlockZ() == location2.getBlockZ() &&
                 location1.getWorld().getUID().equals(location2.getWorld().getUID());
-    }
-
-    public static boolean isBlockPlacedByPlayer(Block block) {
-        PersistentDataContainer customBlockData = new CustomBlockData(block, AmethystPaper.getInstance());
-        return customBlockData.has(AmethystPaper.getPlayerPlacedBlockKey(), PersistentDataType.BYTE);
     }
 
 }

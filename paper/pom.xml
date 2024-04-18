@@ -205,6 +205,18 @@
                                         wtf.casper.amethyst.libs.storageapi
                                     </shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>de.tr7zw.nbtapi</pattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.nbtapi
+                                    </shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>de.tr7zw.nbtinjector</pattern>
+                                    <shadedPattern>
+                                        wtf.casper.amethyst.libs.nbtinjector
+                                    </shadedPattern>
+                                </relocation>
                             </relocations>
                             <filters>
                                 <filter>
@@ -288,8 +300,7 @@
                                     </excludes>
                                 </filter>
                             </filters>
-                            <createDependencyReducedPom>false
-                            </createDependencyReducedPom>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
                         </configuration>
                     </execution>
                 </executions>
@@ -406,8 +417,8 @@
         <dependency>
             <groupId>de.tr7zw</groupId>
             <artifactId>item-nbt-api-plugin</artifactId>
-            <version>2.11.1</version>
-            <scope>provided</scope>
+            <version>2.12.2</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.geysermc.floodgate</groupId>
@@ -481,16 +492,9 @@
         </dependency>
 
         <dependency>
-            <groupId>xyz.xenondevs.invui</groupId>
-            <artifactId>invui</artifactId>
-            <version>1.23</version>
-            <type>pom</type>
-        </dependency>
-
-        <dependency>
             <groupId>com.github.retrooper.packetevents</groupId>
             <artifactId>spigot</artifactId>
-            <version>2.0.2</version>
+            <version>2.2.1</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -568,12 +572,6 @@
             <scope>system</scope>
             <systemPath>${pom.basedir}/libs/FancyHolograms-2.0.1.jar
             </systemPath>
-        </dependency>
-        <dependency>
-            <groupId>com.google.auto.service</groupId>
-            <artifactId>auto-service-annotations</artifactId>
-            <version>1.0.1</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.google.auto.service</groupId>

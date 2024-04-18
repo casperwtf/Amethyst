@@ -89,18 +89,15 @@
                         </relocation>
                         <relocation>
                             <pattern>redempt.crunch</pattern>
-                            <shadedPattern>wtf.casper.amethyst.libs.crunch
-                            </shadedPattern>
+                            <shadedPattern>wtf.casper.amethyst.libs.crunch</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>org.quartz</pattern>
-                            <shadedPattern>wtf.casper.amethyst.libs.quartz
-                            </shadedPattern>
+                            <shadedPattern>wtf.casper.amethyst.libs.quartz</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>com.github.benmanes.caffeine</pattern>
-                            <shadedPattern>wtf.casper.amethyst.libs.caffeine
-                            </shadedPattern>
+                            <shadedPattern>wtf.casper.amethyst.libs.caffeine</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>org.reflections</pattern>
@@ -110,8 +107,7 @@
                         </relocation>
                         <relocation>
                             <pattern>javaassist</pattern>
-                            <shadedPattern>wtf.casper.amethyst.libs.javaassist
-                            </shadedPattern>
+                            <shadedPattern>wtf.casper.amethyst.libs.javaassist</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>wtf.casper.storageapi.libs.boostedyaml

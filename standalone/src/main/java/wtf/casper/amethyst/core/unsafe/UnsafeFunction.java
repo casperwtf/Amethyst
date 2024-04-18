@@ -1,7 +1,5 @@
 package wtf.casper.amethyst.core.unsafe;
 
-import lombok.SneakyThrows;
-
 import java.util.function.Function;
 
 @FunctionalInterface
@@ -11,10 +9,12 @@ public interface UnsafeFunction<T, R> extends Function<T, R> {
         return t -> t;
     }
 
-    @SneakyThrows
     @Override
     default R apply(final T t) {
-        return this.applyThrows(t);
+        try {
+            return this.applyThrows(t);
+        } catch (Exception ignored) {}
+        return null;
     }
 
     R applyThrows(final T t) throws Exception;

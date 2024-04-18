@@ -51,7 +51,7 @@ public class VanishController implements IHookController {
 
     @Override
     public void recalculateHooks() {
-        ServiceUtil.getServices(IVanish.class).forEach(this::registerHook);
+        ServiceUtil.getServices(IVanish.class, this.getClass().getClassLoader()).forEach(this::registerHook);
     }
 
     @Override

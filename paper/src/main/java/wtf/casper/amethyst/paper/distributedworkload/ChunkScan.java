@@ -12,8 +12,10 @@ public class ChunkScan {
     private final WorkloadRunnable workloadRunnable;
 
     public void scanChunk(Chunk chunk, Consumer<Block> blockConsumer) {
+        int maxHeight = chunk.getWorld().getMaxHeight();
+        int minHeight = chunk.getWorld().getMinHeight();
         for (int x = 0; x < 16; x++) {
-            for (int y = chunk.getWorld().getMaxHeight(); y >= chunk.getWorld().getMinHeight(); y--) {
+            for (int y = maxHeight; y >= minHeight; y--) {
                 for (int z = 0; z < 16; z++) {
                     BlockScanWorkload workload = new BlockScanWorkload(chunk.getWorld().getUID(), x, y, z, blockConsumer);
                     workloadRunnable.addWorkload(workload);

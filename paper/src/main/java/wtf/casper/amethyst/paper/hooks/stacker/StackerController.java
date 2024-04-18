@@ -69,7 +69,7 @@ public class StackerController implements IHookController {
     @Override
     public void recalculateHooks() {
         unregisterAllHooks();
-        registerHooks(new HashSet<>(ServiceUtil.getServices(IStacker.class)));
+        registerHooks(new HashSet<>(ServiceUtil.getServices(IStacker.class, this.getClass().getClassLoader())));
     }
 
     @Override

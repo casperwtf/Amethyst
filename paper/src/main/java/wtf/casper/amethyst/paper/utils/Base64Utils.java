@@ -14,6 +14,12 @@ import java.io.IOException;
 
 public class Base64Utils {
 
+    /**
+     * A method to serialize an inventory to Base64 string.
+     * @param playerInventory
+     * @return A string array with 3 elements: inventory content, offHand & armor
+     * @throws IllegalStateException
+     */
     public static String[] playerInventoryToBase64(PlayerInventory playerInventory) throws IllegalStateException {
         //get the main content part, this doesn't return the armor
         String content = toBase64(playerInventory);

@@ -35,8 +35,6 @@ public class GeyserExpansion extends PlaceholderExpansion implements Relational 
     public String onPlaceholderRequest(Player player, @NotNull String params) {
         String[] args = params.split("_");
 
-        player.getTargetBlockExact(5);
-
         if (args.length == 0) return "";
         if (!GeyserUtils.isFloodgateEnabled()) return "";
 

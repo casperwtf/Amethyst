@@ -1,6 +1,7 @@
 package wtf.casper.amethyst.core.utils;
 
-import lombok.SneakyThrows;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import org.jetbrains.annotations.Nullable;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
@@ -12,40 +13,101 @@ import java.util.*;
 
 public class ReflectionUtil {
 
-    @SneakyThrows
+    private final static Table<Class<?>, String, Field> fieldCache = HashBasedTable.create();
+
     public static void setPrivateField(Object object, String field, Object newValue) {
-        Class<?> clazz = object.getClass();
-        Field objectField = clazz.getDeclaredField(field);
-        objectField.setAccessible(true);
-        objectField.set(object, newValue);
-        objectField.setAccessible(false);
+        if (object == null) {
+            throw new IllegalArgumentException("Object cannot be null");
+        }
+
+        if (field == null) {
+            throw new IllegalArgumentException("Field cannot be null");
+        }
+
+        try {
+            if (fieldCache.contains(object.getClass(), field)) {
+                Field objectField = fieldCache.get(object.getClass(), field);
+                objectField.set(object, newValue);
+                return;
+            }
+
+            Class<?> clazz = object.getClass();
+            Field objectField = clazz.getDeclaredField(field);
+
+            fieldCache.put(clazz, field, objectField);
+
+            objectField.setAccessible(true);
+            objectField.set(object, newValue);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    @SneakyThrows
     public static void setPrivateField(Class<?> clazz, String field, Object newValue) {
-        Field objectField = clazz.getDeclaredField(field);
-        objectField.setAccessible(true);
-        objectField.set(null, newValue);
-        objectField.setAccessible(false);
+        if (clazz == null) {
+            throw new IllegalArgumentException("Class cannot be null");
+        }
+
+        if (field == null) {
+            throw new IllegalArgumentException("Field cannot be null");
+        }
+
+        try {
+            if (fieldCache.contains(clazz, field)) {
+                Field objectField = fieldCache.get(clazz, field);
+                objectField.set(null, newValue);
+                return;
+            }
+
+            Field objectField = clazz.getDeclaredField(field);
+
+            fieldCache.put(clazz, field, objectField);
+
+            objectField.setAccessible(true);
+            objectField.set(null, newValue);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    @SneakyThrows
     public static Object getPrivateField(Object object, String field) {
         Class<?> clazz = object.getClass();
-        Field objectField = clazz.getDeclaredField(field);
-        objectField.setAccessible(true);
-        Object val = objectField.get(object);
-        objectField.setAccessible(false);
-        return val;
+
+        try {
+            if (fieldCache.contains(clazz, field)) {
+                Field objectField = fieldCache.get(clazz, field);
+                objectField.setAccessible(true);
+                return objectField.get(object);
+            }
+
+            Field objectField = clazz.getDeclaredField(field);
+            objectField.setAccessible(true);
+
+            fieldCache.put(clazz, field, objectField);
+
+            return objectField.get(object);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    @SneakyThrows
     public static Object getPrivateField(Class<?> clazz, String field) {
-        Field objectField = clazz.getDeclaredField(field);
-        objectField.setAccessible(true);
-        Object val = objectField.get(null);
-        objectField.setAccessible(false);
-        return val;
+        try {
+            if (fieldCache.contains(clazz, field)) {
+                Field objectField = fieldCache.get(clazz, field);
+                objectField.setAccessible(true);
+                return objectField.get(null);
+            }
+
+            Field objectField = clazz.getDeclaredField(field);
+            objectField.setAccessible(true);
+
+            fieldCache.put(clazz, field, objectField);
+
+            return objectField.get(null);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -62,7 +124,7 @@ public class ReflectionUtil {
         throw new IllegalStateException("Can't find field " + clazz.getName() + "#" + name);
     }
 
-    public static Collection<Class<?>> getClassesWithAnnotation(String packagePath, Class<? extends Annotation> annotation) {
+    public static List<Class<?>> getClassesWithAnnotation(String packagePath, Class<? extends Annotation> annotation) {
         List<Class<?>> classes = new ArrayList<>();
         for (Class<?> clazz : getClasses(packagePath, Object.class)) {
             if (clazz.isAnnotationPresent(annotation)) {

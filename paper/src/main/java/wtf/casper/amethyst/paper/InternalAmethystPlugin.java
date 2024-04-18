@@ -15,7 +15,7 @@ public final class InternalAmethystPlugin extends AmethystPlugin {
 
     @Override
     public void onEnable() {
-        amethystPaper.initAmethyst(this);
+        amethystPaper.enableAmethyst(this);
     }
 
     @Override

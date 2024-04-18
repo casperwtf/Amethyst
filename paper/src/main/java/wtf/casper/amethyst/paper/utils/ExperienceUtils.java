@@ -15,8 +15,7 @@ public final class ExperienceUtils {
      * @see <a href=http://minecraft.gamepedia.com/Experience#Leveling_up>Experience#Leveling_up</a>
      */
     public static double getExp(Player player) {
-        return getExpFromLevel(player.getLevel())
-                + Math.round(getExpToNext(player.getLevel()) * player.getExp());
+        return getExpFromLevel(player.getLevel()) + Math.round(getExpToNext(player.getLevel()) * player.getExp());
     }
 
     /**

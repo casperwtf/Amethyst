@@ -11,6 +11,7 @@ import wtf.casper.amethyst.core.gson.RuntimeTypeAdapterFactory;
 import wtf.casper.amethyst.core.gson.UUIDTypeAdapter;
 import wtf.casper.amethyst.core.mq.Message;
 import wtf.casper.storageapi.id.Transient;
+import wtf.casper.storageapi.utils.StorageAPIConstants;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -74,6 +75,7 @@ public class AmethystCore {
         }
 
         gson = gsonBuilder.create();
+        StorageAPIConstants.setGson(gson);
     }
 
     public static void typeFactoryMessage(Class<? extends Message> clazz) {

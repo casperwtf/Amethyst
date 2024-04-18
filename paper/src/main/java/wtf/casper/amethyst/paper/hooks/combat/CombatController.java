@@ -56,7 +56,7 @@ public class CombatController implements IHookController {
             hook.disable();
         }
 
-        List<ICombat> services = ServiceUtil.getServices(ICombat.class);
+        List<ICombat> services = ServiceUtil.getServices(ICombat.class, this.getClass().getClassLoader());
         if (services.isEmpty()) {
             return;
         }

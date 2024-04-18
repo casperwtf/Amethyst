@@ -11,7 +11,6 @@ import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import org.bukkit.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -26,9 +25,7 @@ import wtf.casper.amethyst.paper.hooks.GeyserExpansion;
 import wtf.casper.amethyst.paper.hooks.IHookController;
 import wtf.casper.amethyst.paper.internal.commands.ItemSerializationCommands;
 import wtf.casper.amethyst.paper.internal.listeners.LoggerListener;
-import wtf.casper.amethyst.paper.internal.listeners.PlayerBlockListener;
 import wtf.casper.amethyst.paper.internal.listeners.PlayerSmeltItemEventListener;
-import wtf.casper.amethyst.paper.providers.CloudCommandProvider;
 import wtf.casper.amethyst.paper.providers.VaultProvider;
 import wtf.casper.amethyst.paper.scheduler.SchedulerUtil;
 import wtf.casper.amethyst.paper.serialized.SerializableItem;
@@ -37,7 +34,6 @@ import wtf.casper.amethyst.paper.serialized.serializer.*;
 import wtf.casper.amethyst.paper.tracker.PlayerTracker;
 import wtf.casper.amethyst.paper.tracker.PlayerTrackerListener;
 import wtf.casper.amethyst.paper.utils.ArmorstandUtils;
-import wtf.casper.amethyst.paper.utils.GeyserUtils;
 import wtf.casper.amethyst.paper.utils.ServerLock;
 import wtf.casper.amethyst.paper.utils.ServerUtils;
 
@@ -55,11 +51,9 @@ public class AmethystPaper {
     private final char[] DEFAULT_PACKAGE = new char[]{'w', 't', 'f', '.', 'c', 'a', 's', 'p', 'e', 'r', '.', 'a', 'm', 'e', 't', 'h', 'y', 's', 't', '.', 'p', 'a', 'p', 'e', 'r'};
 
     @Getter private static Filter filter;
-    @Getter @Setter private static NamespacedKey playerPlacedBlockKey = new NamespacedKey("amethyst", "PLAYER_PLACED_BLOCK");
-    @Getter @Setter private static NamespacedKey playerSmeltItemKey = new NamespacedKey("amethyst", "PLAYER_SMELT_ITEM");
+    @Getter @Setter private static NamespacedKey playerSmeltItemKey = new NamespacedKey("amethyst", "player_smelt_item");
     @Getter private YamlDocument amethystConfig;
     private static JavaPlugin instance;
-    @Getter private CloudCommandProvider cloudCommandHandler;
 
     /**
      * This constructor is used for loading Amethyst as a plugin
@@ -94,16 +88,15 @@ public class AmethystPaper {
     public void loadAmethyst(JavaPlugin plugin) {
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(plugin));
         PacketEvents.getAPI().load();
-    }
 
-    public void initAmethyst(JavaPlugin plugin) {
         AmethystCore.init();
         this.amethystConfig = getYamlDocument(plugin, "amethyst-config.yml");
+    }
 
+    public void enableAmethyst(JavaPlugin plugin) {
         CustomBlockData.registerListener(plugin);
-        new PlayerBlockListener(plugin);
         new PlayerSmeltItemEventListener(plugin);
-
+        AmethystLogger.setLog(plugin.getLogger());
         new ServerLock(plugin);
 
         filter = record -> {
@@ -127,9 +120,9 @@ public class AmethystPaper {
             }
 
             File log = new File("logs" + File.separator + "latest.log");
-            PasteProvider.paste(
+            PasteProvider.paste(PasteProvider.PasteType.MCLOGS,
                     "Server Version: " + Bukkit.getVersionMessage() + "\n" +
-                            "Server Jar: " + ServerUtils.getServerJar(log) + "\n" +
+                            "Server Jar: " + ServerUtils.getServerJar() + "\n" +
                             "Java Version: " + System.getProperty("java.version") + "\n\n\n" +
                             ServerUtils.readLog(log)
             ).whenComplete((link, throwable) -> {
@@ -179,10 +172,9 @@ public class AmethystPaper {
         }
 
         Bukkit.getLogger().setFilter(filter);
-        AmethystLogger.setFilter(filter);
 
         new PlayerTrackerListener(plugin);
-        instance.getServer().getScheduler().runTaskTimerAsynchronously(plugin, new PlayerTracker(), 0L, 1L);
+        instance.getServer().getScheduler().runTaskTimer(plugin, new PlayerTracker(), 0L, 1L); // needs to be called sync cause if cancelled itll teleport
 
         new ArmorstandUtils(plugin);
 
@@ -197,16 +189,12 @@ public class AmethystPaper {
 
         if (Bukkit.getPluginManager().isPluginEnabled("Floodgate") && Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new GeyserExpansion().register();
-            new GeyserUtils(plugin);
         }
 
         new HologramBridge(plugin, true);
 
         PacketEvents.getAPI().getSettings().debug(false).bStats(false).checkForUpdates(true).timeStampMode(TimeStampMode.MILLIS).reEncodeByDefault(true);
         PacketEvents.getAPI().init();
-
-        this.cloudCommandHandler = new CloudCommandProvider();
-        this.cloudCommandHandler.setup(plugin);
 
         // debug nag
         if (getYamlConfig().getBoolean("debug", false)) {
@@ -220,7 +208,7 @@ public class AmethystPaper {
 
         // initialize these
         SchedulerUtil.runLater(() -> {
-            ServiceUtil.getServices(IHookController.class).forEach(IHookController::enable);
+            ServiceUtil.getServices(IHookController.class, this.getClass().getClassLoader()).forEach(IHookController::enable);
         }, 2L);
 
         // Handle vault events
@@ -231,7 +219,7 @@ public class AmethystPaper {
     }
 
     public void disableAmethyst() {
-        ServiceUtil.getServices(IHookController.class).forEach(IHookController::disable);
+        ServiceUtil.getServices(IHookController.class, this.getClass().getClassLoader()).forEach(IHookController::disable);
         PacketEvents.getAPI().terminate();
     }
 
@@ -242,15 +230,6 @@ public class AmethystPaper {
 
     public void setupConfigOptions() {
         AmethystLogger.setDebug(getYamlConfig().getBoolean("debug"));
-
-        PasteProvider.getEnabledPasteTypes().clear();
-        for (String key : getYamlConfig().getSection("paste-services").getRoutesAsStrings(false)) {
-            boolean isEnabled = getYamlConfig().getBoolean("paste-services." + key);
-
-            if (isEnabled) {
-                PasteProvider.getEnabledPasteTypes().add(PasteProvider.PasteType.valueOf(key.toUpperCase()));
-            }
-        }
     }
 
     private void checkRelocation() {
@@ -260,31 +239,23 @@ public class AmethystPaper {
         }
     }
 
-    @SneakyThrows
     public YamlDocument getYamlDocument(JavaPlugin plugin, String path) {
         return getYamlDocument(plugin, path, GeneralSettings.builder().setUseDefaults(false).build(), LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
     }
 
-    @SneakyThrows
     public YamlDocument getYamlDocument(JavaPlugin plugin, String path, GeneralSettings generalSettings, LoaderSettings loaderSettings, DumperSettings dumperSettings, UpdaterSettings updaterSettings) {
-        return YamlDocument.create(
-                new File(plugin.getDataFolder(), path),
-                plugin.getResource(path),
-                generalSettings,
-                loaderSettings,
-                dumperSettings,
-                updaterSettings
-        );
-    }
-
-    public static JavaPlugin getCallingPlugin() {
-        Exception ex = new Exception();
         try {
-            Class<?> clazz = Class.forName(ex.getStackTrace()[2].getClassName());
-            return JavaPlugin.getProvidingPlugin(clazz);
-        } catch (ClassNotFoundException e) {
+            return YamlDocument.create(
+                    new File(plugin.getDataFolder(), path),
+                    plugin.getResource(path),
+                    generalSettings,
+                    loaderSettings,
+                    dumperSettings,
+                    updaterSettings
+            );
+        } catch (IOException e) {
             e.printStackTrace();
-            return null;
         }
+        return null;
     }
 }

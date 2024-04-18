@@ -3,7 +3,7 @@ package wtf.casper.amethyst.paper.utils;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
-import net.kyori.adventure.text.Component;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -14,8 +14,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.persistence.PersistentDataType;
-import wtf.casper.amethyst.core.exceptions.AmethystException;
 import wtf.casper.amethyst.core.utils.MathUtils;
 
 import javax.annotation.Nullable;
@@ -30,19 +28,11 @@ public class ItemConfigUtils {
     public static ItemBuilder getItemBuilder(Section section, @Nullable OfflinePlayer player, @Nullable Placeholders replacer) {
 
         if (!section.contains("material")) {
-            try {
-                throw new AmethystException("Material is not defined in the config for " + section.getRouteAsString());
-            } catch (AmethystException e) {
-                throw new RuntimeException(e);
-            }
+            throw new RuntimeException("Material is not defined in the config for " + section.getRouteAsString());
         }
 
         if (!StringUtilsPaper.validateEnum(section.getString("material").toUpperCase(Locale.ROOT), Material.class)) {
-            try {
-                throw new AmethystException("Material is not valid in the config for " + section.getRouteAsString());
-            } catch (AmethystException e) {
-                throw new RuntimeException(e);
-            }
+            throw new RuntimeException("Material is not valid in the config for " + section.getRouteAsString());
         }
 
         Material material = Material.valueOf(section.getString("material").toUpperCase(Locale.ROOT));
@@ -54,27 +44,35 @@ public class ItemConfigUtils {
 
         section.getOptionalString("name").ifPresent(s -> {
 
-            Component component = StringUtilsPaper.parseMini(s, player, replacer);
             if (player != null && Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                component = StringUtilsPaper.parsePAPI(component, player);
+                s = PlaceholderAPI.setPlaceholders(player, s);
+            }
+
+            if (replacer != null) {
+                s = replacer.parse(s);
             }
 
             ItemMeta meta = builder.getItemMeta();
-            meta.displayName(component);
+            meta.setDisplayName(s);
             builder.setItemMeta(meta);
         });
 
         section.getOptionalStringList("lore").ifPresent(lore -> {
             ItemMeta meta = builder.getItemMeta();
-            List<Component> components = new ArrayList<>();
+            List<String> components = new ArrayList<>();
             for (String s : lore) {
-                Component component = StringUtilsPaper.parseMini(s, player, replacer);
                 if (player != null && Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                    component = StringUtilsPaper.parsePAPI(component, player);
+                    s = PlaceholderAPI.setPlaceholders(player, s);
                 }
-                components.add(component);
+
+                if (replacer != null) {
+                    s = replacer.parse(s);
+                }
+
+                components.add(s);
             }
 
+            meta.setLore(components);
             builder.setItemMeta(meta);
         });
 
@@ -92,21 +90,6 @@ public class ItemConfigUtils {
                 if (enchantName.length != 3) continue;
                 if (MathUtils.validateInt(enchantName[2])) {
                     builder.addEnchant(Enchantment.getByKey(NamespacedKey.fromString(enchantName[0] + ":" + enchantName[1])), Integer.parseInt(enchantName[2]));
-                }
-            }
-        });
-
-        section.getOptionalSection("nbt").ifPresent(section1 -> {
-            for (String key : section1.getRoutesAsStrings(false)) {
-                Object oTemp = section1.get(key + ".value");
-                if (oTemp instanceof String o) {
-                    builder.getItemMeta().getPersistentDataContainer().set(builder.keyFromCache(section1.getString(key + ".key")), PersistentDataType.STRING, o);
-                } else if (oTemp instanceof Boolean o) {
-                    builder.getItemMeta().getPersistentDataContainer().set(builder.keyFromCache(section1.getString(key + ".key")), PersistentDataType.BOOLEAN, o);
-                } else if (oTemp instanceof Number o) {
-                    builder.getItemMeta().getPersistentDataContainer().set(builder.keyFromCache(section1.getString(key + ".key")), PersistentDataType.DOUBLE, o.doubleValue());
-                } else {
-                    throw new IllegalStateException("Unknown type for NBT value. " + oTemp.getClass().getName() + " for " + section1.getRouteAsString());
                 }
             }
         });
@@ -171,27 +154,33 @@ public class ItemConfigUtils {
     }
 
     public static boolean isFull(Inventory inventory, ItemStack toAdd) {
-        if (isFull(inventory)) {
-            int leftToAdd = toAdd.getAmount();
-            for (ItemStack itemStack : inventory) {
-                if (!itemStack.equals(toAdd)) {
-                    continue;
-                }
-                if (leftToAdd - (itemStack.getMaxStackSize() - itemStack.getAmount()) <= 0) {
-                    return false;
-                }
-                leftToAdd -= itemStack.getMaxStackSize() - itemStack.getAmount();
-            }
-            return true;
+        if (!isFull(inventory)) {
+            return false;
         }
-        return false;
+
+        int leftToAdd = toAdd.getAmount();
+        for (ItemStack itemStack : inventory) {
+            if (!itemStack.equals(toAdd)) {
+                continue;
+            }
+            if (leftToAdd - (itemStack.getMaxStackSize() - itemStack.getAmount()) <= 0) {
+                return false;
+            }
+            leftToAdd -= itemStack.getMaxStackSize() - itemStack.getAmount();
+        }
+        return true;
     }
 
+    /**
+     * Returns the amount of free slots in the inventory
+     * @param inventory
+     * @return the amount of free slots in the inventory
+     */
     public static int freeSlots(Inventory inventory) {
         int freeSlots = 0;
         for (ItemStack itemStack : inventory) {
             if (itemStack == null) {
-                freeSlots += 64;
+                freeSlots++;
             }
         }
         return freeSlots;

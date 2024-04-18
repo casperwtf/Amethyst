@@ -6,7 +6,6 @@ import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
-import lombok.SneakyThrows;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -60,14 +59,17 @@ public class ConfigProvider {
     }
 
 
-    @SneakyThrows
     public YamlDocument getYamlDocument(String path, GeneralSettings generalSettings, LoaderSettings loaderSettings, DumperSettings dumperSettings, UpdaterSettings updaterSettings) {
-        return YamlDocument.create(new File(plugin.getDataFolder(), path),
-                plugin.getResource(path),
-                generalSettings,
-                loaderSettings,
-                dumperSettings,
-                updaterSettings);
+        try {
+            return YamlDocument.create(new File(plugin.getDataFolder(), path),
+                    plugin.getResource(path),
+                    generalSettings,
+                    loaderSettings,
+                    dumperSettings,
+                    updaterSettings);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load yaml document", e);
+        }
     }
 
 }

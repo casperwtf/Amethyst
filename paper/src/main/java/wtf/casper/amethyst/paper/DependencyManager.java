@@ -20,6 +20,7 @@ public class DependencyManager {
         this.libraryManager.addJitPack();
         this.libraryManager.addSonatype();
         this.libraryManager.addRepository("https://repo.codemc.io/repository/maven-snapshots/");
+        this.libraryManager.addRepository("https://repo.codemc.io/repository/maven-releases/");
         this.libraryManager.addRepository("https://repo.opencollab.dev/maven-releases/");
         this.libraryManager.addRepository("https://repo.minebench.de/");
         this.libraryManager.addRepository("https://redempt.dev");
@@ -101,7 +102,7 @@ public class DependencyManager {
                         javaassist + "assist", amethystPackage + "{}libs{}javassist"
                 ),
                 // so much cloud shit wtf
-                this.getLibrary("io{}leangen{}geantyref", "geantyref", "1.3.14",
+                this.getLibrary("io{}leangen{}geantyref", "geantyref", "1.3.15",
                         "io{}leangen{}geantyref", amethystPackage + "{}libs{}geantyref"
                 ),
                 this.getLibrary("cloud{}commandframework", "cloud-core", "1.8.3",
@@ -128,7 +129,7 @@ public class DependencyManager {
                 this.getLibrary("cloud{}commandframework", "cloud-annotations", "1.8.3",
                         "cloud{}commandframework", amethystPackage + "{}libs{}cloud{}commandframework"
                 ),
-                this.getLibrary("com{}github{}retrooper{}packetevents", "spigot", "2.0.2",
+                this.getLibrary("com{}github{}retrooper{}packetevents", "spigot", "2.2.1",
                         "com{}github{}retrooper{}packetevents", amethystPackage + "{}libs{}packetevents{}api",
                         "io{}github{}retrooper{}packetevents", amethystPackage + "{}libs{}packetevents{}impl",
                         "net{}kyori", amethystPackage + "{}libs{}kyori"

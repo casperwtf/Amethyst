@@ -12,7 +12,7 @@ public class ItemFromString {
     private final static List<ItemSerializer> serializers = new ArrayList<>();
 
     static {
-        ServiceUtil.getServices(ItemSerializer.class).forEach(ItemFromString::register);
+        ServiceUtil.getServices(ItemSerializer.class, ItemFromString.class.getClassLoader()).forEach(ItemFromString::register);
     }
 
     public static void register(ItemSerializer serializer) {

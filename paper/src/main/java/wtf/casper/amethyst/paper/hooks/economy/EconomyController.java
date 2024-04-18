@@ -75,7 +75,7 @@ public class EconomyController implements IHookController {
     public void recalculateHooks() {
         unregisterAllHooks();
 
-        List<IEconomy> services = ServiceUtil.getServices(IEconomy.class);
+        List<IEconomy> services = ServiceUtil.getServices(IEconomy.class, this.getClass().getClassLoader());
         if (services.isEmpty()) {
             return;
         }

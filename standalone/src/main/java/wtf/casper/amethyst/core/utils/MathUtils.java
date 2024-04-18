@@ -37,7 +37,6 @@ public class MathUtils {
         return ThreadLocalRandom.current().nextInt(min, max);
     }
 
-
     /**
      * @param mean   The mean of the distribution
      * @param stdDev The standard deviation of the distribution
@@ -138,7 +137,7 @@ public class MathUtils {
      * @param input The numbers to check.
      * @return The input with the outliers removed.
      */
-    public static List<Double> getOutliers(Double[] input) {
+    public static List<Double> getOutliers(Number[] input) {
         List<Double> output = new ArrayList<>();
         Double[] data1 = new Double[]{};
         Double[] data2 = new Double[]{};
@@ -147,20 +146,20 @@ public class MathUtils {
             for (int i = 0; i < input.length; i++) {
                 if (i < input.length / 2) {
                     data1 = Arrays.copyOf(data1, data1.length + 1);
-                    data1[data1.length - 1] = input[i];
+                    data1[data1.length - 1] = input[i].doubleValue();
                 } else {
                     data2 = Arrays.copyOf(data2, data2.length + 1);
-                    data2[data2.length - 1] = input[i];
+                    data2[data2.length - 1] = input[i].doubleValue();
                 }
             }
         } else {
             for (int i = 0; i < input.length; i++) {
                 if (i < input.length / 2 + 1) {
                     data1 = Arrays.copyOf(data1, data1.length + 1);
-                    data1[data1.length - 1] = input[i];
+                    data1[data1.length - 1] = input[i].doubleValue();
                 } else if (i > input.length / 2 + 1) {
                     data2 = Arrays.copyOf(data2, data2.length + 1);
-                    data2[data2.length - 1] = input[i];
+                    data2[data2.length - 1] = input[i].doubleValue();
                 }
             }
         }
@@ -170,53 +169,10 @@ public class MathUtils {
         double iqr = q3 - q1;
         double lowerFence = q1 - 1.5 * iqr;
         double upperFence = q3 + 1.5 * iqr;
-        for (Double aDouble : input) {
-            if (aDouble < lowerFence || aDouble > upperFence) {
-                output.add(aDouble);
-            }
-        }
-        return output;
-    }
-
-    /**
-     * @param input The numbers to check.
-     * @return The input with the outliers removed.
-     */
-    public static List<Integer> getOutliers(Integer[] input) {
-        List<Integer> output = new ArrayList<>();
-        Integer[] data1 = new Integer[]{};
-        Integer[] data2 = new Integer[]{};
-
-        if (input.length % 2 == 0) {
-            for (int i = 0; i < input.length; i++) {
-                if (i < input.length / 2) {
-                    data1 = Arrays.copyOf(data1, data1.length + 1);
-                    data1[data1.length - 1] = input[i];
-                } else {
-                    data2 = Arrays.copyOf(data2, data2.length + 1);
-                    data2[data2.length - 1] = input[i];
-                }
-            }
-        } else {
-            for (int i = 0; i < input.length; i++) {
-                if (i < input.length / 2 + 1) {
-                    data1 = Arrays.copyOf(data1, data1.length + 1);
-                    data1[data1.length - 1] = input[i];
-                } else if (i > input.length / 2 + 1) {
-                    data2 = Arrays.copyOf(data2, data2.length + 1);
-                    data2[data2.length - 1] = input[i];
-                }
-            }
-        }
-        double q1 = getMedian(data1);
-        double q3 = getMedian(data2);
-
-        double iqr = q3 - q1;
-        double lowerFence = q1 - 1.5 * iqr;
-        double upperFence = q3 + 1.5 * iqr;
-        for (Integer aDouble : input) {
-            if (aDouble < lowerFence || aDouble > upperFence) {
-                output.add(aDouble);
+        for (Number aDouble : input) {
+            double e = aDouble.doubleValue();
+            if (e < lowerFence || e > upperFence) {
+                output.add(e);
             }
         }
         return output;
@@ -297,7 +253,7 @@ public class MathUtils {
      * @param input A string with a math equation.
      * @return The result of the equation.
      */
-    public static double parseCrunch(String input) {
+    public static double parseExpression(String input) {
         return Crunch.compileExpression(input).evaluate();
     }
 }

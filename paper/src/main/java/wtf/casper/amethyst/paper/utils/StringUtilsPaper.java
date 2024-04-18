@@ -3,34 +3,28 @@ package wtf.casper.amethyst.paper.utils;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.kyori.adventure.text.*;
-import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.SoundCategory;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import wtf.casper.amethyst.core.utils.StringUtils;
-import wtf.casper.amethyst.paper.AmethystPaper;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @SuppressWarnings("unused")
 public class StringUtilsPaper extends StringUtils {
 
-    private final static Pattern PAPI_PATTERN = Pattern.compile("%(.+?)%");
-    private final static Pattern HEX_PATTERN = Pattern.compile("&(#\\w{6})");
-    private final static MiniMessageCache MINI_MESSAGE_CACHE = new MiniMessageCache();
+    private final static LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.builder().hexColors().useUnusualXRepeatedCharacterHexFormat().build();
 
     private StringUtilsPaper() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
@@ -46,7 +40,6 @@ public class StringUtilsPaper extends StringUtils {
         }
 
         configuration.getOptionalString(path + ".message").ifPresent(s -> broadcast(s, null, placeholderReplacer));
-
     }
 
     public static void broadcast(@Nullable List<String> message, @Nullable List<String> geyser, Placeholders placeholderReplacer) {
@@ -121,13 +114,13 @@ public class StringUtilsPaper extends StringUtils {
 
         if (geyser != null) {
             for (String s : geyser) {
-                player.sendMessage(parseMini(s, null, placeholderReplacer));
+                player.sendMessage(parse(s, null, placeholderReplacer));
             }
             return;
         }
 
         for (String s : message) {
-            player.sendMessage(parseMini(s, null, placeholderReplacer));
+            player.sendMessage(parse(s, null, placeholderReplacer));
         }
     }
 
@@ -151,13 +144,13 @@ public class StringUtilsPaper extends StringUtils {
 
         if (geyser != null) {
             for (String s : geyser) {
-                player.sendMessage(parseMini(s, player, placeholderReplacer));
+                player.sendMessage(parse(s, player, placeholderReplacer));
             }
             return;
         }
 
         for (String s : message) {
-            player.sendMessage(parseMini(s, player, placeholderReplacer));
+            player.sendMessage(parse(s, player, placeholderReplacer));
         }
     }
 
@@ -190,8 +183,8 @@ public class StringUtilsPaper extends StringUtils {
             );
 
             Title title = Title.title(
-                    parseMini(section.getString("title", ""), player, placeholderReplacer),
-                    parseMini(section.getString("subtitle", ""), player, placeholderReplacer),
+                    LEGACY_COMPONENT_SERIALIZER.deserialize(parse(section.getString("title"), player, placeholderReplacer)),
+                    LEGACY_COMPONENT_SERIALIZER.deserialize(parse(section.getString("subtitle"), player, placeholderReplacer)),
                     times
             );
 
@@ -206,9 +199,9 @@ public class StringUtilsPaper extends StringUtils {
                         Ticks.duration(section.getInt("fadeOut", 20))
                 );
 
-                Title title = Title.title(parseMini(
-                                section.getString("title"), player, placeholderReplacer),
-                        parseMini(section.getString("subtitle"), player, placeholderReplacer),
+                Title title = Title.title(
+                        LEGACY_COMPONENT_SERIALIZER.deserialize(parse(section.getString("title"), player, placeholderReplacer)),
+                        LEGACY_COMPONENT_SERIALIZER.deserialize(parse(section.getString("subtitle"), player, placeholderReplacer)),
                         times
                 );
 
@@ -221,12 +214,12 @@ public class StringUtilsPaper extends StringUtils {
                 return;
             }
 
-            player.sendActionBar(parseMini(message, player, placeholderReplacer));
+            player.sendActionBar(parse(message, player, placeholderReplacer));
         });
 
         sec.getOptionalString("geyser-actionbar").ifPresent(message -> {
             if (GeyserUtils.isFloodgateEnabled() && GeyserUtils.isUserBedrock(player.getUniqueId())) {
-                player.sendActionBar(parseMini(message, player, placeholderReplacer));
+                player.sendActionBar(parse(message, player, placeholderReplacer));
             }
         });
 
@@ -252,37 +245,16 @@ public class StringUtilsPaper extends StringUtils {
         }
     }
 
-
-    /**
-     * @param text     The text to parse
-     * @param replacer The replacer to use
-     * @param player   The player to parse for
-     * @return The parsed text
-     */
-    public static Component parseMini(String text, @Nullable OfflinePlayer player, @Nullable Placeholders replacer) {
-        if (replacer == null) {
-            replacer = Placeholders.EMPTY;
+    private static String parse(String message, Player player, Placeholders placeholderReplacer) {
+        if (placeholderReplacer != null) {
+            message = placeholderReplacer.parse(message);
         }
-
-        Component component = MINI_MESSAGE_CACHE.get(text);
-
-        if (AmethystPaper.getInstance().getServer().getPluginManager().isPluginEnabled("PlaceholderAPI") && player != null) {
-            component = parsePAPI(component, player);
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            message = PlaceholderAPI.setPlaceholders(player, message);
         }
-
-        return replacer.parse(component);
+        return message;
     }
 
-    public static Component parsePAPI(Component component, OfflinePlayer player) {
-        return component.replaceText(
-                TextReplacementConfig.builder().match(PAPI_PATTERN)
-                        .replacement((matchResult, builder) -> {
-                            String placeholder = matchResult.group(1);
-                            String value = PlaceholderAPI.setPlaceholders(player, placeholder);
-                            return builder.content(value);
-                        }).build()
-        );
-    }
 
     /**
      * @param current           The current progress
@@ -297,33 +269,6 @@ public class StringUtilsPaper extends StringUtils {
         int progressBars = (int) (totalBars * percent);
 
         return completedColor + symbol.repeat(Math.max(0, progressBars)) + notCompletedColor + symbol.repeat(Math.max(0, totalBars - progressBars));
-    }
-
-    /**
-     * @param message The message to colorify
-     * @return The colorified message
-     */
-    public static String colorify(String message) {
-        Matcher matcher = HEX_PATTERN.matcher(message);
-        StringBuilder buffer = new StringBuilder(message.length() + 4 * 8);
-        while (matcher.find()) {
-            String group = matcher.group(1);
-            matcher.appendReplacement(buffer, ChatColor.COLOR_CHAR + "x"
-                    + ChatColor.COLOR_CHAR + group.charAt(0) + ChatColor.COLOR_CHAR + group.charAt(1)
-                    + ChatColor.COLOR_CHAR + group.charAt(2) + ChatColor.COLOR_CHAR + group.charAt(3)
-                    + ChatColor.COLOR_CHAR + group.charAt(4) + ChatColor.COLOR_CHAR + group.charAt(5)
-            );
-        }
-        return ChatColor.translateAlternateColorCodes('&', matcher.appendTail(buffer).toString());
-    }
-
-    /**
-     * @param message The messages to colorify
-     * @return The colorified messages
-     */
-    public static List<String> colorify(List<String> message) {
-        message.replaceAll(StringUtilsPaper::colorify);
-        return message;
     }
 
     /**
@@ -347,6 +292,16 @@ public class StringUtilsPaper extends StringUtils {
      */
     public static List<String> partialCompletion(List<String> list, String arg) {
         return partialCompletion(arg, list);
+    }
+
+    // just here for compatibility
+    public static String colorify(String string) {
+        return HexUtils.colorify(string);
+    }
+
+    // just here for compatibility
+    public static List<String> colorify(List<String> list) {
+        return HexUtils.colorify(list);
     }
 
     /**
@@ -389,43 +344,11 @@ public class StringUtilsPaper extends StringUtils {
     }
 
     /**
-     * @param message The message to center
-     * @return The spaces needed for the message
-     */
-    public static String centerMessageSpaces(Component message) {
-        return centerMessageSpaces(getContent(message, true));
-    }
-
-    /**
      * @param component The component to get the content of (keeps bold intact)
      * @return The content of the component
      */
-    public static String getContent(Component component, boolean leaveBold) {
-        if (component instanceof TextComponent textComponent) {
-            if (leaveBold && textComponent.hasDecoration(TextDecoration.BOLD)) {
-                return ChatColor.COLOR_CHAR + ChatColor.BOLD.getChar() + textComponent.content();
-            }
-            return textComponent.content();
-        }
-
-        if (component instanceof TranslatableComponent translatableComponent) {
-            return translatableComponent.fallback();
-        }
-
-        if (component instanceof KeybindComponent keybindComponent) {
-            return keybindComponent.keybind();
-        }
-
-        if (component instanceof ScoreComponent scoreComponent) {
-            return scoreComponent.name();
-        }
-
-        StringBuilder content = new StringBuilder();
-        for (Component child : component.children()) {
-            content.append(getContent(child, leaveBold));
-        }
-
-        return content.toString();
+    public static String getContent(Component component) {
+        return LEGACY_COMPONENT_SERIALIZER.serialize(component);
     }
 
 }

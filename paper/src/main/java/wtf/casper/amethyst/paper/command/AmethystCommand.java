@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import lombok.Getter;
 import lombok.Setter;
-import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
@@ -14,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import wtf.casper.amethyst.paper.utils.CommandUtil;
 import wtf.casper.amethyst.paper.utils.Placeholders;
-import wtf.casper.amethyst.paper.utils.StringUtilsPaper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,16 +25,17 @@ public abstract class AmethystCommand extends BukkitCommand {
 
     private final List<AmethystCommand> subCommands = new ArrayList<>();
     private final List<String> names = new ArrayList<>();
+
     @Nullable
     private JavaPlugin plugin = null;
     private boolean playerOnly = false;
     private boolean consoleOnly = false;
     private String playerOnlyMessage = null;
 
-    private Component consoleOnlyMessage = null;
-    private Component noPermissionMessage = null;
+    private String consoleOnlyMessage = null;
+    private String noPermissionMessage = null;
     private Section noPermissionMessageSection = null;
-    private Placeholders noPermissionMessageReplacer = new Placeholders();
+    private Placeholders noPermissionMessageReplacer = Placeholders.EMPTY;
 
     public AmethystCommand(@NotNull String name) {
         super(name);
@@ -83,11 +82,6 @@ public abstract class AmethystCommand extends BukkitCommand {
         if (sender instanceof Player) {
             Player player = asPlayer(sender);
             if (getPermission() != null && !getPermission().isEmpty() && !player.hasPermission(getPermission())) {
-                if (noPermissionMessage != null) {
-                    player.sendMessage(noPermissionMessageReplacer.replace(noPermissionMessage));
-                } else if (noPermissionMessageSection != null) {
-                    StringUtilsPaper.sendMessage(noPermissionMessageSection, player, noPermissionMessageReplacer);
-                }
                 return true;
             }
         }

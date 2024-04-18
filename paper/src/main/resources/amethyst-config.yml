@@ -8,11 +8,6 @@ logged-packages:
   - wtf.casper
 
 paste-services: # (Optional) Paste services to use when uploading debug logs. True is enabled and false is disabled.
-  pastebin: false
   hastebin: false
   mclogs: true
   pastesdev: false
-
-pastebin:
-  api-key: ""
-  user-key: "" # ends up as a fallback I think

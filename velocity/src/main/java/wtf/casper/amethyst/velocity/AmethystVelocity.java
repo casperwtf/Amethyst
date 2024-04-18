@@ -6,18 +6,17 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
-import dev.dejvokep.boostedyaml.YamlDocument;
-import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
-import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
-import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
-import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import wtf.casper.amethyst.core.AmethystCore;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.velocity.listener.PlayerListener;
 import wtf.casper.amethyst.velocity.redis.RedisManager;
+import wtf.casper.storageapi.libs.boostedyaml.YamlDocument;
+import wtf.casper.storageapi.libs.boostedyaml.settings.dumper.DumperSettings;
+import wtf.casper.storageapi.libs.boostedyaml.settings.general.GeneralSettings;
+import wtf.casper.storageapi.libs.boostedyaml.settings.loader.LoaderSettings;
+import wtf.casper.storageapi.libs.boostedyaml.settings.updater.UpdaterSettings;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -54,18 +53,20 @@ public class AmethystVelocity {
         AmethystLogger.log("AmethystVelocity is enabled!");
     }
 
-    @SneakyThrows
     public YamlDocument getYamlDocument(String path) {
         return getYamlDocument(path, GeneralSettings.builder().setUseDefaults(false).build(), LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
     }
 
-    @SneakyThrows
     public YamlDocument getYamlDocument(String path, GeneralSettings generalSettings, LoaderSettings loaderSettings, DumperSettings dumperSettings, UpdaterSettings updaterSettings) {
-        return YamlDocument.create(new File(dataDirectory.toFile(), path),
-                getClass().getResourceAsStream(path),
-                generalSettings,
-                loaderSettings,
-                dumperSettings,
-                updaterSettings);
+        try {
+            return YamlDocument.create(new File(dataDirectory.toFile(), path),
+                    getClass().getResourceAsStream(path),
+                    generalSettings,
+                    loaderSettings,
+                    dumperSettings,
+                    updaterSettings);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

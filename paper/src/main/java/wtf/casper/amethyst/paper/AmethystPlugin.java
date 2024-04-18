@@ -5,7 +5,6 @@ import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
-import lombok.SneakyThrows;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -15,12 +14,16 @@ import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.core.utils.ReflectionUtil;
 import wtf.casper.amethyst.core.utils.ServiceUtil;
 import wtf.casper.amethyst.paper.command.CloudCommand;
+import wtf.casper.amethyst.paper.providers.CloudCommandProvider;
 import wtf.casper.amethyst.paper.providers.ConfigProvider;
+
+import java.io.IOException;
 
 public abstract class AmethystPlugin extends JavaPlugin {
 
     private YamlDocument config;
     private ConfigProvider configProvider;
+    private CloudCommandProvider cloudCommandHandler;
 
     public void setName(String name) {
         PluginDescriptionFile descriptionFile = getDescription();
@@ -65,16 +68,27 @@ public abstract class AmethystPlugin extends JavaPlugin {
         ServiceUtil.getServices(Listener.class, classLoader).forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
     }
 
-    @Override
-    @SneakyThrows
-    public void reloadConfig() {
-        config.reload();
+    public void setupCommands() {
+        cloudCommandHandler = new CloudCommandProvider();
+        this.cloudCommandHandler.setup(this);
     }
 
     @Override
-    @SneakyThrows
+    public void reloadConfig() {
+        try {
+            config.reload();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public void saveConfig() {
-        config.save();
+        try {
+            config.save();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

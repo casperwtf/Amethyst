@@ -30,7 +30,7 @@ public class AmethystFoliaScheduler extends AmethystScheduler {
                 scheduler = entity.getScheduler().run(AmethystPaper.getInstance(), scheduledTask -> {
                     runnable.run();
                 }, () -> {
-                    // ran if entity is removed before ran
+                    // TODO: ran if entity is removed before ran
                 });
             }
             case "org.bukkit.Chunk" -> {

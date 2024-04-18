@@ -71,7 +71,7 @@ public class ProtectionController implements IHookController {
     @Override
     public void recalculateHooks() {
         unregisterAllHooks();
-        List<IProtection> list = ServiceUtil.getServices(IProtection.class);
+        List<IProtection> list = ServiceUtil.getServices(IProtection.class, this.getClass().getClassLoader());
 
         for (IProtection protection : list) {
             if (protection.canEnable()) {

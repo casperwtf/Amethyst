@@ -15,13 +15,21 @@ public class Inject {
     public static <T> void bind(Class<T> clazz, T instance, @Nullable InjectionContainer container) {
         if (container == null) container = InjectionContainer.GLOBAL;
 
-        containerInstances.computeIfAbsent(container, c -> new HashMap<>()).put(clazz, instance);
+        Map<Class<?>, Object> map = containerInstances.computeIfAbsent(container, c -> new HashMap<>());
+        if (map.containsKey(clazz)) {
+            throw new IllegalStateException("Instance already bound for " + clazz.getName());
+        }
+        map.put(clazz, instance);
     }
 
     public static <T> void bind(Class<T> clazz, Supplier<T> supplier, @Nullable InjectionContainer container) {
         if (container == null) container = InjectionContainer.GLOBAL;
 
-        containerSuppliers.computeIfAbsent(container, c -> new HashMap<>()).put(clazz, supplier);
+        Map<Class<?>, Supplier<?>> map = containerSuppliers.computeIfAbsent(container, c -> new HashMap<>());
+        if (map.containsKey(clazz)) {
+            throw new IllegalStateException("Supplier already bound for " + clazz.getName());
+        }
+        map.put(clazz, supplier);
     }
 
     public static <T> void bind(Class<T> clazz, Supplier<T> supplier) {

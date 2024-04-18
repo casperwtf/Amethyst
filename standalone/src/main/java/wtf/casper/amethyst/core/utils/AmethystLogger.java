@@ -2,6 +2,7 @@ package wtf.casper.amethyst.core.utils;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.java.Log;
 
 import java.util.logging.Filter;
 import java.util.logging.Level;
@@ -13,13 +14,8 @@ public class AmethystLogger {
     private static boolean debug = false;
     @Getter
     private static Filter filter;
-
-    private static final Logger logger = Logger.getLogger("Amethyst");
-
-    public static void setFilter(Filter filter) {
-        AmethystLogger.filter = filter;
-        logger.setFilter(filter);
-    }
+    @Setter
+    private static Logger log = Logger.getLogger("Amethyst");
 
     public static void debug(Object... message) {
         if (!debug) {
@@ -30,8 +26,12 @@ public class AmethystLogger {
     }
 
     public static void log(Level level, Object... message) {
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        String callingClass = stackTrace[2].getClassName();
+        int callingLine = stackTrace[2].getLineNumber();
+
         for (Object o : message) {
-            logger.log(level, o.toString());
+            log.log(level, "("+callingClass + ":" + callingLine + ") " + o.toString());
         }
     }
 

@@ -1,17 +1,12 @@
 package wtf.casper.amethyst.paper.utils;
 
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.geysermc.floodgate.api.FloodgateApi;
 
 import java.util.Optional;
 import java.util.UUID;
 
-public class GeyserUtils extends AmethystListener<JavaPlugin> {
-
-    public GeyserUtils(JavaPlugin plugin) {
-        super(plugin);
-    }
+public class GeyserUtils {
 
     public static boolean isFloodgateEnabled() {
         return Bukkit.getPluginManager().isPluginEnabled("floodgate");

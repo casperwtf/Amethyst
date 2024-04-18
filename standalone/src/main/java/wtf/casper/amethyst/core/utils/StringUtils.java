@@ -23,7 +23,7 @@ public class StringUtils {
             return false;
         }
         try {
-            Enum<?> en = Enum.valueOf(enumType, input);
+            Enum.valueOf(enumType, input);
             return true;
         } catch (final IllegalArgumentException e) {
             return false;
