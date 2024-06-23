@@ -75,7 +75,6 @@ public class AmethystCore {
         }
 
         gson = gsonBuilder.create();
-        StorageAPIConstants.setGson(gson);
     }
 
     public static void typeFactoryMessage(Class<? extends Message> clazz) {

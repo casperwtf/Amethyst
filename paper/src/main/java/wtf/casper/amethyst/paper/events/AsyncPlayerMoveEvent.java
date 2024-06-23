@@ -41,11 +41,11 @@ public class AsyncPlayerMoveEvent extends PlayerEvent implements Cancellable {
     }
 
     public boolean hasMoved() {
-        return !to.equals(from);
+        return hasChangedPosition(); // why does this exist
     }
 
     public boolean hasChangedWorld() {
-        return !to.getWorld().equals(from.getWorld());
+        return !to.getWorld().getUID().equals(from.getWorld().getUID());
     }
 
     public boolean hasChangedBlock() {

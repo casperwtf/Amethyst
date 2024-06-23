@@ -1,9 +1,10 @@
 package wtf.casper.amethyst.minecraft.mq.messages;
 
 import lombok.Getter;
-import org.jetbrains.annotations.Nullable;
+
 import wtf.casper.amethyst.core.mq.Message;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 @Getter

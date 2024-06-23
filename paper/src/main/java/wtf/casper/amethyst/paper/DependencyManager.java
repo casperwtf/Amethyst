@@ -80,7 +80,10 @@ public class DependencyManager {
                         "gg{}optimalgames{}hologrambridge", amethystPackage + "{}libs{}hologrambridge"
                 ),
                 this.getLibrary("com{}google{}code{}gson", "gson", "2.10.1",
-                        "com{}google{}gson", amethystPackage + "{}libs{}google{}gson"
+                        "com{}google", amethystPackage + "{}libs{}google"
+                ),
+                this.getLibrary("com{}google{}guava", "guava", "33.2.1-jre",
+                        "com{}google", amethystPackage + "{}libs{}google"
                 ),
                 this.getLibrary("org{}mongodb", "mongo-java-driver", "3.12.11",
                         "com{}mongodb", amethystPackage + "{}libs{}mongodb"

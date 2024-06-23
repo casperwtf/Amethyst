@@ -5,6 +5,7 @@ import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
+import io.papermc.paper.plugin.configuration.PluginMeta;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -26,6 +27,28 @@ public abstract class AmethystPlugin extends JavaPlugin {
     private CloudCommandProvider cloudCommandHandler;
 
     public void setName(String name) {
+        try {
+            PluginMeta meta = getPluginMeta();
+
+            if (meta.getName().equals(name)) return;
+
+            if (getServer().getPluginManager().getPlugin(name) != null) {
+                AmethystLogger.log("Plugin with name " + name + " already exists!");
+                return;
+            }
+
+            if (!name.matches("[a-zA-Z0-9_\\-.]+")) {
+                AmethystLogger.log("Invalid name for plugin! Name must be a-z,A-Z,0-9,_,.,-");
+                return;
+            }
+
+            ReflectionUtil.setPrivateField(meta, "name", name);
+            Class.forName("", false, getClassLoader());
+
+            return;
+        } catch (Exception ignored) {
+        }
+
         PluginDescriptionFile descriptionFile = getDescription();
         if (descriptionFile.getName().equals(name)) return;
 
@@ -38,6 +61,8 @@ public abstract class AmethystPlugin extends JavaPlugin {
             return;
         }
         ReflectionUtil.setPrivateField(descriptionFile, "name", name);
+
+
     }
 
     @NotNull

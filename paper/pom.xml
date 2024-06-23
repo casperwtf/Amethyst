@@ -222,10 +222,10 @@
                                 <filter>
                                     <artifact>*:*</artifact>
                                     <excludes>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                        <exclude>META-INF/**</exclude>
+<!--                                        <exclude>META-INF/*.SF</exclude>-->
+<!--                                        <exclude>META-INF/*.DSA</exclude>-->
+<!--                                        <exclude>META-INF/*.RSA</exclude>-->
+<!--                                        <exclude>META-INF/**</exclude>-->
                                         <exclude>org/**</exclude>
                                         <exclude>dev/**</exclude>
                                         <exclude>me/**</exclude>
@@ -473,6 +473,13 @@
             </systemPath>
         </dependency>
         <dependency>
+            <groupId>com.jojodmo.itembridge</groupId>
+            <artifactId>itembridge</artifactId>
+            <version>3.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/ItemBridge.jar</systemPath>
+        </dependency>
+        <dependency>
             <groupId>com.jeff_media</groupId>
             <artifactId>CustomBlockData</artifactId>
             <version>2.1.0</version>
@@ -576,7 +583,7 @@
         <dependency>
             <groupId>com.google.auto.service</groupId>
             <artifactId>auto-service-annotations</artifactId>
-            <version>1.0.1</version>
+            <version>1.1.1</version>
             <scope>compile</scope>
         </dependency>
 

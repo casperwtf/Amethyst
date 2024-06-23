@@ -2,11 +2,11 @@ package wtf.casper.amethyst.core.utils;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import org.jetbrains.annotations.Nullable;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.reflections.util.ConfigurationBuilder;
 
+import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;

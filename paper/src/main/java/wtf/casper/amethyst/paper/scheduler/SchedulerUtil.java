@@ -96,11 +96,11 @@ public class SchedulerUtil {
         return runDelayedTimerAsync(runnable, null, delay, ticks);
     }
 
-    public AmethystScheduler runDelayedRepeatedTimer(Runnable runnable, long delay, long ticks, long repeats) {
+    public static AmethystScheduler runDelayedRepeatedTimer(Runnable runnable, long delay, long ticks, long repeats) {
         return runDelayedRepeatedTimer(runnable, null, delay, ticks, repeats);
     }
 
-    public AmethystScheduler runDelayedRepeatedTimerAsync(Runnable runnable, long delay, long ticks, long repeats) {
+    public static AmethystScheduler runDelayedRepeatedTimerAsync(Runnable runnable, long delay, long ticks, long repeats) {
         return runDelayedRepeatedTimerAsync(runnable, null, delay, ticks, repeats);
     }
 

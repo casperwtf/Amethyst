@@ -16,7 +16,7 @@ import java.util.Optional;
 public class MinecraftItemSerializer implements ItemSerializer {
 
     @Override
-    public Optional<ItemStack> initialStack(String first) {
+    public Optional<ItemStack> serializeType(String first) {
         try {
             Material material = Material.valueOf(first.toUpperCase());
             return Optional.of(new ItemStack(material));
@@ -27,7 +27,7 @@ public class MinecraftItemSerializer implements ItemSerializer {
     }
 
     @Override
-    public boolean tryAppend(ItemStack itemStack, String next) {
+    public boolean serializeMeta(ItemStack itemStack, String next) {
 
         if (next.startsWith("amount:")) {
             if (MathUtils.validateInt(next.substring(7))) {

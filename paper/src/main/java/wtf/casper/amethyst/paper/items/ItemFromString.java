@@ -71,7 +71,7 @@ public class ItemFromString {
         ItemStack baseStack = null;
 
         for (ItemSerializer serializer : serializers) {
-            baseStack = serializer.initialStack(builder.toString().trim()).orElse(null);
+            baseStack = serializer.serializeType(builder.toString().trim()).orElse(null);
             if (baseStack != null) {
                 break;
             }
@@ -93,7 +93,7 @@ public class ItemFromString {
             nextPart = nextBuilder.toString().trim();
 
             for (ItemSerializer serializer : serializers) {
-                if (serializer.tryAppend(baseStack, nextPart)) {
+                if (serializer.serializeMeta(baseStack, nextPart)) {
                     break;
                 }
             }

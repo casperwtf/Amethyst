@@ -26,8 +26,6 @@ public class MoveServerRequestListener implements RedisPubSubListener<String, St
                     server -> player.get().createConnectionRequest(server).fireAndForget(),
                     () -> AmethystLogger.error("Server " + request.getServer() + " does not exist!")
             );
-        } else {
-            AmethystLogger.error("Player " + request.getTarget() + " does not exist!");
         }
     }
 

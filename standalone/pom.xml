@@ -40,14 +40,14 @@
 
                 <configuration>
                     <filters>
-                        <filter>
-                            <artifact>*:*</artifact>
-                            <excludes>
-                                <exclude>META-INF/*.SF</exclude>
-                                <exclude>META-INF/*.DSA</exclude>
-                                <exclude>META-INF/*.RSA</exclude>
-                            </excludes>
-                        </filter>
+<!--                        <filter>-->
+<!--                            <artifact>*:*</artifact>-->
+<!--                            <excludes>-->
+<!--                                <exclude>META-INF/*.SF</exclude>-->
+<!--                                <exclude>META-INF/*.DSA</exclude>-->
+<!--                                <exclude>META-INF/*.RSA</exclude>-->
+<!--                            </excludes>-->
+<!--                        </filter>-->
                     </filters>
                     <artifactSet>
                         <excludes>
@@ -58,34 +58,27 @@
                     <relocations>
                         <relocation>
                             <pattern>com.zaxxer.hikari</pattern>
-                            <shadedPattern>wtf.casper.amethyst.libs.hikari
-                            </shadedPattern>
+                            <shadedPattern>wtf.casper.amethyst.libs.hikari</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>com.google</pattern>
-                            <shadedPattern>wtf.casper.amethyst.libs.google
-                            </shadedPattern>
+                            <shadedPattern>wtf.casper.amethyst.libs.google</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>io.lettuce.core</pattern>
-                            <shadedPattern>wtf.casper.amethyst.libs.lettuce
-                            </shadedPattern>
+                            <shadedPattern>wtf.casper.amethyst.libs.lettuce</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>com.mongodb</pattern>
-                            <shadedPattern>wtf.casper.amethyst.libs.mongodb
-                            </shadedPattern>
+                            <shadedPattern>wtf.casper.amethyst.libs.mongodb</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>reactor</pattern>
-                            <shadedPattern>wtf.casper.amethyst.libs.reactor
-                            </shadedPattern>
+                            <shadedPattern>wtf.casper.amethyst.libs.reactor</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>org.reactivestreams</pattern>
-                            <shadedPattern>
-                                wtf.casper.amethyst.libs.reactivestreams
-                            </shadedPattern>
+                            <shadedPattern>wtf.casper.amethyst.libs.reactivestreams</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>redempt.crunch</pattern>
@@ -101,25 +94,19 @@
                         </relocation>
                         <relocation>
                             <pattern>org.reflections</pattern>
-                            <shadedPattern>
-                                wtf.casper.amethyst.libs.reflections
-                            </shadedPattern>
+                            <shadedPattern>wtf.casper.amethyst.libs.reflections</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>javaassist</pattern>
                             <shadedPattern>wtf.casper.amethyst.libs.javaassist</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>wtf.casper.storageapi.libs.boostedyaml
-                            </pattern>
-                            <shadedPattern>
-                                wtf.casper.amethyst.libs.boostedyaml
-                            </shadedPattern>
+                            <pattern>wtf.casper.storageapi.libs.boostedyaml</pattern>
+                            <shadedPattern>wtf.casper.amethyst.libs.boostedyaml</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>wtf.casper.storageapi</pattern>
-                            <shadedPattern>wtf.casper.amethyst.libs.storageapi
-                            </shadedPattern>
+                            <shadedPattern>wtf.casper.amethyst.libs.storageapi</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -212,9 +199,8 @@
         <dependency>
             <groupId>com.google.auto.service</groupId>
             <artifactId>auto-service</artifactId>
-            <version>1.0-rc5</version>
-            <scope>provided</scope>
-            <optional>true</optional>
+            <version>1.1.1</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

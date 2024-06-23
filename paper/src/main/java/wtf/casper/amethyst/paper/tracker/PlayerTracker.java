@@ -23,7 +23,7 @@ public class PlayerTracker implements Runnable {
         }
 
         for (Player player : Bukkit.getOnlinePlayers()) {
-            Location location = player.getLocation(); // get location is not a reference & is a new object apparently
+            Location location = player.getLocation();
             if (!cache.containsKey(player.getUniqueId())) {
                 cache.put(player.getUniqueId(), location);
                 continue;

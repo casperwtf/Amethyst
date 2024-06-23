@@ -2,7 +2,6 @@ package wtf.casper.amethyst.core.utils;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.java.Log;
 
 import java.util.logging.Filter;
 import java.util.logging.Level;
@@ -22,21 +21,17 @@ public class AmethystLogger {
             return;
         }
 
-        log(Level.INFO, message);
+        log(Level.ALL, "[DEBUG] " + message);
     }
 
     public static void log(Level level, Object... message) {
-        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        String callingClass = stackTrace[2].getClassName();
-        int callingLine = stackTrace[2].getLineNumber();
-
         for (Object o : message) {
-            log.log(level, "("+callingClass + ":" + callingLine + ") " + o.toString());
+            log.log(level, LogUtils.getFileAndLine() + " " + o.toString());
         }
     }
 
     public static void log(Object... message) {
-        log(Level.INFO, message);
+        log(Level.ALL, message);
     }
 
     public static void warning(Object... message) {

@@ -1,7 +1,8 @@
 package wtf.casper.amethyst.core.inject;
 
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
+import wtf.casper.storageapi.libs.jetbrains.annotations.NotNull;
+
 
 import javax.annotation.Nullable;
 
