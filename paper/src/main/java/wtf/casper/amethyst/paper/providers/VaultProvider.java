@@ -31,7 +31,7 @@ public class VaultProvider {
             }
         }
 
-        SchedulerUtil.run(() -> {
+        SchedulerUtil.run(scheduler -> {
             RegisteredServiceProvider<Economy> registration2 = plugin.getServer().getServicesManager().getRegistration(Economy.class);
             if (registration2 != null) {
                 Economy provider = registration2.getProvider();

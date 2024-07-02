@@ -10,16 +10,17 @@ import wtf.casper.amethyst.paper.AmethystPaper;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
 
 public class AmethystFoliaScheduler extends AmethystScheduler {
 
     private ScheduledTask scheduler;
 
     @Override
-    public AmethystScheduler run(Runnable runnable, Object subject) {
+    public AmethystScheduler run(Consumer<AmethystScheduler> runnable, Object subject) {
         if (subject == null) {
             scheduler = Bukkit.getGlobalRegionScheduler().run(AmethystPaper.getInstance(), scheduledTask -> {
-                runnable.run();
+                runnable.accept(this);
             });
             return this;
         }
@@ -28,7 +29,7 @@ public class AmethystFoliaScheduler extends AmethystScheduler {
             case "org.bukkit.entity.Entity" -> {
                 Entity entity = (Entity) subject;
                 scheduler = entity.getScheduler().run(AmethystPaper.getInstance(), scheduledTask -> {
-                    runnable.run();
+                    runnable.accept(this);
                 }, () -> {
                     // TODO: ran if entity is removed before ran
                 });
@@ -36,24 +37,24 @@ public class AmethystFoliaScheduler extends AmethystScheduler {
             case "org.bukkit.Chunk" -> {
                 Chunk chunk = (Chunk) subject;
                 scheduler = Bukkit.getRegionScheduler().run(AmethystPaper.getInstance(), chunk.getWorld(), chunk.getX(), chunk.getZ(), scheduledTask -> {
-                    runnable.run();
+                    runnable.accept(this);
                 });
             }
             case "org.bukkit.Location" -> {
                 Location location = (Location) subject;
                 scheduler = Bukkit.getRegionScheduler().run(AmethystPaper.getInstance(), location, scheduledTask -> {
-                    runnable.run();
+                    runnable.accept(this);
                 });
             }
             case "org.bukkit.block.Block" -> {
                 Block block = (Block) subject;
                 scheduler = Bukkit.getRegionScheduler().run(AmethystPaper.getInstance(), block.getLocation(), scheduledTask -> {
-                    runnable.run();
+                    runnable.accept(this);
                 });
             }
             default -> {
                 scheduler = Bukkit.getGlobalRegionScheduler().run(AmethystPaper.getInstance(), scheduledTask -> {
-                    runnable.run();
+                    runnable.accept(this);
                 });
             }
         }
@@ -62,18 +63,18 @@ public class AmethystFoliaScheduler extends AmethystScheduler {
     }
 
     @Override
-    public AmethystScheduler runAsync(Runnable runnable, Object subject) {
+    public AmethystScheduler runAsync(Consumer<AmethystScheduler> runnable, Object subject) {
         scheduler = Bukkit.getAsyncScheduler().runNow(AmethystPaper.getInstance(), scheduledTask -> {
-            runnable.run();
+            runnable.accept(this);
         });
         return this;
     }
 
     @Override
-    public AmethystScheduler runLater(Runnable runnable, Object subject, long ticks) {
+    public AmethystScheduler runLater(Consumer<AmethystScheduler> runnable, Object subject, long ticks) {
         if (subject == null) {
             scheduler = Bukkit.getGlobalRegionScheduler().runDelayed(AmethystPaper.getInstance(), scheduledTask -> {
-                runnable.run();
+                runnable.accept(this);
             }, ticks);
             return this;
         }
@@ -82,7 +83,7 @@ public class AmethystFoliaScheduler extends AmethystScheduler {
             case "org.bukkit.entity.Entity" -> {
                 Entity entity = (Entity) subject;
                 scheduler = entity.getScheduler().runDelayed(AmethystPaper.getInstance(), scheduledTask -> {
-                    runnable.run();
+                    runnable.accept(this);
                 }, () -> {
                     // ran if entity is removed before ran
                 }, ticks);
@@ -90,24 +91,24 @@ public class AmethystFoliaScheduler extends AmethystScheduler {
             case "org.bukkit.Chunk" -> {
                 Chunk chunk = (Chunk) subject;
                 scheduler = Bukkit.getRegionScheduler().runDelayed(AmethystPaper.getInstance(), chunk.getWorld(), chunk.getX(), chunk.getZ(), scheduledTask -> {
-                    runnable.run();
+                    runnable.accept(this);
                 }, ticks);
             }
             case "org.bukkit.Location" -> {
                 Location location = (Location) subject;
                 scheduler = Bukkit.getRegionScheduler().runDelayed(AmethystPaper.getInstance(), location, scheduledTask -> {
-                    runnable.run();
+                    runnable.accept(this);
                 }, ticks);
             }
             case "org.bukkit.block.Block" -> {
                 Block block = (Block) subject;
                 scheduler = Bukkit.getRegionScheduler().runDelayed(AmethystPaper.getInstance(), block.getLocation(), scheduledTask -> {
-                    runnable.run();
+                    runnable.accept(this);
                 }, ticks);
             }
             default -> {
                 scheduler = Bukkit.getGlobalRegionScheduler().runDelayed(AmethystPaper.getInstance(), scheduledTask -> {
-                    runnable.run();
+                    runnable.accept(this);
                 }, ticks);
             }
         }
@@ -116,18 +117,18 @@ public class AmethystFoliaScheduler extends AmethystScheduler {
     }
 
     @Override
-    public AmethystScheduler runLaterAsync(Runnable runnable, Object subject, long ticks) {
+    public AmethystScheduler runLaterAsync(Consumer<AmethystScheduler> runnable, Object subject, long ticks) {
         scheduler = Bukkit.getAsyncScheduler().runDelayed(AmethystPaper.getInstance(), scheduledTask -> {
-            runnable.run();
+            runnable.accept(this);
         }, ticks * 50, TimeUnit.MILLISECONDS);
         return this;
     }
 
     @Override
-    public AmethystScheduler runDelayedTimer(Runnable runnable, Object subject, long delay, long ticks) {
+    public AmethystScheduler runDelayedTimer(Consumer<AmethystScheduler> runnable, Object subject, long delay, long ticks) {
         if (subject == null) {
             scheduler = Bukkit.getGlobalRegionScheduler().runAtFixedRate(AmethystPaper.getInstance(), scheduledTask -> {
-                runnable.run();
+                runnable.accept(this);
             }, delay, ticks);
             return this;
         }
@@ -136,7 +137,7 @@ public class AmethystFoliaScheduler extends AmethystScheduler {
             case "org.bukkit.entity.Entity" -> {
                 Entity entity = (Entity) subject;
                 scheduler = entity.getScheduler().runAtFixedRate(AmethystPaper.getInstance(), scheduledTask -> {
-                    runnable.run();
+                    runnable.accept(this);
                 }, () -> {
                     // ran if entity is removed before ran
                 }, delay, ticks);
@@ -144,24 +145,24 @@ public class AmethystFoliaScheduler extends AmethystScheduler {
             case "org.bukkit.Chunk" -> {
                 Chunk chunk = (Chunk) subject;
                 scheduler = Bukkit.getRegionScheduler().runAtFixedRate(AmethystPaper.getInstance(), chunk.getWorld(), chunk.getX(), chunk.getZ(), scheduledTask -> {
-                    runnable.run();
+                    runnable.accept(this);
                 }, delay, ticks);
             }
             case "org.bukkit.Location" -> {
                 Location location = (Location) subject;
                 scheduler = Bukkit.getRegionScheduler().runAtFixedRate(AmethystPaper.getInstance(), location, scheduledTask -> {
-                    runnable.run();
+                    runnable.accept(this);
                 }, delay, ticks);
             }
             case "org.bukkit.block.Block" -> {
                 Block block = (Block) subject;
                 scheduler = Bukkit.getRegionScheduler().runAtFixedRate(AmethystPaper.getInstance(), block.getLocation(), scheduledTask -> {
-                    runnable.run();
+                    runnable.accept(this);
                 }, delay, ticks);
             }
             default -> {
                 scheduler = Bukkit.getGlobalRegionScheduler().runAtFixedRate(AmethystPaper.getInstance(), scheduledTask -> {
-                    runnable.run();
+                    runnable.accept(this);
                 }, delay, ticks);
             }
         }
@@ -170,16 +171,16 @@ public class AmethystFoliaScheduler extends AmethystScheduler {
     }
 
     @Override
-    public AmethystScheduler runDelayedTimerAsync(Runnable runnable, Object subject, long delay, long ticks) {
+    public AmethystScheduler runDelayedTimerAsync(Consumer<AmethystScheduler> runnable, Object subject, long delay, long ticks) {
         scheduler = Bukkit.getAsyncScheduler().runAtFixedRate(AmethystPaper.getInstance(), scheduledTask -> {
-            runnable.run();
+            runnable.accept(this);
         }, delay * 50, ticks * 50, TimeUnit.MILLISECONDS);
 
         return this;
     }
 
     @Override
-    public AmethystScheduler runDelayedRepeatedTimer(Runnable runnable, Object subject, long delay, long ticks, long repeats) {
+    public AmethystScheduler runDelayedRepeatedTimer(Consumer<AmethystScheduler> runnable, Object subject, long delay, long ticks, long repeats) {
         if (repeats == 0) {
             return this;
         }
@@ -188,7 +189,7 @@ public class AmethystFoliaScheduler extends AmethystScheduler {
 
         if (subject == null) {
             scheduler = Bukkit.getGlobalRegionScheduler().runAtFixedRate(AmethystPaper.getInstance(), scheduledTask -> {
-                runnable.run();
+                runnable.accept(this);
                 if (counter.incrementAndGet() == repeats) {
                     scheduledTask.cancel();
                 }
@@ -200,7 +201,7 @@ public class AmethystFoliaScheduler extends AmethystScheduler {
             case "org.bukkit.entity.Entity" -> {
                 Entity entity = (Entity) subject;
                 scheduler = entity.getScheduler().runAtFixedRate(AmethystPaper.getInstance(), scheduledTask -> {
-                    runnable.run();
+                    runnable.accept(this);
                     if (counter.incrementAndGet() == repeats) {
                         scheduledTask.cancel();
                     }
@@ -211,7 +212,7 @@ public class AmethystFoliaScheduler extends AmethystScheduler {
             case "org.bukkit.Chunk" -> {
                 Chunk chunk = (Chunk) subject;
                 scheduler = Bukkit.getRegionScheduler().runAtFixedRate(AmethystPaper.getInstance(), chunk.getWorld(), chunk.getX(), chunk.getZ(), scheduledTask -> {
-                    runnable.run();
+                    runnable.accept(this);
                     if (counter.incrementAndGet() == repeats) {
                         scheduledTask.cancel();
                     }
@@ -220,7 +221,7 @@ public class AmethystFoliaScheduler extends AmethystScheduler {
             case "org.bukkit.Location" -> {
                 Location location = (Location) subject;
                 scheduler = Bukkit.getRegionScheduler().runAtFixedRate(AmethystPaper.getInstance(), location, scheduledTask -> {
-                    runnable.run();
+                    runnable.accept(this);
                     if (counter.incrementAndGet() == repeats) {
                         scheduledTask.cancel();
                     }
@@ -229,7 +230,7 @@ public class AmethystFoliaScheduler extends AmethystScheduler {
             case "org.bukkit.block.Block" -> {
                 Block block = (Block) subject;
                 scheduler = Bukkit.getRegionScheduler().runAtFixedRate(AmethystPaper.getInstance(), block.getLocation(), scheduledTask -> {
-                    runnable.run();
+                    runnable.accept(this);
                     if (counter.incrementAndGet() == repeats) {
                         scheduledTask.cancel();
                     }
@@ -237,7 +238,7 @@ public class AmethystFoliaScheduler extends AmethystScheduler {
             }
             default -> {
                 scheduler = Bukkit.getGlobalRegionScheduler().runAtFixedRate(AmethystPaper.getInstance(), scheduledTask -> {
-                    runnable.run();
+                    runnable.accept(this);
                     if (counter.incrementAndGet() == repeats) {
                         scheduledTask.cancel();
                     }
@@ -249,7 +250,7 @@ public class AmethystFoliaScheduler extends AmethystScheduler {
     }
 
     @Override
-    public AmethystScheduler runDelayedRepeatedTimerAsync(Runnable runnable, Object subject, long delay, long ticks, long repeats) {
+    public AmethystScheduler runDelayedRepeatedTimerAsync(Consumer<AmethystScheduler> runnable, Object subject, long delay, long ticks, long repeats) {
 
         if (repeats == 0) {
             return this;
@@ -258,7 +259,7 @@ public class AmethystFoliaScheduler extends AmethystScheduler {
         AtomicLong counter = new AtomicLong(0);
 
         scheduler = Bukkit.getAsyncScheduler().runAtFixedRate(AmethystPaper.getInstance(), scheduledTask -> {
-            runnable.run();
+            runnable.accept(this);
             if (counter.incrementAndGet() == repeats) {
                 scheduledTask.cancel();
             }

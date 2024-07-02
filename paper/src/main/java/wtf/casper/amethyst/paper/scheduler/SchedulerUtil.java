@@ -2,13 +2,15 @@ package wtf.casper.amethyst.paper.scheduler;
 
 import wtf.casper.amethyst.paper.utils.FoliaUtil;
 
+import java.util.function.Consumer;
+
 public class SchedulerUtil {
 
     private SchedulerUtil() {
         throw new IllegalStateException("Utility class");
     }
 
-    public static AmethystScheduler run(Runnable runnable, Object subject) {
+    public static AmethystScheduler run(Consumer<AmethystScheduler> runnable, Object subject) {
         if (FoliaUtil.isFolia()) {
             return new AmethystFoliaScheduler().run(runnable, subject);
         } else {
@@ -16,7 +18,7 @@ public class SchedulerUtil {
         }
     }
 
-    public static AmethystScheduler runAsync(Runnable runnable, Object subject) {
+    public static AmethystScheduler runAsync(Consumer<AmethystScheduler> runnable, Object subject) {
         if (FoliaUtil.isFolia()) {
             return new AmethystFoliaScheduler().runAsync(runnable, subject);
         } else {
@@ -24,7 +26,7 @@ public class SchedulerUtil {
         }
     }
 
-    public static AmethystScheduler runLater(Runnable runnable, Object subject, long ticks) {
+    public static AmethystScheduler runLater(Consumer<AmethystScheduler> runnable, Object subject, long ticks) {
         if (FoliaUtil.isFolia()) {
             return new AmethystFoliaScheduler().runLater(runnable, subject, ticks);
         } else {
@@ -32,7 +34,7 @@ public class SchedulerUtil {
         }
     }
 
-    public static AmethystScheduler runLaterAsync(Runnable runnable, Object subject, long ticks) {
+    public static AmethystScheduler runLaterAsync(Consumer<AmethystScheduler> runnable, Object subject, long ticks) {
         if (FoliaUtil.isFolia()) {
             return new AmethystFoliaScheduler().runLaterAsync(runnable, subject, ticks);
         } else {
@@ -40,7 +42,7 @@ public class SchedulerUtil {
         }
     }
 
-    public static AmethystScheduler runDelayedTimer(Runnable runnable, Object subject, long delay, long ticks) {
+    public static AmethystScheduler runDelayedTimer(Consumer<AmethystScheduler> runnable, Object subject, long delay, long ticks) {
         if (FoliaUtil.isFolia()) {
             return new AmethystFoliaScheduler().runDelayedTimer(runnable, subject, delay, ticks);
         } else {
@@ -48,7 +50,7 @@ public class SchedulerUtil {
         }
     }
 
-    public static AmethystScheduler runDelayedTimerAsync(Runnable runnable, Object subject, long delay, long ticks) {
+    public static AmethystScheduler runDelayedTimerAsync(Consumer<AmethystScheduler> runnable, Object subject, long delay, long ticks) {
         if (FoliaUtil.isFolia()) {
             return new AmethystFoliaScheduler().runDelayedTimerAsync(runnable, subject, delay, ticks);
         } else {
@@ -56,7 +58,7 @@ public class SchedulerUtil {
         }
     }
 
-    public static AmethystScheduler runDelayedRepeatedTimer(Runnable runnable, Object subject, long delay, long ticks, long repeats) {
+    public static AmethystScheduler runDelayedRepeatedTimer(Consumer<AmethystScheduler> runnable, Object subject, long delay, long ticks, long repeats) {
         if (FoliaUtil.isFolia()) {
             return new AmethystFoliaScheduler().runDelayedRepeatedTimer(runnable, subject, delay, ticks, repeats);
         } else {
@@ -64,7 +66,7 @@ public class SchedulerUtil {
         }
     }
 
-    public static AmethystScheduler runDelayedRepeatedTimerAsync(Runnable runnable, Object subject, long delay, long ticks, long repeats) {
+    public static AmethystScheduler runDelayedRepeatedTimerAsync(Consumer<AmethystScheduler> runnable, Object subject, long delay, long ticks, long repeats) {
         if (FoliaUtil.isFolia()) {
             return new AmethystFoliaScheduler().runDelayedRepeatedTimerAsync(runnable, subject, delay, ticks, repeats);
         } else {
@@ -72,35 +74,35 @@ public class SchedulerUtil {
         }
     }
 
-    public static AmethystScheduler run(Runnable runnable) {
+    public static AmethystScheduler run(Consumer<AmethystScheduler> runnable) {
         return run(runnable, null);
     }
 
-    public static AmethystScheduler runAsync(Runnable runnable) {
+    public static AmethystScheduler runAsync(Consumer<AmethystScheduler> runnable) {
         return runAsync(runnable, null);
     }
 
-    public static AmethystScheduler runLater(Runnable runnable, long ticks) {
+    public static AmethystScheduler runLater(Consumer<AmethystScheduler> runnable, long ticks) {
         return runLater(runnable, null, ticks);
     }
 
-    public static AmethystScheduler runLaterAsync(Runnable runnable, long ticks) {
+    public static AmethystScheduler runLaterAsync(Consumer<AmethystScheduler> runnable, long ticks) {
         return runLaterAsync(runnable, null, ticks);
     }
 
-    public static AmethystScheduler runDelayedTimer(Runnable runnable, long delay, long ticks) {
+    public static AmethystScheduler runDelayedTimer(Consumer<AmethystScheduler> runnable, long delay, long ticks) {
         return runDelayedTimer(runnable, null, delay, ticks);
     }
 
-    public static AmethystScheduler runDelayedTimerAsync(Runnable runnable, long delay, long ticks) {
+    public static AmethystScheduler runDelayedTimerAsync(Consumer<AmethystScheduler> runnable, long delay, long ticks) {
         return runDelayedTimerAsync(runnable, null, delay, ticks);
     }
 
-    public static AmethystScheduler runDelayedRepeatedTimer(Runnable runnable, long delay, long ticks, long repeats) {
+    public static AmethystScheduler runDelayedRepeatedTimer(Consumer<AmethystScheduler> runnable, long delay, long ticks, long repeats) {
         return runDelayedRepeatedTimer(runnable, null, delay, ticks, repeats);
     }
 
-    public static AmethystScheduler runDelayedRepeatedTimerAsync(Runnable runnable, long delay, long ticks, long repeats) {
+    public static AmethystScheduler runDelayedRepeatedTimerAsync(Consumer<AmethystScheduler> runnable, long delay, long ticks, long repeats) {
         return runDelayedRepeatedTimerAsync(runnable, null, delay, ticks, repeats);
     }
 

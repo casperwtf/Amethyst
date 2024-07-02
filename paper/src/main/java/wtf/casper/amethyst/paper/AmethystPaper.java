@@ -207,7 +207,7 @@ public class AmethystPaper {
         }
 
         // initialize these
-        SchedulerUtil.runLater(() -> {
+        SchedulerUtil.runLater(scheduler -> {
             ServiceUtil.getServices(IHookController.class, this.getClass().getClassLoader()).forEach(IHookController::enable);
         }, 2L);
 

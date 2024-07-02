@@ -72,7 +72,7 @@ public class PlayerSmeltItemEventListener extends AmethystListener<JavaPlugin> {
             return;
         }
 
-        SchedulerUtil.run(() -> {
+        SchedulerUtil.run(scheduler -> {
             ItemStack smelted = furnaceInventory.getItem(0);
             setItem(smelted, player, furnaceInventory);
         }, null);

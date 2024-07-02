@@ -1,17 +1,23 @@
 package wtf.casper.amethyst.paper.utils;
 
 import com.mojang.authlib.GameProfile;
+import me.clip.placeholderapi.PlaceholderAPI;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -43,7 +49,7 @@ public class ItemBuilder extends ItemStack {
         super(material, amount, damage);
         modifyMeta(meta -> {
             meta.setDisplayName(displayName);
-            meta.setLore(java.util.Arrays.asList(lore));
+            meta.setLore(Arrays.asList(lore));
         });
     }
 
@@ -119,6 +125,47 @@ public class ItemBuilder extends ItemStack {
         return this;
     }
 
+    public ItemBuilder replace(Placeholders placeholders) {
+        modifyMeta(meta -> {
+            if (meta.hasDisplayName()) {
+                meta.setDisplayName(placeholders.parse(meta.getDisplayName()));
+            }
+
+            if (meta.hasLore()) {
+                List<String> lore = meta.getLore();
+                for (String s : meta.getLore()) {
+                    lore.set(lore.indexOf(s), placeholders.parse(s));
+                }
+                meta.setLore(lore);
+            }
+        });
+
+        return this;
+    }
+
+    public ItemBuilder replace(Player player, Placeholders placeholders) {
+        if (!Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            replace(placeholders);
+            return this;
+        }
+
+        modifyMeta(meta -> {
+            if (meta.hasDisplayName()) {
+                meta.setDisplayName(placeholders.parse(PlaceholderAPI.setPlaceholders(player, meta.getDisplayName())));
+            }
+
+            if (meta.hasLore()) {
+                List<String> lore = meta.getLore();
+                for (String s : meta.getLore()) {
+                    lore.set(lore.indexOf(s), placeholders.parse(PlaceholderAPI.setPlaceholders(player, s)));
+                }
+                meta.setLore(lore);
+            }
+        });
+
+        return this;
+    }
+
     public void setHeadUrl(String string) {
         modifyMeta(meta -> {
             if (meta instanceof SkullMeta) {
@@ -154,5 +201,18 @@ public class ItemBuilder extends ItemStack {
 
     public void setCustomModelData(Integer integer) {
         modifyMeta(meta -> meta.setCustomModelData(integer));
+    }
+
+    @Override
+    public @NotNull ItemBuilder clone() {
+        return new ItemBuilder(super.clone());
+    }
+
+    public static ItemBuilder of(ItemStack itemStack) {
+        return new ItemBuilder(itemStack);
+    }
+
+    public static ItemBuilder of(Material material) {
+        return new ItemBuilder(material);
     }
 }
