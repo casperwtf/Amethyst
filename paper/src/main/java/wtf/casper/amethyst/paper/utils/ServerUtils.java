@@ -18,6 +18,10 @@ public class ServerUtils {
         throw new UnsupportedOperationException("Cannot instantiate utility class.");
     }
 
+    /**
+     * Get the plugin that called this method. This is caller sensitive & cannot be cached.
+     * @return The plugin that called this method.
+     */
     public static JavaPlugin getCallingPlugin() {
         Exception ex = new Exception();
         try {
@@ -29,6 +33,11 @@ public class ServerUtils {
         }
     }
 
+    /**
+     * Read the contents of a log file.
+     * @param log The log file to read.
+     * @return The contents of the log file, or null if an error occurred.
+     */
     @Nullable
     public static String readLog(File log) {
         byte[] bytes;

@@ -8,14 +8,35 @@ public class WorldUtils {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 
+    /**
+     * Check if two locations are equal. Takes Y into account & uses integer values.
+     * @param location1 The first location to compare.
+     * @param location2 The second location to compare.
+     * @return True if the locations are equal, false otherwise.
+     */
     public static boolean locationSoftEquals(Location location1, Location location2) {
         return locationSoftEquals(location1, location2, false, false);
     }
 
+    /**
+     * Check if two locations are equal. Optionally ignore Y and uses integer values.
+     * @param location1 The first location to compare.
+     * @param location2 The second location to compare.
+     * @param ignoreY Whether or not to ignore the Y value.
+     * @return True if the locations are equal, false otherwise.
+     */
     public static boolean locationSoftEquals(Location location1, Location location2, boolean ignoreY) {
         return locationSoftEquals(location1, location2, ignoreY, false);
     }
 
+    /**
+     * Check if two locations are equal. Optionally ignore Y and use double values.
+     * @param location1 The first location to compare.
+     * @param location2 The second location to compare.
+     * @param ignoreY Whether or not to ignore the Y value.
+     * @param useDouble Whether or not to use double values.
+     * @return True if the locations are equal, false otherwise.
+     */
     public static boolean locationSoftEquals(Location location1, Location location2, boolean ignoreY, boolean useDouble) {
         if (ignoreY) {
             if (useDouble) {

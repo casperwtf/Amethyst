@@ -3,6 +3,9 @@ package wtf.casper.amethyst.paper.utils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 
+/**
+ * Represents a version of the server software.
+ */
 @Getter
 public class ServerVersion {
 
@@ -107,6 +110,8 @@ public class ServerVersion {
     public static final ServerVersion v1_20_3 = new ServerVersion(1, 20, 3);
     public static final ServerVersion v1_20_4 = new ServerVersion(1, 20, 4);
     public static final ServerVersion v1_20_5 = new ServerVersion(1, 20, 5);
+    public static final ServerVersion v1_20_6 = new ServerVersion(1, 20, 6);
+    public static final ServerVersion v1_21 = new ServerVersion(1, 21, 0);
 
     private final int major;
     private final int minor;
@@ -181,7 +186,6 @@ public class ServerVersion {
             String[] split2 = split[0].split("-");
             String[] split3 = split2[0].split("\\.");
             CURRENT = new ServerVersion(Integer.parseInt(split3[0]), Integer.parseInt(split3[1]), Integer.parseInt(split3[2]));
-            return;
         } catch (Exception ignored) {}
     }
 }

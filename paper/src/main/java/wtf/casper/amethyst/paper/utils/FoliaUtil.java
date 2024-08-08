@@ -1,23 +1,17 @@
 package wtf.casper.amethyst.paper.utils;
 
 public class FoliaUtil {
-    private static final Boolean FOLIA = isFolia();
-    private static final Boolean BUKKIT = isBukkit();
+    private static Boolean FOLIA = null;
 
+    /**
+     * Check if the server is running Folia
+     * @return true if the server is running Folia
+     */
     public static boolean isFolia() {
         if (FOLIA != null) return FOLIA;
         try {
             Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
-    }
-
-    public static boolean isBukkit() {
-        if (BUKKIT != null) return BUKKIT;
-        try {
-            Class.forName("org.bukkit.Bukkit");
+            FOLIA = true;
             return true;
         } catch (ClassNotFoundException e) {
             return false;

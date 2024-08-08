@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import wtf.casper.amethyst.core.utils.MathUtils;
 import wtf.casper.amethyst.paper.items.ItemSerializer;
+import wtf.casper.amethyst.paper.utils.HexUtils;
 import wtf.casper.amethyst.paper.utils.StringUtilsPaper;
 
 import java.util.Optional;
@@ -74,7 +75,7 @@ public class MinecraftItemSerializer implements ItemSerializer {
                 substring = substring.substring(0, substring.length() - 1);
             }
 
-            meta.setDisplayName(StringUtilsPaper.colorify(substring));
+            meta.setDisplayName(HexUtils.colorify(substring));
             itemStack.setItemMeta(meta);
             return true;
         }
@@ -82,7 +83,7 @@ public class MinecraftItemSerializer implements ItemSerializer {
         //TODO: figure out how to serialize with spaces in lore lines while keeping support for all chars
 //        if (next.startsWith("lore:")) {
 //            ItemMeta meta = itemStack.getItemMeta();
-//            meta.setLore(StringUtilsPaper.colorify(Arrays.asList(next.substring(5).split("\n"))));
+//            meta.setLore(HexUtils.colorify(Arrays.asList(next.substring(5).split("\n"))));
 //            itemStack.setItemMeta(meta);
 //            return true;
 //        }

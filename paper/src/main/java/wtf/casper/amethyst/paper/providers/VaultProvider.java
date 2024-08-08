@@ -9,6 +9,7 @@ import wtf.casper.amethyst.paper.scheduler.SchedulerUtil;
 import wtf.casper.amethyst.paper.vault.EventEconomyWrapper;
 import wtf.casper.amethyst.paper.vault.EventPermissionWrapper;
 
+// TODO: Clean up
 public class VaultProvider {
     public VaultProvider(JavaPlugin plugin) {
         init(plugin);
@@ -23,13 +24,13 @@ public class VaultProvider {
             }
         }
 
-        RegisteredServiceProvider<Permission> registration1 = plugin.getServer().getServicesManager().getRegistration(Permission.class);
-        if (registration1 != null) {
-            Permission permissionProvider = registration1.getProvider();
-            if (permissionProvider != null && !(permissionProvider instanceof EventPermissionWrapper)) {
-                plugin.getServer().getServicesManager().register(Permission.class, new EventPermissionWrapper(permissionProvider), plugin, ServicePriority.Highest);
-            }
-        }
+//        RegisteredServiceProvider<Permission> registration1 = plugin.getServer().getServicesManager().getRegistration(Permission.class);
+//        if (registration1 != null) {
+//            Permission permissionProvider = registration1.getProvider();
+//            if (permissionProvider != null && !(permissionProvider instanceof EventPermissionWrapper)) {
+//                plugin.getServer().getServicesManager().register(Permission.class, new EventPermissionWrapper(permissionProvider), plugin, ServicePriority.Highest);
+//            }
+//        }
 
         SchedulerUtil.run(scheduler -> {
             RegisteredServiceProvider<Economy> registration2 = plugin.getServer().getServicesManager().getRegistration(Economy.class);
@@ -40,13 +41,13 @@ public class VaultProvider {
                 }
             }
 
-            RegisteredServiceProvider<Permission> registration3 = plugin.getServer().getServicesManager().getRegistration(Permission.class);
-            if (registration3 != null) {
-                Permission permissionProvider = registration3.getProvider();
-                if (permissionProvider != null && !(permissionProvider instanceof EventPermissionWrapper)) {
-                    plugin.getServer().getServicesManager().register(Permission.class, new EventPermissionWrapper(permissionProvider), plugin, ServicePriority.Highest);
-                }
-            }
+//            RegisteredServiceProvider<Permission> registration3 = plugin.getServer().getServicesManager().getRegistration(Permission.class);
+//            if (registration3 != null) {
+//                Permission permissionProvider = registration3.getProvider();
+//                if (permissionProvider != null && !(permissionProvider instanceof EventPermissionWrapper)) {
+//                    plugin.getServer().getServicesManager().register(Permission.class, new EventPermissionWrapper(permissionProvider), plugin, ServicePriority.Highest);
+//                }
+//            }
         });
 
     }

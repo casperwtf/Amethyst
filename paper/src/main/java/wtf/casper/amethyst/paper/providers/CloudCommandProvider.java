@@ -63,6 +63,7 @@ public class CloudCommandProvider {
 
                         builder.append("confirm");
 
+                        //TODO: make translatable?
                         ctx.getCommandContext().getSender().sendMessage(ChatColor.RED + "Confirmation is needed. Run " + ChatColor.WHITE + builder + ChatColor.RED + " to confirm.");
                     },
                     commandSender -> {

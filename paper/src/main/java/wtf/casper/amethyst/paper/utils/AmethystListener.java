@@ -4,6 +4,10 @@ import lombok.Getter;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+/**
+ * A simple listener class that registers itself to the plugin's event manager
+ * @param <T> Plugin instance
+ */
 @Getter
 public class AmethystListener<T extends JavaPlugin> implements Listener {
 

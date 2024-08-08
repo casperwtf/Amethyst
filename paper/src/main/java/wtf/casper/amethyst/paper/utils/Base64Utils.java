@@ -14,9 +14,13 @@ import java.io.IOException;
 
 public class Base64Utils {
 
+    private Base64Utils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * A method to serialize an inventory to Base64 string.
-     * @param playerInventory
+     * @param playerInventory to turn into a Base64 string.
      * @return A string array with 3 elements: inventory content, offHand & armor
      * @throws IllegalStateException
      */
@@ -29,6 +33,12 @@ public class Base64Utils {
         return new String[]{content, offHand, armor};
     }
 
+    /**
+     * Get the player inventory from a string array
+     * @param items The string array
+     * @return The itemstack array
+     * @throws IllegalStateException
+     */
     public static String itemStackArrayToBase64(ItemStack... items) throws IllegalStateException {
         if (items == null || items.length == 0) {
             return "";
@@ -54,6 +64,12 @@ public class Base64Utils {
         }
     }
 
+    /**
+     * Get the player inventory from a string array
+     * @param data The string array
+     * @return The itemstack array
+     * @throws IOException
+     */
     public static ItemStack[] itemStackArrayFromBase64(String data) throws IOException {
         if (data.isEmpty()) {
             return new ItemStack[0];
@@ -76,6 +92,12 @@ public class Base64Utils {
         }
     }
 
+    /**
+     * A method to serialize an inventory to Base64 string.
+     * @param inventory
+     * @return Base64 string of the provided inventory
+     * @throws IllegalStateException
+     */
     public static String toBase64(Inventory inventory) throws IllegalStateException {
         if (inventory == null) {
             return "";
@@ -101,6 +123,12 @@ public class Base64Utils {
         }
     }
 
+    /**
+     * Gets an inventory from a Base64 string.
+     * @param data Base64 string of the inventory
+     * @return Inventory created from the Base64 string
+     * @throws IOException
+     */
     public static Inventory fromBase64(String data) throws IOException {
         if (data.isEmpty()) {
             return Bukkit.getServer().createInventory(null, 9);
@@ -123,6 +151,12 @@ public class Base64Utils {
         }
     }
 
+    /**
+     * A method to serialize an ItemStack to Base64 string.
+     * @param obj to serialize
+     * @return Base64 string of the provided ItemStack
+     * @throws IllegalStateException
+     */
     public static String serializeItem(ItemStack obj) {
         if (obj == null) {
             return "";
@@ -141,6 +175,12 @@ public class Base64Utils {
         }
     }
 
+    /**
+     * A method to serialize an ItemStack to Base64 string.
+     * @param base64 to deserialize
+     * @return ItemStack created from the Base64 string
+     * @throws IllegalStateException
+     */
     public static ItemStack deserializeItem(String base64) {
         if (base64.isEmpty()) {
             return null;

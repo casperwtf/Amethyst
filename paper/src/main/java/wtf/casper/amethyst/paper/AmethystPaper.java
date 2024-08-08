@@ -2,7 +2,6 @@ package wtf.casper.amethyst.paper;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.util.TimeStampMode;
-import com.jeff_media.customblockdata.CustomBlockData;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
@@ -25,14 +24,13 @@ import wtf.casper.amethyst.paper.hooks.GeyserExpansion;
 import wtf.casper.amethyst.paper.hooks.IHookController;
 import wtf.casper.amethyst.paper.internal.commands.ItemSerializationCommands;
 import wtf.casper.amethyst.paper.internal.listeners.LoggerListener;
-import wtf.casper.amethyst.paper.internal.listeners.PlayerSmeltItemEventListener;
 import wtf.casper.amethyst.paper.providers.VaultProvider;
 import wtf.casper.amethyst.paper.scheduler.SchedulerUtil;
 import wtf.casper.amethyst.paper.serialized.SerializableItem;
 import wtf.casper.amethyst.paper.serialized.SerializableItemTypeAdapter;
 import wtf.casper.amethyst.paper.serialized.serializer.*;
-import wtf.casper.amethyst.paper.tracker.PlayerTracker;
-import wtf.casper.amethyst.paper.tracker.PlayerTrackerListener;
+import wtf.casper.amethyst.paper.internal.listeners.PlayerTracker;
+import wtf.casper.amethyst.paper.internal.listeners.PlayerTrackerListener;
 import wtf.casper.amethyst.paper.utils.ArmorstandUtils;
 import wtf.casper.amethyst.paper.utils.ServerLock;
 import wtf.casper.amethyst.paper.utils.ServerUtils;
@@ -51,7 +49,6 @@ public class AmethystPaper {
     private final char[] DEFAULT_PACKAGE = new char[]{'w', 't', 'f', '.', 'c', 'a', 's', 'p', 'e', 'r', '.', 'a', 'm', 'e', 't', 'h', 'y', 's', 't', '.', 'p', 'a', 'p', 'e', 'r'};
 
     @Getter private static Filter filter;
-    @Getter @Setter private static NamespacedKey playerSmeltItemKey = new NamespacedKey("amethyst", "player_smelt_item");
     @Getter private YamlDocument amethystConfig;
     private static JavaPlugin instance;
 
@@ -94,8 +91,6 @@ public class AmethystPaper {
     }
 
     public void enableAmethyst(JavaPlugin plugin) {
-        CustomBlockData.registerListener(plugin);
-        new PlayerSmeltItemEventListener(plugin);
         AmethystLogger.setLog(plugin.getLogger());
         new ServerLock(plugin);
 

@@ -1,9 +1,10 @@
-package wtf.casper.amethyst.paper.tracker;
+package wtf.casper.amethyst.paper.internal.listeners;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import wtf.casper.amethyst.paper.internal.listeners.PlayerTracker;
 import wtf.casper.amethyst.paper.utils.AmethystListener;
 
 public class PlayerTrackerListener extends AmethystListener<JavaPlugin> {

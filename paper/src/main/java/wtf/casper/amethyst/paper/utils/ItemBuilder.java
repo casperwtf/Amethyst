@@ -125,6 +125,49 @@ public class ItemBuilder extends ItemStack {
         return this;
     }
 
+    public ItemBuilder setHeadUrl(String string) {
+        modifyMeta(meta -> {
+            if (meta instanceof SkullMeta) {
+                SkullMeta skullMeta = (SkullMeta) meta;
+                GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+                profile.getProperties().put("textures", new com.mojang.authlib.properties.Property("textures", string));
+                try {
+                    Field profileField = skullMeta.getClass().getDeclaredField("profile");
+                    profileField.setAccessible(true);
+                    profileField.set(skullMeta, profile);
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        return this;
+    }
+
+    public ItemBuilder addItemFlag(ItemFlag itemFlag) {
+        modifyMeta(meta -> meta.addItemFlags(itemFlag));
+        return this;
+    }
+
+    public ItemBuilder addEnchant(Enchantment byKey, int lvl) {
+        addUnsafeEnchantment(byKey, lvl);
+        return this;
+    }
+
+    public ItemBuilder addAttribute(Attribute attribute, AttributeModifier modifier) {
+        modifyMeta(meta -> meta.addAttributeModifier(attribute, modifier));
+        return this;
+    }
+
+    public ItemBuilder setColor(Color color) {
+        modifyMeta(meta -> ((org.bukkit.inventory.meta.LeatherArmorMeta) meta).setColor(color));
+        return this;
+    }
+
+    public ItemBuilder setCustomModelData(Integer integer) {
+        modifyMeta(meta -> meta.setCustomModelData(integer));
+        return this;
+    }
+
     public ItemBuilder replace(Placeholders placeholders) {
         modifyMeta(meta -> {
             if (meta.hasDisplayName()) {
@@ -164,43 +207,6 @@ public class ItemBuilder extends ItemStack {
         });
 
         return this;
-    }
-
-    public void setHeadUrl(String string) {
-        modifyMeta(meta -> {
-            if (meta instanceof SkullMeta) {
-                SkullMeta skullMeta = (SkullMeta) meta;
-                GameProfile profile = new GameProfile(UUID.randomUUID(), null);
-                profile.getProperties().put("textures", new com.mojang.authlib.properties.Property("textures", string));
-                try {
-                    Field profileField = skullMeta.getClass().getDeclaredField("profile");
-                    profileField.setAccessible(true);
-                    profileField.set(skullMeta, profile);
-                } catch (NoSuchFieldException | IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    public void addItemFlag(ItemFlag itemFlag) {
-        modifyMeta(meta -> meta.addItemFlags(itemFlag));
-    }
-
-    public void addEnchant(Enchantment byKey, int lvl) {
-        addUnsafeEnchantment(byKey, lvl);
-    }
-
-    public void addAttribute(Attribute attribute, AttributeModifier modifier) {
-        modifyMeta(meta -> meta.addAttributeModifier(attribute, modifier));
-    }
-
-    public void setColor(Color color) {
-        modifyMeta(meta -> ((org.bukkit.inventory.meta.LeatherArmorMeta) meta).setColor(color));
-    }
-
-    public void setCustomModelData(Integer integer) {
-        modifyMeta(meta -> meta.setCustomModelData(integer));
     }
 
     @Override

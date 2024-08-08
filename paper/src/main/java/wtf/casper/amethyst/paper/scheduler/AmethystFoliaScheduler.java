@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 
 public class AmethystFoliaScheduler extends AmethystScheduler {
 
+
     private ScheduledTask scheduler;
 
     @Override
@@ -25,15 +26,16 @@ public class AmethystFoliaScheduler extends AmethystScheduler {
             return this;
         }
 
+        if (subject.getClass().isAssignableFrom(Entity.class)) {
+            Entity entity = (Entity) subject;
+            scheduler = entity.getScheduler().run(AmethystPaper.getInstance(), scheduledTask -> {
+                runnable.accept(this);
+            }, () -> {
+
+            });
+        }
+
         switch (subject.getClass().getName()) {
-            case "org.bukkit.entity.Entity" -> {
-                Entity entity = (Entity) subject;
-                scheduler = entity.getScheduler().run(AmethystPaper.getInstance(), scheduledTask -> {
-                    runnable.accept(this);
-                }, () -> {
-                    // TODO: ran if entity is removed before ran
-                });
-            }
             case "org.bukkit.Chunk" -> {
                 Chunk chunk = (Chunk) subject;
                 scheduler = Bukkit.getRegionScheduler().run(AmethystPaper.getInstance(), chunk.getWorld(), chunk.getX(), chunk.getZ(), scheduledTask -> {
@@ -79,15 +81,16 @@ public class AmethystFoliaScheduler extends AmethystScheduler {
             return this;
         }
 
+        if (subject.getClass().isAssignableFrom(Entity.class)) {
+            Entity entity = (Entity) subject;
+            scheduler = entity.getScheduler().runDelayed(AmethystPaper.getInstance(), scheduledTask -> {
+                runnable.accept(this);
+            }, () -> {
+                // ran if entity is removed before ran
+            }, ticks);
+        }
+
         switch (subject.getClass().getName()) {
-            case "org.bukkit.entity.Entity" -> {
-                Entity entity = (Entity) subject;
-                scheduler = entity.getScheduler().runDelayed(AmethystPaper.getInstance(), scheduledTask -> {
-                    runnable.accept(this);
-                }, () -> {
-                    // ran if entity is removed before ran
-                }, ticks);
-            }
             case "org.bukkit.Chunk" -> {
                 Chunk chunk = (Chunk) subject;
                 scheduler = Bukkit.getRegionScheduler().runDelayed(AmethystPaper.getInstance(), chunk.getWorld(), chunk.getX(), chunk.getZ(), scheduledTask -> {
@@ -133,15 +136,16 @@ public class AmethystFoliaScheduler extends AmethystScheduler {
             return this;
         }
 
+        if (subject.getClass().isAssignableFrom(Entity.class)) {
+            Entity entity = (Entity) subject;
+            scheduler = entity.getScheduler().runAtFixedRate(AmethystPaper.getInstance(), scheduledTask -> {
+                runnable.accept(this);
+            }, () -> {
+                // ran if entity is removed before ran
+            }, delay, ticks);
+        }
+
         switch (subject.getClass().getName()) {
-            case "org.bukkit.entity.Entity" -> {
-                Entity entity = (Entity) subject;
-                scheduler = entity.getScheduler().runAtFixedRate(AmethystPaper.getInstance(), scheduledTask -> {
-                    runnable.accept(this);
-                }, () -> {
-                    // ran if entity is removed before ran
-                }, delay, ticks);
-            }
             case "org.bukkit.Chunk" -> {
                 Chunk chunk = (Chunk) subject;
                 scheduler = Bukkit.getRegionScheduler().runAtFixedRate(AmethystPaper.getInstance(), chunk.getWorld(), chunk.getX(), chunk.getZ(), scheduledTask -> {
@@ -197,18 +201,19 @@ public class AmethystFoliaScheduler extends AmethystScheduler {
             return this;
         }
 
+        if (subject.getClass().isAssignableFrom(Entity.class)) {
+            Entity entity = (Entity) subject;
+            scheduler = entity.getScheduler().runAtFixedRate(AmethystPaper.getInstance(), scheduledTask -> {
+                runnable.accept(this);
+                if (counter.incrementAndGet() == repeats) {
+                    scheduledTask.cancel();
+                }
+            }, () -> {
+                // ran if entity is removed before ran
+            }, delay, ticks);
+        }
+
         switch (subject.getClass().getName()) {
-            case "org.bukkit.entity.Entity" -> {
-                Entity entity = (Entity) subject;
-                scheduler = entity.getScheduler().runAtFixedRate(AmethystPaper.getInstance(), scheduledTask -> {
-                    runnable.accept(this);
-                    if (counter.incrementAndGet() == repeats) {
-                        scheduledTask.cancel();
-                    }
-                }, () -> {
-                    // ran if entity is removed before ran
-                }, delay, ticks);
-            }
             case "org.bukkit.Chunk" -> {
                 Chunk chunk = (Chunk) subject;
                 scheduler = Bukkit.getRegionScheduler().runAtFixedRate(AmethystPaper.getInstance(), chunk.getWorld(), chunk.getX(), chunk.getZ(), scheduledTask -> {

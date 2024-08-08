@@ -4,8 +4,10 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
+import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -13,6 +15,7 @@ import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
+import wtf.casper.amethyst.paper.utils.HexUtils;
 import wtf.casper.amethyst.paper.utils.StringUtilsPaper;
 
 import java.util.*;
@@ -152,13 +155,13 @@ public class SerializableItem {
 
         String name = null;
         if (document.has("name")) { // Could potentially not exist if null in wrapper
-            name = StringUtilsPaper.colorify(document.get("name").getAsString());
+            name = HexUtils.parseLegacy(document.get("name").getAsString());
         }
 
         List<String> lore = new ArrayList<>();
         for (JsonElement loreElement : document.getAsJsonArray("lore")) {
             String loreLine = loreElement.getAsString();
-            lore.add(StringUtilsPaper.colorify(loreLine));
+            lore.add(HexUtils.parseLegacy(loreLine));
         }
 
         ItemStack item = new ItemStack(material, amount);
@@ -239,8 +242,7 @@ public class SerializableItem {
 
     public void applySkullData() {
         ItemMeta meta = itemStack.getItemMeta();
-        if (meta instanceof SkullMeta) {
-            SkullMeta skullMeta = (SkullMeta) meta;
+        if (meta instanceof SkullMeta skullMeta) {
             if (skullPlayerProfile != null) {
                 skullMeta.setPlayerProfile(skullPlayerProfile.getPlayerProfile());
             }
@@ -313,8 +315,8 @@ public class SerializableItem {
     }
 
     public ItemStack build() {
-        ItemStack itemStack1 = new ItemStack(type, amount);
-        ItemMeta meta = itemStack1.getItemMeta();
+        ItemStack newItemStack = new ItemStack(type, amount);
+        ItemMeta meta = newItemStack.getItemMeta();
         if (name != null) {
             meta.setDisplayName(name);
         }
@@ -328,8 +330,7 @@ public class SerializableItem {
             ((Damageable) meta).setDamage(damage);
         }
 
-        if (meta instanceof SkullMeta) {
-            SkullMeta skullMeta = (SkullMeta) meta;
+        if (meta instanceof SkullMeta skullMeta) {
             if (skullPlayerProfile != null) {
                 skullMeta.setPlayerProfile(skullPlayerProfile.getPlayerProfile());
             }
@@ -339,9 +340,8 @@ public class SerializableItem {
         }
 
         if (meta instanceof PotionMeta) {
-            PotionMeta potionMeta = (PotionMeta) meta;
             if (this.potionMeta != null) {
-                this.potionMeta.apply(itemStack1);
+                this.potionMeta.apply(newItemStack);
             }
         }
 
@@ -354,28 +354,28 @@ public class SerializableItem {
                 }
             }
         } else {
-            itemStack1.addUnsafeEnchantments(enchantments);
+            newItemStack.addUnsafeEnchantments(enchantments);
         }
 
-        itemStack1.setItemMeta(meta);
+        newItemStack.setItemMeta(meta);
 
         if (nbtDataString != null) {
-            NBTContainer nbtContainer = new NBTContainer(nbtDataString);
-            ItemStack nbtConverted = NBTItem.convertNBTtoItem(nbtContainer);
-            if (nbtConverted.getType() != Material.AIR) {
-                NBTItem nbtItem = new NBTItem(nbtConverted);
-                nbtItem.applyNBT(itemStack1);
+            ReadWriteNBT nbt = NBT.parseNBT(nbtDataString);
+            String type = nbt.getString("id");
+            if (!type.equals("minecraft:air")) {
+                NBT.modify(newItemStack, readWriteItemNBT -> {
+                    readWriteItemNBT.mergeCompound(nbt);
+                });
             }
         }
 
-        return itemStack1;
+        return newItemStack;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof SerializableItem) {
-            SerializableItem serializableItem = (SerializableItem) obj;
-            return serializableItem.serialize().equals(this.serialize());
+        if (obj instanceof SerializableItem serializableItem) {
+            return serializableItem.equals(this);
         }
         if (obj instanceof ItemStack) {
             return this.build().equals(obj);
@@ -406,5 +406,10 @@ public class SerializableItem {
                 && Objects.equals(item.getPotionMeta(), this.getPotionMeta())
                 && Objects.equals(item.getNbtDataString(), this.getNbtDataString());
 
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, amount, enchantments, name, lore, customModelData, skullPlayerProfile, skullUser, potionMeta, nbtDataString, damage);
     }
 }

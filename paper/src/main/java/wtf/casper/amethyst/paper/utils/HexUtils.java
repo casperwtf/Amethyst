@@ -9,7 +9,23 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * https://github.com/Rosewood-Development/RoseGarden/blob/master/src/main/java/dev/rosewood/rosegarden/utils/HexUtils.java
+ * https://github.com/Rosewood-Development/RoseGarden/blob/master/src/main/java/dev/rosewood/rosegarden/utils/HexUtils.java <br>
+ * <p>
+ * Parsed formats: <br>
+ * <pre>
+ * {@code
+ * <rainbow:#speed:saturation:brightness:loop> - Rainbow gradient with optional speed, saturation, brightness, and looping
+ * <r:#speed:saturation:brightness:loop> - Shortened rainbow gradient with optional speed, saturation, brightness, and looping
+ * <gradient:#speed:hex1:hex2:hex3:...:loop> - Gradient with optional speed, hex colors, and looping
+ * <g:#speed:hex1:hex2:hex3:...:loop> - Shortened gradient with optional speed, hex colors, and looping
+ * <#FFFFFF> - Hex color
+ * {#FFFFFF} - Hex color
+ * &#FFFFFF - Hex color
+ * #FFFFFF - Hex color
+ * &r - Reset color
+ * &0-9A-Fa-f - Legacy color codes
+ * }
+ * </pre>
  */
 @SuppressWarnings("unused")
 public class HexUtils {
@@ -68,6 +84,12 @@ public class HexUtils {
         return parsed;
     }
 
+    /**
+     * Parses gradients, hex colors, and legacy color codes
+     *
+     * @param messages The messages
+     * @return A color-replaced message
+     */
     public static List<String> colorify(List<String> messages) {
         List<String> parsed = new ArrayList<>();
         for (String message : messages) {

@@ -22,6 +22,11 @@ public class ItemFromString {
         serializers.add(serializer);
     }
 
+    /**
+     * Serialize an item stack to a string
+     * @param itemStack the item stack to serialize
+     * @return the serialized item stack
+     */
     public static String serialize(ItemStack itemStack) {
 
         StringBuilder builder = new StringBuilder();
@@ -52,6 +57,11 @@ public class ItemFromString {
         return builder.toString().trim();
     }
 
+    /**
+     * Deserialize an item stack from a string
+     * @param itemString the string to deserialize
+     * @return the deserialized item stack
+     */
     public static ItemStack deserialize(String itemString) {
         Iterator<String> iter = Arrays.stream(itemString.split(" ")).iterator();
 

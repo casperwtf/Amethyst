@@ -7,6 +7,10 @@ import org.bukkit.entity.Player;
  */
 public final class ExperienceUtils {
 
+    private ExperienceUtils() {
+        throw new UnsupportedOperationException("This class cannot be instantiated");
+    }
+
     /**
      * Calculate a player's total experience based on level and progress to next.
      *

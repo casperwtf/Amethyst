@@ -15,6 +15,10 @@ public class CommandUtil {
     private static Field commandMapField;
     private static CommandMap commandMap;
 
+    private CommandUtil() {
+        throw new IllegalStateException("Utility class");
+    }
+
     static {
         try {
             commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
@@ -25,16 +29,32 @@ public class CommandUtil {
         }
     }
 
+    /**
+     * Register a command with the server
+     * @param plugin Plugin to register the command to
+     * @param executor Command to register
+     */
     public static void registerCommand(Plugin plugin, BukkitCommand executor) {
         assert commandMap != null;
-        commandMap.register(plugin.getName(), executor);
+        commandMap.register(plugin.getName().toLowerCase(), executor);
     }
 
+    /**
+     * Register a command with the server
+     * @param fallbackPrefix Fallback prefix to register the command to
+     * @param executor Command to register
+     */
     public static void registerCommand(String fallbackPrefix, BukkitCommand executor) {
         assert commandMap != null;
         commandMap.register(fallbackPrefix, executor);
     }
 
+    /**
+     * Unregister a command from the server
+     * @param cmd Command to unregister
+     * @param label Label of the command
+     * @param alias Aliases of the command
+     */
     public static void unregisterCommand(String cmd, String label, List<String> alias) {
         assert commandMap != null;
         commandMap.getKnownCommands().remove(cmd);
@@ -45,6 +65,10 @@ public class CommandUtil {
         }
     }
 
+    /**
+     * Unregister a command from the server
+     * @param cmd Command to unregister
+     */
     public static void unregisterCommand(PluginCommand cmd) {
         assert commandMap != null;
         commandMap.getKnownCommands().remove(cmd.getName());
@@ -55,6 +79,10 @@ public class CommandUtil {
         }
     }
 
+    /**
+     * Unregister a command from the server
+     * @param cmd Command to unregister
+     */
     public static void unregisterCommand(BukkitCommand cmd) {
         assert commandMap != null;
         commandMap.getKnownCommands().remove(cmd.getName());
@@ -65,6 +93,11 @@ public class CommandUtil {
         }
     }
 
+    /**
+     * Get a command from the server
+     * @param cmd Command to get
+     * @return The command
+     */
     public static Command getCommand(String cmd) {
         assert commandMap != null;
         return commandMap.getCommand(cmd);

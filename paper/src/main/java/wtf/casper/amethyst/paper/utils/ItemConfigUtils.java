@@ -25,6 +25,43 @@ import java.util.UUID;
 
 public class ItemConfigUtils {
 
+    private ItemConfigUtils() {
+        throw new UnsupportedOperationException("This class cannot be instantiated");
+    }
+
+    /**
+     * Expected Section Format: <br>
+     * <pre>
+     * {@code
+     *<item-section>:
+     *  material: ENUM (MATERIAL)
+     *  head-url: STRING (Mojang Profile Id)
+     *  name: STRING
+     *  lore:
+     *  - STRING
+     *  item-flags:
+     *  - ENUM (ItemFlag)
+     *  enchantments:
+     *  - STRING (namespace:enchant-name:level)
+     *  attributes:
+     *      <attribute>:
+     *          uuid: STRING (UUID)
+     *          name: STRING
+     *          amount: DOUBLE
+     *          operation: ENUM (AttributeModifier.Operation)
+     *          slot: ENUM (EquipmentSlot)
+     *          * (repeat for each attribute)
+     *  unbreakable: BOOLEAN
+     *  amount: INT
+     *  color: INT
+     *  custom-model-data: INT
+     * }
+     * </pre>
+     * @param section The section to get the item from
+     * @param player The player to replace placeholders for
+     * @param replacer The replacer to replace placeholders with
+     * @return The itemstack from the section
+     */
     public static ItemBuilder getItemBuilder(Section section, @Nullable OfflinePlayer player, @Nullable Placeholders replacer) {
 
         if (!section.contains("material")) {
@@ -39,7 +76,7 @@ public class ItemConfigUtils {
         ItemBuilder builder = new ItemBuilder(material);
 
         if (material == Material.PLAYER_HEAD) {
-            section.getOptionalString("headURL").ifPresent(builder::setHeadUrl);
+            section.getOptionalString("head-url").ifPresent(builder::setHeadUrl);
         }
 
         section.getOptionalString("name").ifPresent(s -> {
@@ -76,7 +113,7 @@ public class ItemConfigUtils {
             builder.setItemMeta(meta);
         });
 
-        section.getOptionalStringList("itemFlags").ifPresent(itemFlags -> {
+        section.getOptionalStringList("item-flags").ifPresent(itemFlags -> {
             for (String itemFlag : itemFlags) {
                 if (StringUtilsPaper.validateEnum(itemFlag.toUpperCase(Locale.ROOT), ItemFlag.class)) {
                     builder.addItemFlag(ItemFlag.valueOf(itemFlag.toUpperCase(Locale.ROOT)));
@@ -116,43 +153,95 @@ public class ItemConfigUtils {
         section.getOptionalBoolean("unbreakable").ifPresent(builder::setUnbreakable);
         section.getOptionalInt("amount").ifPresent(builder::setAmount);
         section.getOptionalInt("color").ifPresent(color -> builder.setColor(Color.fromRGB(color)));
-        section.getOptionalInt("customModelData").ifPresent(builder::setCustomModelData);
+        section.getOptionalInt("custom-model-data").ifPresent(builder::setCustomModelData);
 
         return builder;
     }
 
+    /**
+     * See {@link #getItemBuilder(Section, OfflinePlayer, Placeholders)}
+     * @param section The section to get the item from
+     * @param player The player to replace placeholders for
+     * @return The itemstack from the section
+     */
     public static ItemBuilder getItemBuilder(Section section, OfflinePlayer player) {
         return getItemBuilder(section, player, null);
     }
 
+    /**
+     * See {@link #getItemBuilder(Section, OfflinePlayer, Placeholders)}
+     * @param section The section to get the item from
+     * @param replacer The replacer to replace placeholders with
+     * @return The itemstack from the section
+     */
     public static ItemBuilder getItemBuilder(Section section, Placeholders replacer) {
         return getItemBuilder(section, null, replacer);
     }
 
+    /**
+     * See {@link #getItemBuilder(Section, OfflinePlayer, Placeholders)}
+     * @param section The section to get the item from
+     * @return The itemstack from the section
+     */
     public static ItemBuilder getItemBuilder(Section section) {
         return getItemBuilder(section, null, null);
     }
 
+    /**
+     * See {@link #getItemBuilder(Section, OfflinePlayer, Placeholders)}
+     * @param section The section to get the item from
+     * @param player The player to replace placeholders for
+     * @param replacer The replacer to replace placeholders with
+     * @return The itemstack from the section
+     */
     public static ItemStack getItem(Section section, OfflinePlayer player, Placeholders replacer) {
         return getItemBuilder(section, player, replacer);
     }
 
+    /**
+     * See {@link #getItemBuilder(Section, OfflinePlayer, Placeholders)}
+     * @param section The section to get the item from
+     * @param player The player to replace placeholders for
+     * @return The itemstack from the section
+     */
     public static ItemStack getItem(Section section, OfflinePlayer player) {
         return getItem(section, player, null);
     }
 
+    /**
+     * See {@link #getItemBuilder(Section, OfflinePlayer, Placeholders)}
+     * @param section The section to get the item from
+     * @param replacer The replacer to replace placeholders with
+     * @return The itemstack from the section
+     */
     public static ItemStack getItem(Section section, Placeholders replacer) {
         return getItem(section, null, replacer);
     }
 
+    /**
+     * See {@link #getItemBuilder(Section, OfflinePlayer, Placeholders)}
+     * @param section The section to get the item from
+     * @return The itemstack from the section
+     */
     public static ItemStack getItem(Section section) {
         return getItem(section, null, null);
     }
 
+    /**
+     * Checks if the inventory is full
+     * @param inventory The inventory to check
+     * @return If the inventory is full
+     */
     public static boolean isFull(Inventory inventory) {
         return inventory.firstEmpty() == -1;
     }
 
+    /**
+     * Checks if the inventory is full after adding the item
+     * @param inventory The inventory to check
+     * @param toAdd The item to add
+     * @return If the inventory is full after adding the item
+     */
     public static boolean isFull(Inventory inventory, ItemStack toAdd) {
         if (!isFull(inventory)) {
             return false;
@@ -186,6 +275,12 @@ public class ItemConfigUtils {
         return freeSlots;
     }
 
+    /**
+     * Returns the amount of free slots in the inventory after adding the item
+     * @param inventory The inventory to check
+     * @param toAdd The item to add
+     * @return the amount of free slots in the inventory after adding the item
+     */
     public static int freeSlots(Inventory inventory, ItemStack toAdd) {
         int freeSlots = 0;
         for (ItemStack itemStack : inventory) {
@@ -198,6 +293,10 @@ public class ItemConfigUtils {
         return freeSlots;
     }
 
+    /**
+     * @param headURL The head URL to get the custom skull from
+     * @return The custom skull itemstack
+     */
     public static ItemStack getCustomSkull(String headURL) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         if (headURL.isEmpty())
