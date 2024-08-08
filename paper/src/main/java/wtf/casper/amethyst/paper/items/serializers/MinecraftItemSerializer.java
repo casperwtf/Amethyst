@@ -56,6 +56,7 @@ public class MinecraftItemSerializer implements ItemSerializer {
             ItemMeta meta = itemStack.getItemMeta();
             meta.addEnchant(enchantment, level, true);
             itemStack.setItemMeta(meta);
+            return true;
         }
 
         if (next.startsWith("durability:")) {
