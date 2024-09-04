@@ -20,6 +20,7 @@ public class Base64Utils {
 
     /**
      * A method to serialize an inventory to Base64 string.
+     *
      * @param playerInventory to turn into a Base64 string.
      * @return A string array with 3 elements: inventory content, offHand & armor
      * @throws IllegalStateException
@@ -35,6 +36,7 @@ public class Base64Utils {
 
     /**
      * Get the player inventory from a string array
+     *
      * @param items The string array
      * @return The itemstack array
      * @throws IllegalStateException
@@ -66,6 +68,7 @@ public class Base64Utils {
 
     /**
      * Get the player inventory from a string array
+     *
      * @param data The string array
      * @return The itemstack array
      * @throws IOException
@@ -94,6 +97,7 @@ public class Base64Utils {
 
     /**
      * A method to serialize an inventory to Base64 string.
+     *
      * @param inventory
      * @return Base64 string of the provided inventory
      * @throws IllegalStateException
@@ -125,6 +129,7 @@ public class Base64Utils {
 
     /**
      * Gets an inventory from a Base64 string.
+     *
      * @param data Base64 string of the inventory
      * @return Inventory created from the Base64 string
      * @throws IOException
@@ -153,6 +158,7 @@ public class Base64Utils {
 
     /**
      * A method to serialize an ItemStack to Base64 string.
+     *
      * @param obj to serialize
      * @return Base64 string of the provided ItemStack
      * @throws IllegalStateException
@@ -177,6 +183,7 @@ public class Base64Utils {
 
     /**
      * A method to serialize an ItemStack to Base64 string.
+     *
      * @param base64 to deserialize
      * @return ItemStack created from the Base64 string
      * @throws IllegalStateException

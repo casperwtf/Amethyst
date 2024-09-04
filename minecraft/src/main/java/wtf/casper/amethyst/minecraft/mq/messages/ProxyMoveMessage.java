@@ -1,7 +1,6 @@
 package wtf.casper.amethyst.minecraft.mq.messages;
 
 import lombok.Getter;
-
 import wtf.casper.amethyst.core.mq.Message;
 
 import javax.annotation.Nullable;

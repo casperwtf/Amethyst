@@ -31,7 +31,8 @@ public class CommandUtil {
 
     /**
      * Register a command with the server
-     * @param plugin Plugin to register the command to
+     *
+     * @param plugin   Plugin to register the command to
      * @param executor Command to register
      */
     public static void registerCommand(Plugin plugin, BukkitCommand executor) {
@@ -41,8 +42,9 @@ public class CommandUtil {
 
     /**
      * Register a command with the server
+     *
      * @param fallbackPrefix Fallback prefix to register the command to
-     * @param executor Command to register
+     * @param executor       Command to register
      */
     public static void registerCommand(String fallbackPrefix, BukkitCommand executor) {
         assert commandMap != null;
@@ -51,7 +53,8 @@ public class CommandUtil {
 
     /**
      * Unregister a command from the server
-     * @param cmd Command to unregister
+     *
+     * @param cmd   Command to unregister
      * @param label Label of the command
      * @param alias Aliases of the command
      */
@@ -67,6 +70,7 @@ public class CommandUtil {
 
     /**
      * Unregister a command from the server
+     *
      * @param cmd Command to unregister
      */
     public static void unregisterCommand(PluginCommand cmd) {
@@ -81,6 +85,7 @@ public class CommandUtil {
 
     /**
      * Unregister a command from the server
+     *
      * @param cmd Command to unregister
      */
     public static void unregisterCommand(BukkitCommand cmd) {
@@ -95,6 +100,7 @@ public class CommandUtil {
 
     /**
      * Get a command from the server
+     *
      * @param cmd Command to get
      * @return The command
      */

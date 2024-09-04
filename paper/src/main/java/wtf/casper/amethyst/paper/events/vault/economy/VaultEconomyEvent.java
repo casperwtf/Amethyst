@@ -5,6 +5,11 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class VaultEconomyEvent extends Event {
+
+    public VaultEconomyEvent(boolean async) {
+        super(async);
+    }
+
     private final static HandlerList handlers = new HandlerList();
 
     @Override

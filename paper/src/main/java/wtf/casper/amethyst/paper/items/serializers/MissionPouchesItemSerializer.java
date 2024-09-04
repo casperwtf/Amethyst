@@ -2,7 +2,7 @@ package wtf.casper.amethyst.paper.items.serializers;
 
 //import com.mysticalkingdoms.missionpouches.MissionPouches;
 //import com.mysticalkingdoms.missionpouches.pouches.Pouch;
-import de.tr7zw.nbtapi.NBT;
+
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import wtf.casper.amethyst.core.utils.Lazy;

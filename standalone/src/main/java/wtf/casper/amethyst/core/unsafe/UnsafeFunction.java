@@ -13,7 +13,8 @@ public interface UnsafeFunction<T, R> extends Function<T, R> {
     default R apply(final T t) {
         try {
             return this.applyThrows(t);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         return null;
     }
 

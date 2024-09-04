@@ -1,8 +1,6 @@
 package wtf.casper.amethyst.core.inject;
 
 import lombok.Getter;
-import wtf.casper.storageapi.libs.jetbrains.annotations.NotNull;
-
 
 import javax.annotation.Nullable;
 
@@ -32,7 +30,7 @@ public class InjectionContainer implements Comparable<InjectionContainer> {
     }
 
     @Override
-    public int compareTo(@NotNull InjectionContainer o) {
+    public int compareTo(InjectionContainer o) {
         return Integer.compare(priority, o.priority);
     }
 }

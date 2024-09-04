@@ -9,6 +9,7 @@ import cloud.commandframework.extra.confirmation.CommandConfirmationManager;
 import cloud.commandframework.meta.SimpleCommandMeta;
 import cloud.commandframework.paper.PaperCommandManager;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -18,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 @Getter
+@Setter
 public class CloudCommandProvider {
 
     private PaperCommandManager<CommandSender> commandManager;

@@ -201,9 +201,7 @@
                                 </relocation>
                                 <relocation>
                                     <pattern>wtf.casper.storageapi</pattern>
-                                    <shadedPattern>
-                                        wtf.casper.amethyst.libs.storageapi
-                                    </shadedPattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.storageapi</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>de.tr7zw.nbtapi</pattern>
@@ -213,19 +211,13 @@
                                 </relocation>
                                 <relocation>
                                     <pattern>de.tr7zw.nbtinjector</pattern>
-                                    <shadedPattern>
-                                        wtf.casper.amethyst.libs.nbtinjector
-                                    </shadedPattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.nbtinjector</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
                                     <excludes>
-<!--                                        <exclude>META-INF/*.SF</exclude>-->
-<!--                                        <exclude>META-INF/*.DSA</exclude>-->
-<!--                                        <exclude>META-INF/*.RSA</exclude>-->
-<!--                                        <exclude>META-INF/**</exclude>-->
                                         <exclude>org/**</exclude>
                                         <exclude>dev/**</exclude>
                                         <exclude>me/**</exclude>
@@ -240,6 +232,7 @@
                                         <exclude>javax/**</exclude>
                                         <exclude>redempt/**</exclude>
                                         <!--                                        <exclude>wtf/casper/storageapi/**</exclude>-->
+                                        <exclude>wtf/casper/amethyst/libs/storageapi/**</exclude>
                                         <exclude>
                                             wtf/casper/amethyst/libs/google/**
                                         </exclude>
@@ -300,7 +293,8 @@
                                     </excludes>
                                 </filter>
                             </filters>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <createDependencyReducedPom>false
+                            </createDependencyReducedPom>
                         </configuration>
                     </execution>
                 </executions>
@@ -333,6 +327,16 @@
             <artifactId>minecraft</artifactId>
             <version>${amethyst.version}</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.projectlombok</groupId>
+                    <artifactId>lombok</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>wtf.casper.storageapi</groupId>
+                    <artifactId>StorageAPI</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>dev.dejvokep</groupId>
@@ -411,7 +415,7 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.20.1-R0.1-SNAPSHOT</version>
+            <version>1.20.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -430,6 +434,12 @@
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
             <version>1.7</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-api</artifactId>
+            <version>4.17.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -480,12 +490,6 @@
             <systemPath>${project.basedir}/libs/ItemBridge.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>com.sk89q.worldedit</groupId>
-            <artifactId>worldedit-bukkit</artifactId>
-            <version>7.2.7</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.26</version>
@@ -493,24 +497,10 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.retrooper.packetevents</groupId>
-            <artifactId>spigot</artifactId>
-            <version>2.2.1</version>
+            <groupId>com.github.retrooper</groupId>
+            <artifactId>packetevents-spigot</artifactId>
+            <version>2.4.0</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>net.kyori</groupId>
-                    <artifactId>adventure-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>net.kyori</groupId>
-                    <artifactId>adventure-text-serializer-gson</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>net.kyori</groupId>
-                    <artifactId>adventure-text-serializer-legacy</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -575,20 +565,22 @@
             </systemPath>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>io.th0rgal</groupId>-->
-<!--            <artifactId>oraxen</artifactId>-->
-<!--            <version>1.175.0</version>-->
-<!--            <scope>system</scope>-->
-<!--            <systemPath>${pom.basedir}/libs/oraxen-1.175.0-lazy.jar</systemPath>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>io.th0rgal</groupId>-->
+        <!--            <artifactId>oraxen</artifactId>-->
+        <!--            <version>1.175.0</version>-->
+        <!--            <scope>system</scope>-->
+        <!--            <systemPath>${pom.basedir}/libs/oraxen-1.175.0-lazy.jar</systemPath>-->
+        <!--        </dependency>-->
 
         <dependency>
             <groupId>com.mysticalkingdoms</groupId>
             <artifactId>missionpouches-plugin</artifactId>
             <version>1.15.0</version>
             <scope>system</scope>
-            <systemPath>${pom.basedir}/libs/missionpouches-plugin-1.15.0-lazy.jar</systemPath>
+            <systemPath>
+                ${pom.basedir}/libs/missionpouches-plugin-1.15.0-lazy.jar
+            </systemPath>
         </dependency>
 
         <dependency>
@@ -609,6 +601,10 @@
     </pluginRepositories>
 
     <repositories>
+        <repository>
+            <id>enginehub</id>
+            <url>https://maven.enginehub.org/repo/</url>
+        </repository>
         <repository>
             <id>rosewood</id>
             <url>https://repo.rosewooddev.io/repository/public</url>
@@ -676,6 +672,11 @@
             <id>codemc-snapshots</id>
             <url>https://repo.codemc.io/repository/maven-snapshots/</url>
         </repository>
+        <repository>
+            <id>codemc-releases</id>
+            <url>https://repo.codemc.io/repository/maven-releases/</url>
+        </repository>
+
         <!-- For snapshot builds -->
         <repository>
             <id>sonatype-snapshots</id>

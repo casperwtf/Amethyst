@@ -1,12 +1,15 @@
 package wtf.casper.amethyst.paper.utils;
 
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.command.CommandSender;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * https://github.com/Rosewood-Development/RoseGarden/blob/master/src/main/java/dev/rosewood/rosegarden/utils/HexUtils.java <br>
@@ -32,7 +35,7 @@ public class HexUtils {
     private static final int CHARS_UNTIL_LOOP = 30;
     private static final Pattern RAINBOW_PATTERN = Pattern.compile("<(?<type>rainbow|r)(#(?<speed>\\d+))?(:(?<saturation>\\d*\\.?\\d+))?(:(?<brightness>\\d*\\.?\\d+))?(:(?<loop>l|L|loop))?>");
     private static final Pattern GRADIENT_PATTERN = Pattern.compile("<(?<type>gradient|g)(#(?<speed>\\d+))?(?<hex>(:#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})){2,})(:(?<loop>l|L|loop))?>");
-    private static final List<Pattern> HEX_PATTERNS = List.of(
+    private static final List<Pattern> HEX_PATTERNS = Arrays.asList(
             Pattern.compile("<#([A-Fa-f0-9]){6}>"),   // <#FFFFFF>
             Pattern.compile("\\{#([A-Fa-f0-9]){6}}"), // {#FFFFFF}
             Pattern.compile("&#([A-Fa-f0-9]){6}"),    // &#FFFFFF
@@ -51,7 +54,7 @@ public class HexUtils {
     );
 
     private HexUtils() {
-        throw new UnsupportedOperationException("This class cannot be instantiated");
+
     }
 
     /**
@@ -70,6 +73,16 @@ public class HexUtils {
     }
 
     /**
+     * Sends a CommandSender a colored message
+     *
+     * @param sender  The CommandSender to send to
+     * @param message The message to send
+     */
+    public static void sendMessage(CommandSender sender, String message) {
+        sender.sendMessage(colorify(message));
+    }
+
+    /**
      * Parses gradients, hex colors, and legacy color codes
      *
      * @param message The message
@@ -81,20 +94,6 @@ public class HexUtils {
         parsed = parseGradients(parsed);
         parsed = parseHex(parsed);
         parsed = parseLegacy(parsed);
-        return parsed;
-    }
-
-    /**
-     * Parses gradients, hex colors, and legacy color codes
-     *
-     * @param messages The messages
-     * @return A color-replaced message
-     */
-    public static List<String> colorify(List<String> messages) {
-        List<String> parsed = new ArrayList<>();
-        for (String message : messages) {
-            parsed.add(colorify(message));
-        }
         return parsed;
     }
 
@@ -183,12 +182,10 @@ public class HexUtils {
             int speed = -1;
             boolean looping = getCaptureGroup(matcher, "loop") != null;
 
-            List<Color> hexSteps = new ArrayList<>();
-            for (String x : getCaptureGroup(matcher, "hex").substring(1).split(":")) {
-                String s = x.length() != 4 ? x : String.format("#%s%s%s%s%s%s", x.charAt(1), x.charAt(1), x.charAt(2), x.charAt(2), x.charAt(3), x.charAt(3));
-                Color decode = Color.decode(s);
-                hexSteps.add(decode);
-            }
+            List<Color> hexSteps = Arrays.stream(getCaptureGroup(matcher, "hex").substring(1).split(":"))
+                    .map(x -> x.length() != 4 ? x : String.format("#%s%s%s%s%s%s", x.charAt(1), x.charAt(1), x.charAt(2), x.charAt(2), x.charAt(3), x.charAt(3)))
+                    .map(Color::decode)
+                    .collect(Collectors.toList());
 
             String speedGroup = getCaptureGroup(matcher, "speed");
             if (speedGroup != null) {
@@ -291,15 +288,16 @@ public class HexUtils {
      * @return The closest ChatColor value
      */
     public static ChatColor translateHex(String hex) {
-        if (ServerVersion.v1_16_0.isBefore()) {
+        if (ServerVersion.v1_16_0.isAtLeast()) {
             return ChatColor.of(hex);
         }
         return translateHex(Color.decode(hex));
     }
 
     public static ChatColor translateHex(Color color) {
-        if (ServerVersion.v1_16_0.isBefore())
+        if (ServerVersion.v1_16_0.isAtLeast()) {
             return ChatColor.of(color);
+        }
 
         int minDist = Integer.MAX_VALUE;
         ChatColor legacy = ChatColor.WHITE;
@@ -528,5 +526,6 @@ public class HexUtils {
         }
 
     }
+
 
 }

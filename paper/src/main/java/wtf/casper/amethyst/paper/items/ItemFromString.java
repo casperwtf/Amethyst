@@ -24,6 +24,7 @@ public class ItemFromString {
 
     /**
      * Serialize an item stack to a string
+     *
      * @param itemStack the item stack to serialize
      * @return the serialized item stack
      */
@@ -59,6 +60,7 @@ public class ItemFromString {
 
     /**
      * Deserialize an item stack from a string
+     *
      * @param itemString the string to deserialize
      * @return the deserialized item stack
      */

@@ -1,18 +1,21 @@
 package wtf.casper.amethyst.paper.events.vault.economy;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import org.bukkit.Bukkit;
 import org.bukkit.event.Cancellable;
 
 @Getter
-@RequiredArgsConstructor
-@AllArgsConstructor
 public class PreBankDepositEvent extends VaultEconomyEvent implements Cancellable {
 
     private final String accountName;
     private final double amount;
-    private boolean cancelled;
+    private boolean cancelled = false;
+
+    public PreBankDepositEvent(String accountName, double amount) {
+        super(!Bukkit.isPrimaryThread());
+        this.accountName = accountName;
+        this.amount = amount;
+    }
 
     @Override
     public boolean isCancelled() {

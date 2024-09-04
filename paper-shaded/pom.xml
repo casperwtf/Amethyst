@@ -53,22 +53,16 @@
                                 </relocation>
                                 <relocation>
                                     <pattern>com.google.gson</pattern>
-                                    <shadedPattern>
-                                        wtf.casper.amethyst.libs.google.gson
-                                    </shadedPattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.google.gson</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>dev.dejvokep.boostedyaml</pattern>
-                                    <shadedPattern>
-                                        wtf.casper.amethyst.libs.boostedyaml
-                                    </shadedPattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.boostedyaml</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.jeff_media.customblockdata
                                     </pattern>
-                                    <shadedPattern>
-                                        wtf.casper.amethyst.libs.customblockdata
-                                    </shadedPattern>
+                                    <shadedPattern>wtf.casper.amethyst.libs.customblockdata</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>io.lettuce.core</pattern>
@@ -410,21 +404,15 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.sk89q.worldedit</groupId>
-            <artifactId>worldedit-bukkit</artifactId>
-            <version>7.2.7</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.26</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.retrooper.packetevents</groupId>
-            <artifactId>spigot</artifactId>
-            <version>2.2.1</version>
+            <groupId>com.github.retrooper</groupId>
+            <artifactId>packetevents-spigot</artifactId>
+            <version>2.4.0</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
@@ -508,5 +496,10 @@
             <id>sonatype-snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
+        <repository>
+            <id>enginehub</id>
+            <url>https://maven.enginehub.org/repo/</url>
+        </repository>
+
     </repositories>
 </project>

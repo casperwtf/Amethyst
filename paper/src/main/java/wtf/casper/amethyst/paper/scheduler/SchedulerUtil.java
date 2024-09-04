@@ -12,8 +12,9 @@ public class SchedulerUtil {
 
     /**
      * Run a task on the main thread
+     *
      * @param runnable The task to run
-     * @param subject The subject to run the task on, can be null & is not used in Bukkit. Valid subjects are Entity, Block or Location. Will default to global if null.
+     * @param subject  The subject to run the task on, can be null & is not used in Bukkit. Valid subjects are Entity, Block or Location. Will default to global if null.
      * @return The scheduler instance
      */
     public static AmethystScheduler run(Consumer<AmethystScheduler> runnable, Object subject) {
@@ -26,8 +27,9 @@ public class SchedulerUtil {
 
     /**
      * Run a task off the main thread
+     *
      * @param runnable The task to run
-     * @param subject The subject to run the task on, can be null & is not used in Bukkit. Valid subjects are Entity, Block or Location. Will default to global if null.
+     * @param subject  The subject to run the task on, can be null & is not used in Bukkit. Valid subjects are Entity, Block or Location. Will default to global if null.
      * @return The scheduler instance
      */
     public static AmethystScheduler runAsync(Consumer<AmethystScheduler> runnable, Object subject) {
@@ -40,9 +42,10 @@ public class SchedulerUtil {
 
     /**
      * Run a task on the main thread after a delay
+     *
      * @param runnable The task to run
-     * @param subject The subject to run the task on, can be null & is not used in Bukkit. Valid subjects are Entity, Block or Location. Will default to global if null.
-     * @param ticks The delay in ticks
+     * @param subject  The subject to run the task on, can be null & is not used in Bukkit. Valid subjects are Entity, Block or Location. Will default to global if null.
+     * @param ticks    The delay in ticks
      * @return The scheduler instance
      */
     public static AmethystScheduler runLater(Consumer<AmethystScheduler> runnable, Object subject, long ticks) {
@@ -55,9 +58,10 @@ public class SchedulerUtil {
 
     /**
      * Run a task off the main thread after a delay
+     *
      * @param runnable The task to run
-     * @param subject The subject to run the task on, can be null & is not used in Bukkit. Valid subjects are Entity, Block or Location. Will default to global if null.
-     * @param ticks The delay in ticks
+     * @param subject  The subject to run the task on, can be null & is not used in Bukkit. Valid subjects are Entity, Block or Location. Will default to global if null.
+     * @param ticks    The delay in ticks
      * @return The scheduler instance
      */
     public static AmethystScheduler runLaterAsync(Consumer<AmethystScheduler> runnable, Object subject, long ticks) {
@@ -70,10 +74,11 @@ public class SchedulerUtil {
 
     /**
      * Run a task on the main thread after a delay
+     *
      * @param runnable The task to run
-     * @param subject The subject to run the task on, can be null & is not used in Bukkit. Valid subjects are Entity, Block or Location. Will default to global if null.
-     * @param delay The delay in ticks
-     * @param ticks The interval in ticks
+     * @param subject  The subject to run the task on, can be null & is not used in Bukkit. Valid subjects are Entity, Block or Location. Will default to global if null.
+     * @param delay    The delay in ticks
+     * @param ticks    The interval in ticks
      * @return The scheduler instance
      */
     public static AmethystScheduler runDelayedTimer(Consumer<AmethystScheduler> runnable, Object subject, long delay, long ticks) {
@@ -86,10 +91,11 @@ public class SchedulerUtil {
 
     /**
      * Run a task off the main thread after a delay
+     *
      * @param runnable The task to run
-     * @param subject The subject to run the task on, can be null & is not used in Bukkit. Valid subjects are Entity, Block or Location. Will default to global if null.
-     * @param delay The delay in ticks
-     * @param ticks The interval in ticks
+     * @param subject  The subject to run the task on, can be null & is not used in Bukkit. Valid subjects are Entity, Block or Location. Will default to global if null.
+     * @param delay    The delay in ticks
+     * @param ticks    The interval in ticks
      * @return The scheduler instance
      */
     public static AmethystScheduler runDelayedTimerAsync(Consumer<AmethystScheduler> runnable, Object subject, long delay, long ticks) {
@@ -102,11 +108,12 @@ public class SchedulerUtil {
 
     /**
      * Run a task on the main thread after a delay
+     *
      * @param runnable The task to run
-     * @param subject The subject to run the task on, can be null & is not used in Bukkit. Valid subjects are Entity, Block or Location. Will default to global if null.
-     * @param delay The delay in ticks
-     * @param ticks The interval in ticks
-     * @param repeats The number of times to repeat the task
+     * @param subject  The subject to run the task on, can be null & is not used in Bukkit. Valid subjects are Entity, Block or Location. Will default to global if null.
+     * @param delay    The delay in ticks
+     * @param ticks    The interval in ticks
+     * @param repeats  The number of times to repeat the task
      * @return The scheduler instance
      */
     public static AmethystScheduler runDelayedRepeatedTimer(Consumer<AmethystScheduler> runnable, Object subject, long delay, long ticks, long repeats) {
@@ -119,11 +126,12 @@ public class SchedulerUtil {
 
     /**
      * Run a task off the main thread after a delay
+     *
      * @param runnable The task to run
-     * @param subject The subject to run the task on, can be null & is not used in Bukkit. Valid subjects are Entity, Block or Location. Will default to global if null.
-     * @param delay The delay in ticks
-     * @param ticks The interval in ticks
-     * @param repeats The number of times to repeat the task
+     * @param subject  The subject to run the task on, can be null & is not used in Bukkit. Valid subjects are Entity, Block or Location. Will default to global if null.
+     * @param delay    The delay in ticks
+     * @param ticks    The interval in ticks
+     * @param repeats  The number of times to repeat the task
      * @return The scheduler instance
      */
     public static AmethystScheduler runDelayedRepeatedTimerAsync(Consumer<AmethystScheduler> runnable, Object subject, long delay, long ticks, long repeats) {
@@ -136,6 +144,7 @@ public class SchedulerUtil {
 
     /**
      * Run a task on the main thread after a delay
+     *
      * @param runnable The task to run
      * @return The scheduler instance
      */
@@ -145,6 +154,7 @@ public class SchedulerUtil {
 
     /**
      * Run a task off the main thread after a delay
+     *
      * @param runnable The task to run
      * @return The scheduler instance
      */
@@ -154,8 +164,9 @@ public class SchedulerUtil {
 
     /**
      * Run a task on the main thread after a delay
+     *
      * @param runnable The task to run
-     * @param ticks The delay in ticks
+     * @param ticks    The delay in ticks
      * @return The scheduler instance
      */
     public static AmethystScheduler runLater(Consumer<AmethystScheduler> runnable, long ticks) {
@@ -164,8 +175,9 @@ public class SchedulerUtil {
 
     /**
      * Run a task off the main thread after a delay
+     *
      * @param runnable The task to run
-     * @param ticks The delay in ticks
+     * @param ticks    The delay in ticks
      * @return The scheduler instance
      */
     public static AmethystScheduler runLaterAsync(Consumer<AmethystScheduler> runnable, long ticks) {
@@ -174,9 +186,10 @@ public class SchedulerUtil {
 
     /**
      * Run a task on the main thread after a delay
+     *
      * @param runnable The task to run
-     * @param delay The delay in ticks
-     * @param ticks The interval in ticks
+     * @param delay    The delay in ticks
+     * @param ticks    The interval in ticks
      * @return The scheduler instance
      */
     public static AmethystScheduler runDelayedTimer(Consumer<AmethystScheduler> runnable, long delay, long ticks) {
@@ -185,9 +198,10 @@ public class SchedulerUtil {
 
     /**
      * Run a task off the main thread after a delay
+     *
      * @param runnable The task to run
-     * @param delay The delay in ticks
-     * @param ticks The interval in ticks
+     * @param delay    The delay in ticks
+     * @param ticks    The interval in ticks
      * @return The scheduler instance
      */
     public static AmethystScheduler runDelayedTimerAsync(Consumer<AmethystScheduler> runnable, long delay, long ticks) {
@@ -196,10 +210,11 @@ public class SchedulerUtil {
 
     /**
      * Run a task on the main thread after a delay
+     *
      * @param runnable The task to run
-     * @param delay The delay in ticks
-     * @param ticks The interval in ticks
-     * @param repeats The number of times to repeat the task
+     * @param delay    The delay in ticks
+     * @param ticks    The interval in ticks
+     * @param repeats  The number of times to repeat the task
      * @return The scheduler instance
      */
     public static AmethystScheduler runDelayedRepeatedTimer(Consumer<AmethystScheduler> runnable, long delay, long ticks, long repeats) {
@@ -208,10 +223,11 @@ public class SchedulerUtil {
 
     /**
      * Run a task off the main thread after a delay
+     *
      * @param runnable The task to run
-     * @param delay The delay in ticks
-     * @param ticks The interval in ticks
-     * @param repeats The number of times to repeat the task
+     * @param delay    The delay in ticks
+     * @param ticks    The interval in ticks
+     * @param repeats  The number of times to repeat the task
      * @return The scheduler instance
      */
     public static AmethystScheduler runDelayedRepeatedTimerAsync(Consumer<AmethystScheduler> runnable, long delay, long ticks, long repeats) {

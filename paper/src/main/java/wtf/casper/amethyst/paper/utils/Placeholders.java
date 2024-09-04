@@ -16,7 +16,7 @@ public class Placeholders {
 
 
     /**
-     * @param key  The key to replace
+     * @param key   The key to replace
      * @param value The value to replace the key with
      * @return The placeholders object
      */
@@ -27,6 +27,7 @@ public class Placeholders {
 
     /**
      * Add multiple placeholders to the object
+     *
      * @param args The arguments to add. Must be in pairs of key, value
      * @return The placeholders object
      */

@@ -1,14 +1,20 @@
 package wtf.casper.amethyst.paper.events.vault.economy;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.milkbowl.vault.economy.EconomyResponse;
+import org.bukkit.Bukkit;
 
 @Getter
-@AllArgsConstructor
 public class BankDepositEvent extends VaultEconomyEvent {
 
     private final String accountName;
     private final double amount;
     private final EconomyResponse response;
+
+    public BankDepositEvent(String accountName, double amount, EconomyResponse response) {
+        super(!Bukkit.isPrimaryThread());
+        this.accountName = accountName;
+        this.amount = amount;
+        this.response = response;
+    }
 }

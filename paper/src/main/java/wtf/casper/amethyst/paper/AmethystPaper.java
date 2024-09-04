@@ -9,7 +9,6 @@ import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,16 +23,17 @@ import wtf.casper.amethyst.paper.hooks.GeyserExpansion;
 import wtf.casper.amethyst.paper.hooks.IHookController;
 import wtf.casper.amethyst.paper.internal.commands.ItemSerializationCommands;
 import wtf.casper.amethyst.paper.internal.listeners.LoggerListener;
+import wtf.casper.amethyst.paper.internal.listeners.PlayerTracker;
+import wtf.casper.amethyst.paper.internal.listeners.PlayerTrackerListener;
 import wtf.casper.amethyst.paper.providers.VaultProvider;
 import wtf.casper.amethyst.paper.scheduler.SchedulerUtil;
 import wtf.casper.amethyst.paper.serialized.SerializableItem;
 import wtf.casper.amethyst.paper.serialized.SerializableItemTypeAdapter;
 import wtf.casper.amethyst.paper.serialized.serializer.*;
-import wtf.casper.amethyst.paper.internal.listeners.PlayerTracker;
-import wtf.casper.amethyst.paper.internal.listeners.PlayerTrackerListener;
 import wtf.casper.amethyst.paper.utils.ArmorstandUtils;
 import wtf.casper.amethyst.paper.utils.ServerLock;
 import wtf.casper.amethyst.paper.utils.ServerUtils;
+import wtf.casper.amethyst.paper.utils.ServerVersion;
 
 import java.awt.Color;
 import java.io.File;
@@ -65,6 +65,7 @@ public class AmethystPaper {
             checkRelocation();
         }
 
+        ServerVersion.setVersion();
         instance = plugin;
 
         DependencyManager dependencyManager = new DependencyManager(plugin);

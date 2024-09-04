@@ -7,12 +7,13 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import wtf.casper.amethyst.core.utils.MathUtils;
 
@@ -33,7 +34,7 @@ public class ItemConfigUtils {
      * Expected Section Format: <br>
      * <pre>
      * {@code
-     *<item-section>:
+     * <item-section>:
      *  material: ENUM (MATERIAL)
      *  head-url: STRING (Mojang Profile Id)
      *  name: STRING
@@ -55,10 +56,14 @@ public class ItemConfigUtils {
      *  amount: INT
      *  color: INT
      *  custom-model-data: INT
+     *  banner-color: ENUM (DyeColor)
+     *  banner-patterns:
+     *  - STRING (DyeColor:PatternType)
      * }
      * </pre>
-     * @param section The section to get the item from
-     * @param player The player to replace placeholders for
+     *
+     * @param section  The section to get the item from
+     * @param player   The player to replace placeholders for
      * @param replacer The replacer to replace placeholders with
      * @return The itemstack from the section
      */
@@ -89,15 +94,13 @@ public class ItemConfigUtils {
                 s = replacer.parse(s);
             }
 
-            ItemMeta meta = builder.getItemMeta();
-            meta.setDisplayName(s);
-            builder.setItemMeta(meta);
+            builder.setLegacyName(s);
         });
 
         section.getOptionalStringList("lore").ifPresent(lore -> {
-            ItemMeta meta = builder.getItemMeta();
-            List<String> components = new ArrayList<>();
+            List<String> loreList = new ArrayList<>();
             for (String s : lore) {
+
                 if (player != null && Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                     s = PlaceholderAPI.setPlaceholders(player, s);
                 }
@@ -106,11 +109,9 @@ public class ItemConfigUtils {
                     s = replacer.parse(s);
                 }
 
-                components.add(s);
+                loreList.add(s);
             }
-
-            meta.setLore(components);
-            builder.setItemMeta(meta);
+            builder.setLegacyLore(loreList);
         });
 
         section.getOptionalStringList("item-flags").ifPresent(itemFlags -> {
@@ -126,7 +127,7 @@ public class ItemConfigUtils {
                 String[] enchantName = enchants.split(":");
                 if (enchantName.length != 3) continue;
                 if (MathUtils.validateInt(enchantName[2])) {
-                    builder.addEnchant(Enchantment.getByKey(NamespacedKey.fromString(enchantName[0] + ":" + enchantName[1])), Integer.parseInt(enchantName[2]));
+                    builder.addEnchantment(Enchantment.getByKey(NamespacedKey.fromString(enchantName[0] + ":" + enchantName[1])), Integer.parseInt(enchantName[2]));
                 }
             }
         });
@@ -146,13 +147,31 @@ public class ItemConfigUtils {
                             return null;
                         }).orElse(null)
                 );
-                builder.addAttribute(Attribute.valueOf(key.toUpperCase(Locale.ROOT)), modifier);
+                if (modifier.getSlot() != null) {
+                    builder.addAttributeModifier(Attribute.valueOf(key), modifier);
+                }
             }
+        });
+
+        section.getOptionalString("banner-color").ifPresent(s -> {
+            builder.setBannerBaseColor(DyeColor.valueOf(s.toUpperCase(Locale.ROOT)));
+        });
+
+        section.getOptionalStringList("banner-patterns").ifPresent(patterns -> {
+            List<Pattern> patternList = new ArrayList<>();
+            for (String pattern : patterns) {
+                String[] split = pattern.split(":");
+                if (split.length != 2) continue;
+                if (StringUtilsPaper.validateEnum(split[0].toUpperCase(Locale.ROOT), PatternType.class)) {
+                    patternList.add(new Pattern(DyeColor.valueOf(split[0].toUpperCase(Locale.ROOT)), PatternType.valueOf(split[1].toUpperCase(Locale.ROOT))));
+                }
+            }
+            builder.setBannerPatterns(patternList);
         });
 
         section.getOptionalBoolean("unbreakable").ifPresent(builder::setUnbreakable);
         section.getOptionalInt("amount").ifPresent(builder::setAmount);
-        section.getOptionalInt("color").ifPresent(color -> builder.setColor(Color.fromRGB(color)));
+        section.getOptionalInt("color").ifPresent(color -> builder.setLeatherColor(Color.fromRGB(color)));
         section.getOptionalInt("custom-model-data").ifPresent(builder::setCustomModelData);
 
         return builder;
@@ -160,8 +179,9 @@ public class ItemConfigUtils {
 
     /**
      * See {@link #getItemBuilder(Section, OfflinePlayer, Placeholders)}
+     *
      * @param section The section to get the item from
-     * @param player The player to replace placeholders for
+     * @param player  The player to replace placeholders for
      * @return The itemstack from the section
      */
     public static ItemBuilder getItemBuilder(Section section, OfflinePlayer player) {
@@ -170,7 +190,8 @@ public class ItemConfigUtils {
 
     /**
      * See {@link #getItemBuilder(Section, OfflinePlayer, Placeholders)}
-     * @param section The section to get the item from
+     *
+     * @param section  The section to get the item from
      * @param replacer The replacer to replace placeholders with
      * @return The itemstack from the section
      */
@@ -180,6 +201,7 @@ public class ItemConfigUtils {
 
     /**
      * See {@link #getItemBuilder(Section, OfflinePlayer, Placeholders)}
+     *
      * @param section The section to get the item from
      * @return The itemstack from the section
      */
@@ -189,19 +211,21 @@ public class ItemConfigUtils {
 
     /**
      * See {@link #getItemBuilder(Section, OfflinePlayer, Placeholders)}
-     * @param section The section to get the item from
-     * @param player The player to replace placeholders for
+     *
+     * @param section  The section to get the item from
+     * @param player   The player to replace placeholders for
      * @param replacer The replacer to replace placeholders with
      * @return The itemstack from the section
      */
     public static ItemStack getItem(Section section, OfflinePlayer player, Placeholders replacer) {
-        return getItemBuilder(section, player, replacer);
+        return getItemBuilder(section, player, replacer).build(replacer, player);
     }
 
     /**
      * See {@link #getItemBuilder(Section, OfflinePlayer, Placeholders)}
+     *
      * @param section The section to get the item from
-     * @param player The player to replace placeholders for
+     * @param player  The player to replace placeholders for
      * @return The itemstack from the section
      */
     public static ItemStack getItem(Section section, OfflinePlayer player) {
@@ -210,7 +234,8 @@ public class ItemConfigUtils {
 
     /**
      * See {@link #getItemBuilder(Section, OfflinePlayer, Placeholders)}
-     * @param section The section to get the item from
+     *
+     * @param section  The section to get the item from
      * @param replacer The replacer to replace placeholders with
      * @return The itemstack from the section
      */
@@ -220,6 +245,7 @@ public class ItemConfigUtils {
 
     /**
      * See {@link #getItemBuilder(Section, OfflinePlayer, Placeholders)}
+     *
      * @param section The section to get the item from
      * @return The itemstack from the section
      */
@@ -229,6 +255,7 @@ public class ItemConfigUtils {
 
     /**
      * Checks if the inventory is full
+     *
      * @param inventory The inventory to check
      * @return If the inventory is full
      */
@@ -238,8 +265,9 @@ public class ItemConfigUtils {
 
     /**
      * Checks if the inventory is full after adding the item
+     *
      * @param inventory The inventory to check
-     * @param toAdd The item to add
+     * @param toAdd     The item to add
      * @return If the inventory is full after adding the item
      */
     public static boolean isFull(Inventory inventory, ItemStack toAdd) {
@@ -262,6 +290,7 @@ public class ItemConfigUtils {
 
     /**
      * Returns the amount of free slots in the inventory
+     *
      * @param inventory
      * @return the amount of free slots in the inventory
      */
@@ -277,8 +306,9 @@ public class ItemConfigUtils {
 
     /**
      * Returns the amount of free slots in the inventory after adding the item
+     *
      * @param inventory The inventory to check
-     * @param toAdd The item to add
+     * @param toAdd     The item to add
      * @return the amount of free slots in the inventory after adding the item
      */
     public static int freeSlots(Inventory inventory, ItemStack toAdd) {

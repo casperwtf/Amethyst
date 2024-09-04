@@ -115,7 +115,7 @@ public class StringUtils {
 
         long differenceInTime = time1 - time2;
 
-        return TimeUnit.MILLISECONDS.toDays(differenceInTime) % 24 + "d, "
+        return TimeUnit.MILLISECONDS.toDays(differenceInTime) + "d, "
                 + TimeUnit.MILLISECONDS.toHours(differenceInTime) % 24 + "h, "
                 + TimeUnit.MILLISECONDS.toMinutes(differenceInTime) % 60 + "m, "
                 + TimeUnit.MILLISECONDS.toSeconds(differenceInTime) % 60 + "s";
@@ -186,7 +186,7 @@ public class StringUtils {
 
         long differenceInTime = time1 - System.currentTimeMillis();
 
-        long days = TimeUnit.MILLISECONDS.toDays(differenceInTime) % 24;
+        long days = TimeUnit.MILLISECONDS.toDays(differenceInTime);
         long hours = TimeUnit.MILLISECONDS.toHours(differenceInTime) % 24;
         long minutes = TimeUnit.MILLISECONDS.toMinutes(differenceInTime) % 60;
         long seconds = TimeUnit.MILLISECONDS.toSeconds(differenceInTime) % 60;
@@ -232,6 +232,8 @@ public class StringUtils {
      */
     public static String abbreviate(int number) {
 
+        if (number == 0) return "0";
+
         if (number >= 1000000000) {
             return String.format("%.2fB", number / 1000000000.0);
         }
@@ -250,6 +252,8 @@ public class StringUtils {
      * @return The number formatted with K, M, B, T, etc.
      */
     public static String abbreviate(double number) {
+
+        if (number == 0) return "0";
 
         if (number >= 1000000000) {
             return String.format("%.2fB", number / 1000000000.0);
@@ -333,7 +337,6 @@ public class StringUtils {
      * @return True if the text only contains the characters in the char array
      */
     public static boolean onlyContains(String text, char[] chars) {
-        // only contains characters found in the char array
         for (char c : text.toCharArray()) {
             boolean found = false;
             for (char c1 : chars) {

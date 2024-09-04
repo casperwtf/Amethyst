@@ -22,6 +22,7 @@ public class ServerLock extends AmethystListener<JavaPlugin> {
      * Locks the server with a reason. If no reason is provided, the default reason is "Server is locked".
      * Multiple locks can be applied by different plugins, but the server will only be unlocked when all locks are removed.
      * While locked, all players will be kicked with the reason provided.
+     *
      * @param plugin The plugin that is locking the server
      * @param reason The reason for locking the server
      */
@@ -34,6 +35,7 @@ public class ServerLock extends AmethystListener<JavaPlugin> {
 
     /**
      * Unlocks the server. If multiple plugins have locked the server, the server will only be unlocked when all locks are removed.
+     *
      * @param plugin
      */
     public static void unlock(JavaPlugin plugin) {

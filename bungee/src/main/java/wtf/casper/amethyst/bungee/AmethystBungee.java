@@ -1,15 +1,15 @@
 package wtf.casper.amethyst.bungee;
 
+import dev.dejvokep.boostedyaml.YamlDocument;
+import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
+import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
+import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
+import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import lombok.Getter;
 import net.md_5.bungee.api.plugin.Plugin;
 import wtf.casper.amethyst.bungee.listener.PlayerListener;
 import wtf.casper.amethyst.bungee.mq.RedisManager;
 import wtf.casper.amethyst.core.AmethystCore;
-import wtf.casper.storageapi.libs.boostedyaml.YamlDocument;
-import wtf.casper.storageapi.libs.boostedyaml.settings.dumper.DumperSettings;
-import wtf.casper.storageapi.libs.boostedyaml.settings.general.GeneralSettings;
-import wtf.casper.storageapi.libs.boostedyaml.settings.loader.LoaderSettings;
-import wtf.casper.storageapi.libs.boostedyaml.settings.updater.UpdaterSettings;
 
 import java.io.File;
 

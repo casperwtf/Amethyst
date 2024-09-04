@@ -7,7 +7,8 @@ public interface UnsafeRunnable extends Runnable {
     default void run() {
         try {
             this.runThrow();
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     void runThrow() throws Exception;

@@ -11,7 +11,6 @@ import wtf.casper.amethyst.core.gson.RuntimeTypeAdapterFactory;
 import wtf.casper.amethyst.core.gson.UUIDTypeAdapter;
 import wtf.casper.amethyst.core.mq.Message;
 import wtf.casper.storageapi.id.Transient;
-import wtf.casper.storageapi.utils.StorageAPIConstants;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;

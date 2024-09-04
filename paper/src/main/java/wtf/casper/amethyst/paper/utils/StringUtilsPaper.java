@@ -57,8 +57,9 @@ public class StringUtilsPaper extends StringUtils {
      *    pitch: <sound pitch> (default: 1.0)
      * }
      * </pre>
-     * @param configuration The configuration to get the message from
-     * @param path The path to the message
+     *
+     * @param configuration       The configuration to get the message from
+     * @param path                The path to the message
      * @param placeholderReplacer The placeholder replacer to use, if null it will not replace any placeholders
      */
     public static void broadcast(YamlDocument configuration, String path, Placeholders placeholderReplacer) {
@@ -74,8 +75,8 @@ public class StringUtilsPaper extends StringUtils {
     }
 
     /**
-     * @param message The message to broadcast
-     * @param geyser The geyser alternative message to broadcast
+     * @param message             The message to broadcast
+     * @param geyser              The geyser alternative message to broadcast
      * @param placeholderReplacer The placeholder replacer to use, if null it will not replace any placeholders
      */
     public static void broadcast(@Nullable List<String> message, @Nullable List<String> geyser, Placeholders placeholderReplacer) {
@@ -100,8 +101,8 @@ public class StringUtilsPaper extends StringUtils {
     }
 
     /**
-     * @param message The message to broadcast
-     * @param geyser The geyser alternative message to broadcast
+     * @param message             The message to broadcast
+     * @param geyser              The geyser alternative message to broadcast
      * @param placeholderReplacer The placeholder replacer to use, if null it will not replace any placeholders
      */
     public static void broadcast(@Nullable String message, @Nullable String geyser, Placeholders placeholderReplacer) {
@@ -144,9 +145,10 @@ public class StringUtilsPaper extends StringUtils {
      *    pitch: <sound pitch> (default: 1.0)
      * }
      * </pre>
-     * @param configuration The configuration to get the message from
-     * @param player The player to send the message to
-     * @param path The path to the message
+     *
+     * @param configuration       The configuration to get the message from
+     * @param player              The player to send the message to
+     * @param path                The path to the message
      * @param placeholderReplacer The placeholder replacer to use, if null it will not replace any placeholders
      */
     public static void sendMessage(YamlDocument configuration, CommandSender player, String path, Placeholders placeholderReplacer) {
@@ -187,8 +189,9 @@ public class StringUtilsPaper extends StringUtils {
      *    pitch: <sound pitch> (default: 1.0)
      * }
      * </pre>
-     * @param section The section that is being parsed for message data
-     * @param player The player to send the message to
+     *
+     * @param section             The section that is being parsed for message data
+     * @param player              The player to send the message to
      * @param placeholderReplacer The placeholder replacer to use, if null it will not replace any placeholders
      */
 
@@ -206,9 +209,10 @@ public class StringUtilsPaper extends StringUtils {
 
     /**
      * Will not parse placeholderapi placeholders at all
-     * @param message List of strings to parse & send to command sender
-     * @param geyser The list of geyser alternative messages to parse & send to command sender, if null it will default to java edition messsages
-     * @param sender The command sender to send the message to
+     *
+     * @param message             List of strings to parse & send to command sender
+     * @param geyser              The list of geyser alternative messages to parse & send to command sender, if null it will default to java edition messsages
+     * @param sender              The command sender to send the message to
      * @param placeholderReplacer The placeholder replacer to use, if null it will not replace any placeholders
      */
     public static void sendMessage(@Nullable String message, @Nullable String geyser, CommandSender sender, Placeholders placeholderReplacer) {
@@ -227,9 +231,10 @@ public class StringUtilsPaper extends StringUtils {
 
     /**
      * Will not parse placeholderapi placeholders at all
-     * @param message List of strings to parse & send to command sender
-     * @param geyser The list of geyser alternative messages to parse & send to command sender, if null it will default to java edition messsages
-     * @param sender The command sender to send the message to
+     *
+     * @param message             List of strings to parse & send to command sender
+     * @param geyser              The list of geyser alternative messages to parse & send to command sender, if null it will default to java edition messsages
+     * @param sender              The command sender to send the message to
      * @param placeholderReplacer The placeholder replacer to use, if null it will not replace any placeholders
      */
     public static void sendMessage(@Nullable List<String> message, @Nullable List<String> geyser, CommandSender sender, Placeholders placeholderReplacer) {
@@ -248,9 +253,9 @@ public class StringUtilsPaper extends StringUtils {
     }
 
     /**
-     * @param message String to parse & send to player
-     * @param geyser String of geyser alternative message to parse & send to player, if null it will default to java edition messsage
-     * @param player The player to send the message to
+     * @param message             String to parse & send to player
+     * @param geyser              String of geyser alternative message to parse & send to player, if null it will default to java edition messsage
+     * @param player              The player to send the message to
      * @param placeholderReplacer The placeholder replacer to use, if null it will not replace any placeholders
      */
     public static void sendMessage(@Nullable String message, @Nullable String geyser, Player player, Placeholders placeholderReplacer) {
@@ -269,9 +274,9 @@ public class StringUtilsPaper extends StringUtils {
     }
 
     /**
-     * @param message List of strings to parse & send to player
-     * @param geyser The list of geyser alternative messages to parse & send to player, if null it will default to java edition messsages
-     * @param player The player to send the message to
+     * @param message             List of strings to parse & send to player
+     * @param geyser              The list of geyser alternative messages to parse & send to player, if null it will default to java edition messsages
+     * @param player              The player to send the message to
      * @param placeholderReplacer The placeholder replacer to use, if null it will not replace any placeholders
      */
     public static void sendMessage(@Nullable List<String> message, @Nullable List<String> geyser, Player player, Placeholders placeholderReplacer) {
@@ -316,9 +321,10 @@ public class StringUtilsPaper extends StringUtils {
      *    pitch: <sound pitch> (default: 1.0)
      * }
      * </pre>
-     * @param configuration The configuration to get the message from
-     * @param player The player to send the message to
-     * @param path The path to the message
+     *
+     * @param configuration       The configuration to get the message from
+     * @param player              The player to send the message to
+     * @param path                The path to the message
      * @param placeholderReplacer The placeholder replacer to use, if null it will not replace any placeholders
      */
 
@@ -353,8 +359,9 @@ public class StringUtilsPaper extends StringUtils {
      *    pitch: <sound pitch> (default: 1.0)
      * }
      * </pre>
-     * @param sec The section that is being parsed for message data
-     * @param player The player to send the message to
+     *
+     * @param sec                 The section that is being parsed for message data
+     * @param player              The player to send the message to
      * @param placeholderReplacer The placeholder replacer to use, if null it will not replace any placeholders
      */
     public static void sendMessage(Section sec, @NotNull Player player, @Nullable Placeholders placeholderReplacer) {
@@ -525,9 +532,9 @@ public class StringUtilsPaper extends StringUtils {
     }
 
     /**
-     * @param message The message to center
-     * @return The spaces needed for the message
+     * @param message      The message to center
      * @param centerOffset The offset to center the message
+     * @return The spaces needed for the message
      */
     public static String centerMessageSpaces(String message, int centerOffset) {
         if (message == null || message.isEmpty()) return "";

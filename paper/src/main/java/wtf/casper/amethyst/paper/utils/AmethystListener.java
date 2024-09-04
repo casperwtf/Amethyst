@@ -6,6 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * A simple listener class that registers itself to the plugin's event manager
+ *
  * @param <T> Plugin instance
  */
 @Getter

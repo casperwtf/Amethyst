@@ -112,6 +112,7 @@ public class ServerVersion {
     public static final ServerVersion v1_20_5 = new ServerVersion(1, 20, 5);
     public static final ServerVersion v1_20_6 = new ServerVersion(1, 20, 6);
     public static final ServerVersion v1_21 = new ServerVersion(1, 21, 0);
+    public static final ServerVersion v1_21_1 = new ServerVersion(1, 21, 1);
 
     private final int major;
     private final int minor;
@@ -124,7 +125,17 @@ public class ServerVersion {
     }
 
     public boolean isAtLeast(int major, int minor, int patch) {
-        return this.major > major || (this.major == major && (this.minor > minor || (this.minor == minor && this.patch >= patch)));
+        if (this.major < major) {
+            return true;
+        } else if (this.major == major) {
+            if (this.minor < minor) {
+                return true;
+            } else if (this.minor == minor) {
+                return this.patch <= patch;
+            }
+        }
+
+        return false;
     }
 
     public boolean isAtLeast(int major, int minor) {
@@ -140,7 +151,17 @@ public class ServerVersion {
     }
 
     public boolean isBefore(int major, int minor, int patch) {
-        return this.major < major || (this.major == major && (this.minor < minor || (this.minor == minor && this.patch < patch)));
+        if (this.major > major) {
+            return true;
+        } else if (this.major == major) {
+            if (this.minor > minor) {
+                return true;
+            } else if (this.minor == minor) {
+                return this.patch > patch;
+            }
+        }
+
+        return false;
     }
 
     public boolean isBefore(int major, int minor) {
@@ -171,21 +192,35 @@ public class ServerVersion {
         return is(CURRENT.major, CURRENT.minor, CURRENT.patch);
     }
 
-    private static void setVersion() {
+    public static void setVersion() {
         try {
             String version = Bukkit.getServer().getMinecraftVersion(); // 1.20.1
             String[] split = version.split("\\.");
             CURRENT = new ServerVersion(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
             return;
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
 
         try {
             String version = Bukkit.getServer().getBukkitVersion(); // 1.20.1-R0.1-SNAPSHOT
             String[] split = version.split("\\.");
 
-            String[] split2 = split[0].split("-");
-            String[] split3 = split2[0].split("\\.");
-            CURRENT = new ServerVersion(Integer.parseInt(split3[0]), Integer.parseInt(split3[1]), Integer.parseInt(split3[2]));
-        } catch (Exception ignored) {}
+            if (split.length < 3) {
+                return;
+            }
+
+            String patch = "";
+
+            for (char c : split[2].toCharArray()) {
+                if (Character.isDigit(c)) {
+                    patch += c;
+                } else {
+                    break;
+                }
+            }
+
+            CURRENT = new ServerVersion(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(patch));
+        } catch (Exception ignored) {
+        }
     }
 }

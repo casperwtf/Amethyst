@@ -6,13 +6,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import wtf.casper.amethyst.paper.AmethystPaper;
-import wtf.casper.amethyst.paper.AmethystPlugin;
 
 public class BungeeUtil {
 
     /**
      * Register outgoing channel
-     * @param plugin Plugin instance to use
+     *
+     * @param plugin  Plugin instance to use
      * @param channel Channel to register
      */
     public static void registerOutChannel(JavaPlugin plugin, String channel) {
@@ -21,8 +21,9 @@ public class BungeeUtil {
 
     /**
      * Register incoming channel
-     * @param plugin Plugin instance to use
-     * @param channel Channel to register
+     *
+     * @param plugin   Plugin instance to use
+     * @param channel  Channel to register
      * @param listener Listener to register
      */
     public static void registerInChannel(JavaPlugin plugin, String channel, PluginMessageListener listener) {
@@ -31,6 +32,7 @@ public class BungeeUtil {
 
     /**
      * Register BungeeCord channel
+     *
      * @param plugin Plugin instance to use
      */
     public static void registerBungeeCord(JavaPlugin plugin) {
@@ -46,6 +48,7 @@ public class BungeeUtil {
 
     /**
      * Send player to server
+     *
      * @param player Player to send
      * @param server Server to send to
      */
@@ -59,6 +62,7 @@ public class BungeeUtil {
 
     /**
      * Send bungee message to send player to server
+     *
      * @param player Player to send
      * @param plugin Plugin instance to use
      * @param server Server to send to

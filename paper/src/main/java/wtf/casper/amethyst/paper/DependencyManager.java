@@ -28,6 +28,7 @@ public class DependencyManager {
         this.libraryManager.addRepository("https://nexus.iridiumdevelopment.net/repository/maven-releases/");
         this.libraryManager.addRepository("https://oss.sonatype.org/content/repositories/snapshots");
         this.libraryManager.addRepository("https://s01.oss.sonatype.org/content/repositories/snapshots/");
+        this.libraryManager.addRepository("http://185.135.158.51:8080/releases/"); // my repo
     }
 
     private Library getLibrary(String groupId, String artifactId, String version, String... patterns) {
@@ -61,9 +62,6 @@ public class DependencyManager {
                 this.getLibrary("com{}zaxxer", "HikariCP", "5.0.1",
                         "com{}zaxxer{}hikari", amethystPackage + "{}libs{}hikari"
                 ),
-                this.getLibrary("com{}jeff_media", "CustomBlockData", "2.2.0",
-                        "com{}jeff_media{}customblockdata", amethystPackage + "{}libs{}customblockdata"
-                ),
                 this.getLibrary("io{}lettuce", "lettuce-core", "6.2.3.RELEASE",
                         "org{}reactivestreams", amethystPackage + "{}libs{}reactivestreams",
                         reactor + "actor", amethystPackage + "{}libs{}reactor",
@@ -75,9 +73,6 @@ public class DependencyManager {
                 ),
                 this.getLibrary("dev{}dejvokep", "boosted-yaml", "1.3",
                         "dev{}dejvokep{}boostedyaml", amethystPackage + "{}libs{}boostedyaml"
-                ),
-                this.getLibrary("com{}github{}chubbyduck1", "HologramBridge", "1.1.0",
-                        "gg{}optimalgames{}hologrambridge", amethystPackage + "{}libs{}hologrambridge"
                 ),
                 this.getLibrary("com{}google{}code{}gson", "gson", "2.10.1",
                         "com{}google", amethystPackage + "{}libs{}google"
@@ -91,13 +86,13 @@ public class DependencyManager {
                 this.getLibrary("org{}reactivestreams", "reactive-streams", "1.0.4",
                         "org{}reactivestreams", amethystPackage + "{}libs{}reactivestreams"
                 ),
-                this.getLibrary("com{}github{}Redempt", "Crunch", "1.0",
+                this.getLibrary("com{}github{}Redempt", "Crunch", "2.0.3",
                         "redempt{}crunch", amethystPackage + "{}libs{}crunch"
                 ),
                 this.getLibrary("org{}quartz-scheduler", "quartz", "2.3.2",
                         "org{}quartz", amethystPackage + "{}libs{}quartz"
                 ),
-                this.getLibrary("com{}github{}ben-manes{}caffeine", "caffeine", "3.1.5",
+                this.getLibrary("com{}github{}ben-manes{}caffeine", "caffeine", "3.1.8",
                         "com{}github{}benmanes{}caffeine", amethystPackage + "{}libs{}caffeine"
                 ),
                 this.getLibrary("org{}reflections", "reflections", "0.10.2",
@@ -132,16 +127,23 @@ public class DependencyManager {
                 this.getLibrary("cloud{}commandframework", "cloud-annotations", "1.8.3",
                         "cloud{}commandframework", amethystPackage + "{}libs{}cloud{}commandframework"
                 ),
-                this.getLibrary("com{}github{}retrooper{}packetevents", "spigot", "2.2.1",
+                this.getLibrary("com{}github{}retrooper", "packetevents-api", "2.4.0",
                         "com{}github{}retrooper{}packetevents", amethystPackage + "{}libs{}packetevents{}api",
-                        "io{}github{}retrooper{}packetevents", amethystPackage + "{}libs{}packetevents{}impl",
+                        "io{}github{}retrooper{}packetevents", amethystPackage + "{}libs{}packetevents{}impl"
+                ),
+                this.getLibrary("com{}github{}retrooper", "packetevents-spigot", "2.4.0",
+                        "com{}github{}retrooper{}packetevents", amethystPackage + "{}libs{}packetevents{}api",
+                        "io{}github{}retrooper{}packetevents", amethystPackage + "{}libs{}packetevents{}impl"
+                ),
+                this.getLibrary("net{}kyori", "adventure-api", "4.17.0",
                         "net{}kyori", amethystPackage + "{}libs{}kyori"
                 ),
-                this.getLibrary("net{}kyori", "adventure-api", "4.14.0",
+                this.getLibrary("net{}kyori", "adventure-platform-bukkit", "4.3.4",
                         "net{}kyori", amethystPackage + "{}libs{}kyori"
                 ),
-                this.getLibrary("net{}kyori", "adventure-platform-bukkit", "4.3.0",
-                        "net{}kyori", amethystPackage + "{}libs{}kyori"
+                // StorageAPI
+                this.getLibrary("wtf{}casper{}storageapi", "StorageAPI", "1.0.0",
+                        "wtf{}casper{}storageapi", amethystPackage + "{}libs{}storageapi"
                 )
         );
 
@@ -149,7 +151,7 @@ public class DependencyManager {
             try {
                 this.libraryManager.loadLibrary(library);
             } catch (RuntimeException exception) {
-                System.out.println("Failed to load library " + library.getArtifactId() + " " + library.getVersion());
+                this.plugin.getLogger().log(Level.INFO,"Failed to load library " + library.getArtifactId() + " " + library.getVersion());
                 exception.printStackTrace();
             }
         }

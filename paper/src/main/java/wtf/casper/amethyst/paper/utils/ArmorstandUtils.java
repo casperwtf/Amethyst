@@ -31,6 +31,7 @@ public class ArmorstandUtils extends AmethystListener<JavaPlugin> {
 
     /**
      * Mark the armor stand, so it cannot be interacted with.
+     *
      * @param armorStand The armor stand to mark
      */
     public static void markArmorstand(ArmorStand armorStand) {
@@ -39,6 +40,7 @@ public class ArmorstandUtils extends AmethystListener<JavaPlugin> {
 
     /**
      * Unmark the armor stand, so it can be interacted with.
+     *
      * @param armorStand The armor stand to unmark
      */
     public static void unmarkArmorstand(ArmorStand armorStand) {
@@ -47,6 +49,7 @@ public class ArmorstandUtils extends AmethystListener<JavaPlugin> {
 
     /**
      * Check if the armor stand is being tracked by the plugin.
+     *
      * @param armorStand The armor stand to check
      * @return true if the armor stand is being tracked
      */
@@ -56,6 +59,7 @@ public class ArmorstandUtils extends AmethystListener<JavaPlugin> {
 
     /**
      * Do not call this method directly, it is used to prevent armor stands from being damaged.
+     *
      * @param event
      */
     @EventHandler
@@ -67,6 +71,7 @@ public class ArmorstandUtils extends AmethystListener<JavaPlugin> {
 
     /**
      * Do not call this method directly, it is used to prevent armor stands from being interacted with.
+     *
      * @param event
      */
     @EventHandler
@@ -78,6 +83,7 @@ public class ArmorstandUtils extends AmethystListener<JavaPlugin> {
 
     /**
      * Do not call this method directly, it is used to prevent armor stands from being interacted with.
+     *
      * @param event
      */
     @EventHandler
@@ -89,6 +95,7 @@ public class ArmorstandUtils extends AmethystListener<JavaPlugin> {
 
     /**
      * Do not call this method directly, it is used to prevent armor stands from being interacted with.
+     *
      * @param event
      */
     @EventHandler

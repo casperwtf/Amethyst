@@ -1,13 +1,11 @@
 package wtf.casper.amethyst.paper.providers;
 
 import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.permission.Permission;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import wtf.casper.amethyst.paper.scheduler.SchedulerUtil;
 import wtf.casper.amethyst.paper.vault.EventEconomyWrapper;
-import wtf.casper.amethyst.paper.vault.EventPermissionWrapper;
 
 // TODO: Clean up
 public class VaultProvider {

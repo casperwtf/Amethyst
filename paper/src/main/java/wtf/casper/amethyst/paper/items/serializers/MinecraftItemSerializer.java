@@ -9,7 +9,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import wtf.casper.amethyst.core.utils.MathUtils;
 import wtf.casper.amethyst.paper.items.ItemSerializer;
 import wtf.casper.amethyst.paper.utils.HexUtils;
-import wtf.casper.amethyst.paper.utils.StringUtilsPaper;
 
 import java.util.Optional;
 

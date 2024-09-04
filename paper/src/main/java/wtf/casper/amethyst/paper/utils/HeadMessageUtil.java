@@ -5,7 +5,6 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.util.ChatPaginator;
 
 import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
@@ -35,6 +34,7 @@ public class HeadMessageUtil {
 
     /**
      * Get the head message of a player.
+     *
      * @param uuid The UUID of the player
      * @param size The size of the head
      * @return The head message
@@ -64,8 +64,9 @@ public class HeadMessageUtil {
 
     /**
      * Send the head message of a player to a player.
+     *
      * @param player The player to send the message to
-     * @param size The size of the head
+     * @param size   The size of the head
      */
     public static void sendHeadMessage(Player player, int size) {
         UUID uuid = player.getUniqueId();
@@ -83,10 +84,11 @@ public class HeadMessageUtil {
 
     /**
      * Send head message to player with custom messages appended.
-     * @param player The player to send the message to
-     * @param headDelimiter The delimiter to replace with the head message
+     *
+     * @param player          The player to send the message to
+     * @param headDelimiter   The delimiter to replace with the head message
      * @param centerDelimiter The delimiter to center the message with. If null, the message will not be centered.
-     * @param message The message to send
+     * @param message         The message to send
      */
     public static void sendHeadMessage(Player player, String headDelimiter, @Nullable String centerDelimiter, List<String> message) {
         UUID uuid = player.getUniqueId();
@@ -133,10 +135,11 @@ public class HeadMessageUtil {
 
     /**
      * Broadcast head message with custom messages appended.
-     * @param player The player whose head is being displayed
-     * @param headDelimiter The delimiter to replace with the head message
+     *
+     * @param player          The player whose head is being displayed
+     * @param headDelimiter   The delimiter to replace with the head message
      * @param centerDelimiter The delimiter to center the message with. If null, the message will not be centered.
-     * @param message The message to send
+     * @param message         The message to send
      */
     public static void broadcastHeadMessage(UUID player, String headDelimiter, @Nullable String centerDelimiter, List<String> message) {
         int headCount = 0;
@@ -181,6 +184,7 @@ public class HeadMessageUtil {
 
     /**
      * Get image message from a file.
+     *
      * @param file The file to get the image from
      * @return The image message
      */
@@ -211,6 +215,7 @@ public class HeadMessageUtil {
 
     /**
      * Get image message to player from a file.
+     *
      * @param file The file to get the image from
      * @return The image message
      */
@@ -240,8 +245,9 @@ public class HeadMessageUtil {
 
     /**
      * Send image message to player from a file.
+     *
      * @param player The player to send the message to
-     * @param file The file to get the image from
+     * @param file   The file to get the image from
      */
     public static void sendFileImageMessage(Player player, File file) {
         getFileImageMessageStr(file).whenComplete((lines, throwable) -> {
@@ -257,12 +263,13 @@ public class HeadMessageUtil {
 
     /**
      * Send image message to player from a file with custom messages appended.
-     * @param player The player to send the message to
-     * @param file The file to get the image from
-     * @param message The message to send
-     * @param fileDelimiter The delimiter to replace with the image message
+     *
+     * @param player          The player to send the message to
+     * @param file            The file to get the image from
+     * @param message         The message to send
+     * @param fileDelimiter   The delimiter to replace with the image message
      * @param centerDelimiter The delimiter to center the message with. If null, the message will not be centered.
-     * @param replacer The placeholders to replace the message with
+     * @param replacer        The placeholders to replace the message with
      */
     public static void sendFileImageMessage(Player player, File file, List<String> message, String fileDelimiter, String centerDelimiter, Placeholders replacer) {
         getFileImageMessageStr(file).whenComplete((lines, throwable) -> {
@@ -292,10 +299,11 @@ public class HeadMessageUtil {
 
     /**
      * Broadcast image message to player from a file.
-     * @param file The file to get the image from
-     * @param message The message to send
+     *
+     * @param file          The file to get the image from
+     * @param message       The message to send
      * @param fileDelimiter The delimiter to replace with the image message
-     * @param replacer The placeholders to replace the message with
+     * @param replacer      The placeholders to replace the message with
      */
     public static void broadcastFileImageMessage(File file, List<String> message, String fileDelimiter, String centerDelimiter, Placeholders replacer) {
         getFileImageMessageStr(file).whenComplete((lines, throwable) -> {

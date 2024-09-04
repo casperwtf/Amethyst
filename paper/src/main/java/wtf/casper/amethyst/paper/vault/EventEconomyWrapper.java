@@ -123,10 +123,9 @@ public class EventEconomyWrapper implements Economy {
     @Deprecated
     @Override
     public EconomyResponse withdrawPlayer(String playerName, double amount) {
-        OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
-        if (callEvent(new PrePlayerWithdrawEvent(player, amount))) {
-            EconomyResponse response = original.withdrawPlayer(player, amount);
-            callEvent(new PlayerWithdrawEvent(player, amount, response));
+        if (callEvent(new PreAccountWithdrawEvent(playerName, amount))) {
+            EconomyResponse response = original.withdrawPlayer(playerName, amount);
+            callEvent(new AccountWithdrawEvent(playerName, amount, response));
             return response;
         } else {
             return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Cancelled");
@@ -147,10 +146,9 @@ public class EventEconomyWrapper implements Economy {
     @Deprecated
     @Override
     public EconomyResponse withdrawPlayer(String playerName, String playerName1, double amount) {
-        OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
-        if (callEvent(new PrePlayerWithdrawEvent(player, amount, playerName1))) {
-            EconomyResponse response = original.withdrawPlayer(player, playerName1, amount);
-            callEvent(new PlayerWithdrawEvent(player, amount, playerName1, response));
+        if (callEvent(new PreAccountWithdrawEvent(playerName, amount, playerName1))) {
+            EconomyResponse response = original.withdrawPlayer(playerName, playerName1, amount);
+            callEvent(new AccountWithdrawEvent(playerName, amount, playerName1, response));
             return response;
         } else {
             return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Cancelled");
@@ -171,10 +169,9 @@ public class EventEconomyWrapper implements Economy {
     @Deprecated
     @Override
     public EconomyResponse depositPlayer(String playerName, double amount) {
-        OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
-        if (callEvent(new PrePlayerDepositEvent(player, amount))) {
-            EconomyResponse response = original.depositPlayer(player, amount);
-            callEvent(new PlayerDepositEvent(player, amount, response));
+        if (callEvent(new PreAccountDepositEvent(playerName, amount))) {
+            EconomyResponse response = original.depositPlayer(playerName, amount);
+            callEvent(new AccountDepositEvent(playerName, amount, response));
             return response;
         } else {
             return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Cancelled");
@@ -195,10 +192,9 @@ public class EventEconomyWrapper implements Economy {
     @Deprecated
     @Override
     public EconomyResponse depositPlayer(String playerName, String worldName, double amount) {
-        OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
-        if (callEvent(new PrePlayerDepositEvent(player, amount, worldName))) {
-            EconomyResponse response = original.depositPlayer(player, worldName, amount);
-            callEvent(new PlayerDepositEvent(player, amount, worldName, response));
+        if (callEvent(new PreAccountDepositEvent(playerName, amount, worldName))) {
+            EconomyResponse response = original.depositPlayer(playerName, worldName, amount);
+            callEvent(new AccountDepositEvent(playerName, amount, worldName, response));
             return response;
         } else {
             return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Cancelled");
@@ -219,10 +215,9 @@ public class EventEconomyWrapper implements Economy {
     @Deprecated
     @Override
     public EconomyResponse createBank(String bankName, String playerName) {
-        OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
-        if (callEvent(new PreBankCreateEvent(bankName, player))) {
-            EconomyResponse response = original.createBank(bankName, player);
-            callEvent(new BankCreateEvent(bankName, player, response));
+        if (callEvent(new PreBankAccountCreateEvent(bankName, playerName))) {
+            EconomyResponse response = original.createBank(bankName, playerName);
+            callEvent(new BankAccountCreateEvent(bankName, playerName, response));
             return response;
         } else {
             return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Cancelled");

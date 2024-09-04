@@ -16,7 +16,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
 import wtf.casper.amethyst.paper.utils.HexUtils;
-import wtf.casper.amethyst.paper.utils.StringUtilsPaper;
 
 import java.util.*;
 

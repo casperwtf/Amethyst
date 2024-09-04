@@ -98,6 +98,11 @@ public abstract class AmethystPlugin extends JavaPlugin {
         this.cloudCommandHandler.setup(this);
     }
 
+    public void deconstructCommands() {
+        this.cloudCommandHandler.setCommandManager(null);
+        this.cloudCommandHandler = null;
+    }
+
     @Override
     public void reloadConfig() {
         try {

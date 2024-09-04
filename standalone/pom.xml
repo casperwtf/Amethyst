@@ -58,55 +58,68 @@
                     <relocations>
                         <relocation>
                             <pattern>com.zaxxer.hikari</pattern>
-                            <shadedPattern>wtf.casper.amethyst.libs.hikari</shadedPattern>
+                            <shadedPattern>wtf.casper.amethyst.libs.hikari
+                            </shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>com.google</pattern>
-                            <shadedPattern>wtf.casper.amethyst.libs.google</shadedPattern>
+                            <shadedPattern>wtf.casper.amethyst.libs.google
+                            </shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>io.lettuce.core</pattern>
-                            <shadedPattern>wtf.casper.amethyst.libs.lettuce</shadedPattern>
+                            <shadedPattern>wtf.casper.amethyst.libs.lettuce
+                            </shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>com.mongodb</pattern>
-                            <shadedPattern>wtf.casper.amethyst.libs.mongodb</shadedPattern>
+                            <shadedPattern>wtf.casper.amethyst.libs.mongodb
+                            </shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>reactor</pattern>
-                            <shadedPattern>wtf.casper.amethyst.libs.reactor</shadedPattern>
+                            <shadedPattern>wtf.casper.amethyst.libs.reactor
+                            </shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>org.reactivestreams</pattern>
-                            <shadedPattern>wtf.casper.amethyst.libs.reactivestreams</shadedPattern>
+                            <shadedPattern>
+                                wtf.casper.amethyst.libs.reactivestreams
+                            </shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>redempt.crunch</pattern>
-                            <shadedPattern>wtf.casper.amethyst.libs.crunch</shadedPattern>
+                            <shadedPattern>wtf.casper.amethyst.libs.crunch
+                            </shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>org.quartz</pattern>
-                            <shadedPattern>wtf.casper.amethyst.libs.quartz</shadedPattern>
+                            <shadedPattern>wtf.casper.amethyst.libs.quartz
+                            </shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>com.github.benmanes.caffeine</pattern>
-                            <shadedPattern>wtf.casper.amethyst.libs.caffeine</shadedPattern>
+                            <shadedPattern>wtf.casper.amethyst.libs.caffeine
+                            </shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>org.reflections</pattern>
-                            <shadedPattern>wtf.casper.amethyst.libs.reflections</shadedPattern>
+                            <shadedPattern>
+                                wtf.casper.amethyst.libs.reflections
+                            </shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>javaassist</pattern>
-                            <shadedPattern>wtf.casper.amethyst.libs.javaassist</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>wtf.casper.storageapi.libs.boostedyaml</pattern>
-                            <shadedPattern>wtf.casper.amethyst.libs.boostedyaml</shadedPattern>
+                            <shadedPattern>wtf.casper.amethyst.libs.javaassist
+                            </shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>wtf.casper.storageapi</pattern>
                             <shadedPattern>wtf.casper.amethyst.libs.storageapi</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>dev.dejvokep.boostedyaml</pattern>
+                            <shadedPattern>wtf.casper.amethyst.libs.boostedyml</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -150,7 +163,7 @@
         <dependency>
             <groupId>com.github.Redempt</groupId>
             <artifactId>Crunch</artifactId>
-            <version>1.0</version>
+            <version>2.0.3</version>
             <scope>compile</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.quartz-scheduler/quartz -->
@@ -163,7 +176,7 @@
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
-            <version>3.1.5</version>
+            <version>3.1.8</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -192,8 +205,8 @@
         </dependency>
         <dependency>
             <groupId>wtf.casper.storageapi</groupId>
-            <artifactId>storageapi</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <artifactId>StorageAPI</artifactId>
+            <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -202,9 +215,20 @@
             <version>1.1.1</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>dev.dejvokep</groupId>
+            <artifactId>boosted-yaml</artifactId>
+            <version>1.3</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <repositories>
+        <repository>
+            <id>casperwtf respository-releases</id>
+            <name>casperwtf Repository</name>
+            <url>http://185.135.158.51:8080/releases</url>
+        </repository>
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
