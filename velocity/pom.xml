@@ -14,8 +14,21 @@
     <properties>
         <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <amethyst.version>2.0.0</amethyst.version>
+        <amethyst.version>2.0.0-SNAPSHOT</amethyst.version>
     </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>casperwtf respository-releases</id>
+            <name>casperwtf Repository</name>
+            <url>https://maven.casper.wtf/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>casperwtf respository-snapshots</id>
+            <name>casperwtf Repository</name>
+            <url>https://maven.casper.wtf/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <profiles>
         <profile>

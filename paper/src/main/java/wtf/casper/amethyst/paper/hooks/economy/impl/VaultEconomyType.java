@@ -4,12 +4,12 @@ import com.google.auto.service.AutoService;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
-import wtf.casper.amethyst.paper.hooks.economy.IEconomy;
+import wtf.casper.amethyst.paper.hooks.economy.IEconomyType;
 
 import java.util.UUID;
 
-@AutoService(IEconomy.class)
-public class VaultEconomy implements IEconomy {
+@AutoService(IEconomyType.class)
+public class VaultEconomyType implements IEconomyType {
 
     private Economy economy;
 
@@ -29,7 +29,7 @@ public class VaultEconomy implements IEconomy {
     }
 
     @Override
-    public void deposit(String player, double amount) {
+    public void deposit(String player, double amount, String currency) {
         if (amount < 0) {
             withdraw(player, -amount);
             return;
@@ -38,7 +38,7 @@ public class VaultEconomy implements IEconomy {
     }
 
     @Override
-    public void withdraw(String player, double amount) {
+    public void withdraw(String player, double amount, String currency) {
         if (amount < 0) {
             deposit(player, -amount);
             return;
@@ -47,7 +47,7 @@ public class VaultEconomy implements IEconomy {
     }
 
     @Override
-    public void set(String player, double amount) {
+    public void set(String player, double amount, String currency) {
         double balance = get(player);
         if (balance > amount) {
             withdraw(player, balance - amount);
@@ -57,17 +57,17 @@ public class VaultEconomy implements IEconomy {
     }
 
     @Override
-    public double get(String player) {
+    public double get(String player, String currency) {
         return economy.getBalance(Bukkit.getOfflinePlayer(player));
     }
 
     @Override
-    public boolean has(String player, double amount) {
+    public boolean has(String player, double amount, String currency) {
         return get(player) >= amount;
     }
 
     @Override
-    public void deposit(UUID player, double amount) {
+    public void deposit(UUID player, double amount, String currency) {
         if (0 > amount) {
             withdraw(player, -amount);
             return;
@@ -76,7 +76,7 @@ public class VaultEconomy implements IEconomy {
     }
 
     @Override
-    public void withdraw(UUID player, double amount) {
+    public void withdraw(UUID player, double amount, String currency) {
         if (0 > amount) {
             deposit(player, -amount);
             return;
@@ -85,7 +85,7 @@ public class VaultEconomy implements IEconomy {
     }
 
     @Override
-    public void set(UUID player, double amount) {
+    public void set(UUID player, double amount, String currency) {
         double balance = get(player);
         if (balance > amount) {
             withdraw(player, balance - amount);
@@ -95,12 +95,12 @@ public class VaultEconomy implements IEconomy {
     }
 
     @Override
-    public double get(UUID player) {
+    public double get(UUID player, String currency) {
         return economy.getBalance(Bukkit.getOfflinePlayer(player));
     }
 
     @Override
-    public boolean has(UUID player, double amount) {
+    public boolean has(UUID player, double amount, String currency) {
         return get(player) >= amount;
     }
 

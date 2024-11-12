@@ -12,7 +12,7 @@ import java.util.Set;
 
 @AutoService(IHookController.class)
 @Log
-public class StackerController implements IHookController {
+public class StackerManager implements IHookController {
 
     @Getter private static IStacker stacker = null;
 
@@ -22,13 +22,16 @@ public class StackerController implements IHookController {
             throw new RuntimeException("Hook must implement IStacker");
         }
 
-        IStacker stacker = (IStacker) hook;
-        if (!stacker.canEnable()) {
+        if (stacker != null) {
             return;
         }
 
+        if (!hook.canEnable()) {
+            return;
+        }
+
+        stacker = (IStacker) hook;
         stacker.enable();
-        StackerController.stacker = stacker;
     }
 
     @Override
@@ -75,12 +78,10 @@ public class StackerController implements IHookController {
     @Override
     public void enable() {
         recalculateHooks();
-        log.info("Stacker hook enabled: " + stacker.getClass().getSimpleName());
     }
 
     @Override
     public void disable() {
         unregisterAllHooks();
-        log.info("Stacker hook disabled.");
     }
 }

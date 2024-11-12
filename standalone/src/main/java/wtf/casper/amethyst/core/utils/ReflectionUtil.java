@@ -32,7 +32,7 @@ public class ReflectionUtil {
             }
 
             Class<?> clazz = object.getClass();
-            Field objectField = clazz.getDeclaredField(field);
+            Field objectField = clazz.getField(field);
 
             fieldCache.put(clazz, field, objectField);
 
@@ -59,7 +59,7 @@ public class ReflectionUtil {
                 return;
             }
 
-            Field objectField = clazz.getDeclaredField(field);
+            Field objectField = clazz.getField(field);
 
             fieldCache.put(clazz, field, objectField);
 
@@ -80,7 +80,7 @@ public class ReflectionUtil {
                 return objectField.get(object);
             }
 
-            Field objectField = clazz.getDeclaredField(field);
+            Field objectField = clazz.getField(field);
             objectField.setAccessible(true);
 
             fieldCache.put(clazz, field, objectField);
@@ -99,7 +99,7 @@ public class ReflectionUtil {
                 return objectField.get(null);
             }
 
-            Field objectField = clazz.getDeclaredField(field);
+            Field objectField = clazz.getField(field);
             objectField.setAccessible(true);
 
             fieldCache.put(clazz, field, objectField);
@@ -178,7 +178,7 @@ public class ReflectionUtil {
      * Retrieves all methods with given annotation.
      */
     public static List<Method> getAnnotatedMethods(Class<?> clazz, Class<? extends Annotation> annotationClass) {
-        Method[] declaredMethods = clazz.getDeclaredMethods();
+        Method[] declaredMethods = clazz.getMethods();
         List<Method> methods = new ArrayList<>(declaredMethods.length);
         for (Method method : declaredMethods) {
             if (method.isAnnotationPresent(annotationClass)) {
@@ -192,7 +192,7 @@ public class ReflectionUtil {
         List<Field> fields = new ArrayList<>();
         Class<?> clazz = valueClass;
         while (clazz != null) {
-            fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
+            fields.addAll(Arrays.asList(clazz.getFields()));
             clazz = clazz.getSuperclass();
         }
         return fields.toArray(new Field[0]);
@@ -248,7 +248,7 @@ public class ReflectionUtil {
      */
     public static <V> Optional<Object> getFieldValue(V v, String fieldName) {
         try {
-            Field field = v.getClass().getDeclaredField(fieldName);
+            Field field = v.getClass().getField(fieldName);
             field.setAccessible(true);
             return Optional.ofNullable(field.get(v));
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -263,7 +263,7 @@ public class ReflectionUtil {
      */
     public static <V, T> Optional<T> getFieldValue(V v, String fieldName, Class<T> returnType) {
         try {
-            Field field = v.getClass().getDeclaredField(fieldName);
+            Field field = v.getClass().getField(fieldName);
             field.setAccessible(true);
             Optional<Object> optional = Optional.ofNullable(field.get(v));
             return optional.map(returnType::cast);

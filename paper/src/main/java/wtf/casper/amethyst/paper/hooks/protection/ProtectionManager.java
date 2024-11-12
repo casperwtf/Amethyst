@@ -12,7 +12,7 @@ import java.util.Set;
 
 @AutoService(IHookController.class)
 @Log
-public class ProtectionController implements IHookController {
+public class ProtectionManager implements IHookController {
 
     @Getter private static IProtection protections;
 
@@ -27,7 +27,7 @@ public class ProtectionController implements IHookController {
         }
 
         protection.enable();
-        ProtectionController.protections = protection;
+        ProtectionManager.protections = protection;
         log.info("Registered protection: " + protection.getClass().getSimpleName());
     }
 

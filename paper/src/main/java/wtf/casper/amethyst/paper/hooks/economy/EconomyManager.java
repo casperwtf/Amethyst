@@ -13,13 +13,13 @@ import java.util.Map;
 import java.util.Set;
 
 @AutoService(IHookController.class)
-public class EconomyController implements IHookController {
+public class EconomyManager implements IHookController {
 
     @Getter
-    private final static Map<String, IEconomy> economies = new HashMap<>();
+    private final static Map<String, IEconomyType> economies = new HashMap<>();
 
     @Nullable
-    public static IEconomy getEconomy(String name) {
+    public static IEconomyType getEconomy(String name) {
         if (economies.isEmpty()) {
             return null;
         }
@@ -27,9 +27,13 @@ public class EconomyController implements IHookController {
         return economies.getOrDefault(name, null);
     }
 
+    public static List<IEconomyType> getEconomies() {
+        return List.copyOf(economies.values());
+    }
+
     @Override
     public void registerHook(IHook hook) {
-        if (hook instanceof IEconomy economy) {
+        if (hook instanceof IEconomyType economy) {
             if (!hook.canEnable()) {
                 return;
             }
@@ -41,7 +45,7 @@ public class EconomyController implements IHookController {
 
     @Override
     public void unregisterHook(IHook hook) {
-        if (hook instanceof IEconomy economy) {
+        if (hook instanceof IEconomyType economy) {
             if (economies.isEmpty()) {
                 return;
             }
@@ -57,7 +61,7 @@ public class EconomyController implements IHookController {
             return;
         }
 
-        for (IEconomy economy : economies.values()) {
+        for (IEconomyType economy : economies.values()) {
             economy.disable();
         }
 
@@ -75,12 +79,12 @@ public class EconomyController implements IHookController {
     public void recalculateHooks() {
         unregisterAllHooks();
 
-        List<IEconomy> services = ServiceUtil.getServices(IEconomy.class, this.getClass().getClassLoader());
+        List<IEconomyType> services = ServiceUtil.getServices(IEconomyType.class, this.getClass().getClassLoader());
         if (services.isEmpty()) {
             return;
         }
 
-        for (IEconomy economy : services) {
+        for (IEconomyType economy : services) {
             if (economy.canEnable()) {
                 economy.enable();
                 economies.put(economy.getName(), economy);
@@ -96,22 +100,5 @@ public class EconomyController implements IHookController {
     @Override
     public void disable() {
         unregisterAllHooks();
-    }
-
-    public enum Economies {
-        EXPERIENCE("EXP"),
-        VAULT("VAULT"),
-        SQL_ESSENTIALS("SQLESS");
-
-        private final String name;
-
-        Economies(String name) {
-            this.name = name;
-        }
-
-        @Nullable
-        public IEconomy getEconomy() {
-            return EconomyController.getEconomy(name);
-        }
     }
 }

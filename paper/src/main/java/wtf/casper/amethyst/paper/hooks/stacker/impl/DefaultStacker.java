@@ -71,7 +71,10 @@ public class DefaultStacker implements IStacker {
 
     @Override
     public long getStackedSpawners(Block block) {
-        return 1;
+        if (block.getType().name().contains("SPAWNER")) {
+            return 1;
+        }
+        return 0;
     }
 
     @Override

@@ -28,7 +28,7 @@ public class DependencyManager {
         this.libraryManager.addRepository("https://nexus.iridiumdevelopment.net/repository/maven-releases/");
         this.libraryManager.addRepository("https://oss.sonatype.org/content/repositories/snapshots");
         this.libraryManager.addRepository("https://s01.oss.sonatype.org/content/repositories/snapshots/");
-        this.libraryManager.addRepository("http://185.135.158.51:8080/releases/"); // my repo
+        this.libraryManager.addRepository("https://maven.casper.wtf/releases/"); // my repo
     }
 
     private Library getLibrary(String groupId, String artifactId, String version, String... patterns) {
@@ -103,35 +103,56 @@ public class DependencyManager {
                 this.getLibrary("io{}leangen{}geantyref", "geantyref", "1.3.15",
                         "io{}leangen{}geantyref", amethystPackage + "{}libs{}geantyref"
                 ),
-                this.getLibrary("cloud{}commandframework", "cloud-core", "1.8.3",
-                        "cloud{}commandframework", amethystPackage + "{}libs{}cloud{}commandframework"
+                this.getLibrary("org{}incendo", "cloud-core", "2.0.0",
+                        "org{}incendo", amethystPackage + "{}libs{}org{}incendo",
+                        "com{}github{}benmanes{}caffeine", amethystPackage + "{}libs{}caffeine"
                 ),
-                this.getLibrary("cloud{}commandframework", "cloud-services", "1.8.3",
-                        "cloud{}commandframework", amethystPackage + "{}libs{}cloud{}commandframework"
+                this.getLibrary("org{}incendo", "cloud-services", "2.0.0",
+                        "org{}incendo", amethystPackage + "{}libs{}org{}incendo",
+                        "com{}github{}benmanes{}caffeine", amethystPackage + "{}libs{}caffeine"
                 ),
-                this.getLibrary("cloud{}commandframework", "cloud-tasks", "1.8.3",
-                        "cloud{}commandframework", amethystPackage + "{}libs{}cloud{}commandframework"
+                this.getLibrary("org{}incendo", "cloud-brigadier", "2.0.0-beta.10",
+                        "org{}incendo", amethystPackage + "{}libs{}org{}incendo",
+                        "com{}github{}benmanes{}caffeine", amethystPackage + "{}libs{}caffeine"
                 ),
-                this.getLibrary("cloud{}commandframework", "cloud-brigadier", "1.8.3",
-                        "cloud{}commandframework", amethystPackage + "{}libs{}cloud{}commandframework"
+                this.getLibrary("org{}incendo", "cloud-bukkit", "2.0.0-beta.10",
+                        "org{}incendo", amethystPackage + "{}libs{}org{}incendo",
+                        "com{}github{}benmanes{}caffeine", amethystPackage + "{}libs{}caffeine"
                 ),
-                this.getLibrary("cloud{}commandframework", "cloud-bukkit", "1.8.3",
-                        "cloud{}commandframework", amethystPackage + "{}libs{}cloud{}commandframework"
+                this.getLibrary("org{}incendo", "cloud-paper", "2.0.0-beta.10",
+                        "org{}incendo", amethystPackage + "{}libs{}org{}incendo",
+                        "com{}github{}benmanes{}caffeine", amethystPackage + "{}libs{}caffeine"
                 ),
-                this.getLibrary("cloud{}commandframework", "cloud-paper", "1.8.3",
-                        "cloud{}commandframework", amethystPackage + "{}libs{}cloud{}commandframework"
+                this.getLibrary("org{}incendo", "cloud-minecraft-extras", "2.0.0-beta.10",
+                        "org{}incendo", amethystPackage + "{}libs{}org{}incendo",
+                        "com{}github{}benmanes{}caffeine", amethystPackage + "{}libs{}caffeine"
                 ),
-                this.getLibrary("cloud{}commandframework", "cloud-minecraft-extras", "1.8.3",
-                        "cloud{}commandframework", amethystPackage + "{}libs{}cloud{}commandframework"
+                this.getLibrary("org{}incendo", "cloud-annotations", "2.0.0",
+                        "org{}incendo", amethystPackage + "{}libs{}org{}incendo",
+                        "com{}github{}benmanes{}caffeine", amethystPackage + "{}libs{}caffeine"
                 ),
-                this.getLibrary("cloud{}commandframework", "cloud-annotations", "1.8.3",
-                        "cloud{}commandframework", amethystPackage + "{}libs{}cloud{}commandframework"
+                this.getLibrary("org{}incendo", "cloud-processors-common", "1.0.0-rc.1",
+                        "org{}incendo", amethystPackage + "{}libs{}org{}incendo",
+                        "com{}github{}benmanes{}caffeine", amethystPackage + "{}libs{}caffeine"
                 ),
-                this.getLibrary("com{}github{}retrooper", "packetevents-api", "2.4.0",
+                this.getLibrary("org{}incendo", "cloud-processors-confirmation", "1.0.0-rc.1",
+                        "org{}incendo", amethystPackage + "{}libs{}org{}incendo",
+                        "com{}github{}benmanes{}caffeine", amethystPackage + "{}libs{}caffeine"
+
+                ),
+                this.getLibrary("org{}incendo", "cloud-processors-cooldown", "1.0.0-rc.1",
+                        "org{}incendo", amethystPackage + "{}libs{}org{}incendo",
+                        "com{}github{}benmanes{}caffeine", amethystPackage + "{}libs{}caffeine"
+                ),
+                this.getLibrary("org{}incendo", "cloud-processors-requirements", "1.0.0-rc.1",
+                        "org{}incendo", amethystPackage + "{}libs{}org{}incendo",
+                        "com{}github{}benmanes{}caffeine", amethystPackage + "{}libs{}caffeine"
+                ),
+                this.getLibrary("com{}github{}retrooper", "packetevents-api", "2.6.0",
                         "com{}github{}retrooper{}packetevents", amethystPackage + "{}libs{}packetevents{}api",
                         "io{}github{}retrooper{}packetevents", amethystPackage + "{}libs{}packetevents{}impl"
                 ),
-                this.getLibrary("com{}github{}retrooper", "packetevents-spigot", "2.4.0",
+                this.getLibrary("com{}github{}retrooper", "packetevents-spigot", "2.6.0",
                         "com{}github{}retrooper{}packetevents", amethystPackage + "{}libs{}packetevents{}api",
                         "io{}github{}retrooper{}packetevents", amethystPackage + "{}libs{}packetevents{}impl"
                 ),
@@ -142,7 +163,7 @@ public class DependencyManager {
                         "net{}kyori", amethystPackage + "{}libs{}kyori"
                 ),
                 // StorageAPI
-                this.getLibrary("wtf{}casper{}storageapi", "StorageAPI", "1.0.0",
+                this.getLibrary("wtf{}casper{}storageapi", "StorageAPI", "1.0.2",
                         "wtf{}casper{}storageapi", amethystPackage + "{}libs{}storageapi"
                 )
         );

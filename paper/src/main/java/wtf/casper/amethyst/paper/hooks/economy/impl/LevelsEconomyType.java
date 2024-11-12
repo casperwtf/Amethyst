@@ -3,13 +3,13 @@ package wtf.casper.amethyst.paper.hooks.economy.impl;
 import com.google.auto.service.AutoService;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import wtf.casper.amethyst.paper.hooks.economy.IEconomy;
+import wtf.casper.amethyst.paper.hooks.economy.IEconomyType;
 import wtf.casper.amethyst.paper.utils.ExperienceUtils;
 
 import java.util.UUID;
 
-@AutoService(IEconomy.class)
-public class ExpEconomy implements IEconomy {
+@AutoService(IEconomyType.class)
+public class LevelsEconomyType implements IEconomyType {
     @Override
     public boolean canEnable() {
         return true;
@@ -27,33 +27,33 @@ public class ExpEconomy implements IEconomy {
 
     @Override
     public String getName() {
-        return "EXP";
+        return "LEVELS";
     }
 
     @Override
-    public void deposit(String player, double amount) {
+    public void deposit(String player, double amount, String currency) {
         if (amount < 0) {
             withdraw(player, -amount);
             return;
         }
 
         Player player1 = Bukkit.getPlayer(player);
-        ExperienceUtils.changeExp(player1, (int) amount);
+        ExperienceUtils.changeExp(player1, ExperienceUtils.getLevelFromExp((int) amount));
     }
 
     @Override
-    public void withdraw(String player, double amount) {
+    public void withdraw(String player, double amount, String currency) {
         if (amount < 0) {
             deposit(player, -amount);
             return;
         }
 
         Player player1 = Bukkit.getPlayer(player);
-        ExperienceUtils.changeExp(player1, -(int) amount);
+        ExperienceUtils.changeExp(player1, -ExperienceUtils.getLevelFromExp((int) amount));
     }
 
     @Override
-    public void set(String player, double amount) {
+    public void set(String player, double amount, String currency) {
         double balance = get(player);
         if (balance > amount) {
             withdraw(player, balance - amount);
@@ -63,41 +63,41 @@ public class ExpEconomy implements IEconomy {
     }
 
     @Override
-    public double get(String player) {
+    public double get(String player, String currency) {
         Player player1 = Bukkit.getPlayer(player);
         if (player1 == null) return 0;
-        return ExperienceUtils.getExp(player1);
+        return ExperienceUtils.getLevelFromExp((int) ExperienceUtils.getExp(player1));
     }
 
     @Override
-    public boolean has(String player, double amount) {
+    public boolean has(String player, double amount, String currency) {
         return get(player) >= amount;
     }
 
     @Override
-    public void deposit(UUID player, double amount) {
+    public void deposit(UUID player, double amount, String currency) {
         if (amount < 0) {
             withdraw(player, -amount);
             return;
         }
 
         Player player1 = Bukkit.getPlayer(player);
-        ExperienceUtils.changeExp(player1, (int) amount);
+        ExperienceUtils.changeExp(player1, ExperienceUtils.getLevelFromExp((int) amount));
     }
 
     @Override
-    public void withdraw(UUID player, double amount) {
+    public void withdraw(UUID player, double amount, String currency) {
         if (amount < 0) {
             deposit(player, -amount);
             return;
         }
 
         Player player1 = Bukkit.getPlayer(player);
-        ExperienceUtils.changeExp(player1, -(int) amount);
+        ExperienceUtils.changeExp(player1, -ExperienceUtils.getLevelFromExp((int) amount));
     }
 
     @Override
-    public void set(UUID player, double amount) {
+    public void set(UUID player, double amount, String currency) {
         double balance = get(player);
         if (balance > amount) {
             withdraw(player, balance - amount);
@@ -107,14 +107,14 @@ public class ExpEconomy implements IEconomy {
     }
 
     @Override
-    public double get(UUID player) {
+    public double get(UUID player, String currency) {
         Player player1 = Bukkit.getPlayer(player);
         if (player1 == null) return 0;
-        return ExperienceUtils.getExp(player1);
+        return ExperienceUtils.getLevelFromExp((int) ExperienceUtils.getExp(player1)); // TODO: make this get exp amount based off player level
     }
 
     @Override
-    public boolean has(UUID player, double amount) {
+    public boolean has(UUID player, double amount, String currency) {
         return get(player) >= amount;
     }
 }

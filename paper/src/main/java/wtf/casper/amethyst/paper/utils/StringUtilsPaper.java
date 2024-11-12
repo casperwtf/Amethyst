@@ -457,7 +457,7 @@ public class StringUtilsPaper extends StringUtils {
         if (placeholderReplacer != null) {
             message = placeholderReplacer.parse(message);
         }
-        return message;
+        return HexUtils.colorify(message);
     }
 
 

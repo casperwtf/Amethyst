@@ -1,22 +1,29 @@
 package wtf.casper.amethyst.paper.providers;
 
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.annotations.AnnotationParser;
-import cloud.commandframework.arguments.CommandArgument;
-import cloud.commandframework.bukkit.CloudBukkitCapabilities;
-import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator;
-import cloud.commandframework.extra.confirmation.CommandConfirmationManager;
-import cloud.commandframework.meta.SimpleCommandMeta;
-import cloud.commandframework.paper.PaperCommandManager;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.annotations.AnnotationParser;
+import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.meta.SimpleCommandMeta;
+import org.incendo.cloud.paper.LegacyPaperCommandManager;
+import org.incendo.cloud.paper.PaperCommandManager;
+import org.incendo.cloud.processors.cache.CaffeineCache;
+import org.incendo.cloud.processors.confirmation.ConfirmationConfiguration;
+import org.incendo.cloud.processors.confirmation.ConfirmationManager;
+import org.incendo.cloud.processors.confirmation.ImmutableConfirmationConfiguration;
 import wtf.casper.amethyst.core.inject.Inject;
+import wtf.casper.amethyst.paper.AmethystPlugin;
 
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
+import java.util.logging.Level;
 
 @Getter
 @Setter
@@ -26,22 +33,25 @@ public class CloudCommandProvider {
 
     public void setup(JavaPlugin plugin) {
         try {
-            commandManager = new PaperCommandManager(
+
+            LegacyPaperCommandManager<CommandSender> commandManager = new LegacyPaperCommandManager<>(
                     plugin,
-                    AsynchronousCommandExecutionCoordinator.builder()
-                            .withSynchronousParsing()
-                            .build(),
-                    Function.identity(),
-                    Function.identity()
+                    ExecutionCoordinator.asyncCoordinator(),
+                    SenderMapper.identity()
             );
 
-            if (commandManager.queryCapability(CloudBukkitCapabilities.BRIGADIER)) {
-                plugin.getLogger().log(java.util.logging.Level.INFO, "Enabling Brigadier support for Amethyst");
-                commandManager.registerBrigadier();
+            //https://cloud.incendo.org/minecraft/paper/#brigadier
+//            PaperCommandManager<CommandSourceStack> commandManager = PaperCommandManager.builder()
+//                    .executionCoordinator(ExecutionCoordinator.asyncCoordinator())
+//                    .buildOnEnable(plugin);
+
+            if (commandManager.hasCapability(CloudBukkitCapabilities.BRIGADIER)) {
+                plugin.getLogger().log(Level.INFO, "Enabling Brigadier support for " + plugin.getName());
+                commandManager.registerLegacyPaperBrigadier();
             }
 
-            if (commandManager.queryCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
-                plugin.getLogger().log(java.util.logging.Level.INFO, "Enabling asynchronous tab completion for Amethyst");
+            if (commandManager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
+                plugin.getLogger().log(Level.INFO, "Enabling asynchronous tab completion for " + plugin.getName());
                 commandManager.registerAsynchronousCompletions();
             }
 
@@ -49,35 +59,38 @@ public class CloudCommandProvider {
                     parserParameters -> SimpleCommandMeta.empty()
             );
 
-            CommandConfirmationManager<CommandSender> commandConfirmationManager = new CommandConfirmationManager<>(
-                    30,
-                    TimeUnit.SECONDS,
-                    ctx -> {
+            ImmutableConfirmationConfiguration<CommandSender> build = ConfirmationConfiguration.<CommandSender>builder()
+                    .cache(CaffeineCache.of(Caffeine.newBuilder().expireAfterWrite(30, TimeUnit.SECONDS).build()))
+                    .noPendingCommandNotifier(sender -> sender.sendMessage(ChatColor.RED + "You have no pending command to confirm."))
+                    .confirmationRequiredNotifier((sender, ctx) -> {
                         StringBuilder builder = new StringBuilder();
+
                         builder.append("/");
-                        for (CommandArgument<CommandSender, ?> argument : ctx.getCommand().getArguments()) {
-                            if (argument.getOwningCommand() == null) {
-                                builder.append(argument.getName()).append(" ");
+                        for (CommandComponent<CommandSender> nonFlagArgument : ctx.command().nonFlagArguments()) {
+                            if (nonFlagArgument.type() != CommandComponent.ComponentType.LITERAL) {
+                                builder.append(nonFlagArgument.name()).append(" ");
                             } else {
                                 break;
                             }
                         }
 
                         builder.append("confirm");
+                        sender.sendMessage(ChatColor.RED + "You must confirm this command by typing " + builder);
+                    })
+                    .build();
 
-                        //TODO: make translatable?
-                        ctx.getCommandContext().getSender().sendMessage(ChatColor.RED + "Confirmation is needed. Run " + ChatColor.WHITE + builder + ChatColor.RED + " to confirm.");
-                    },
-                    commandSender -> {
-                        commandSender.sendMessage(ChatColor.RED + "An error has occurred while running the command. Please try again.");
-                    }
-            );
+            ConfirmationManager<CommandSender> confirmationManager = ConfirmationManager.confirmationManager(build);
+            commandManager.registerCommandPostProcessor(confirmationManager.createPostprocessor());
 
-            commandConfirmationManager.registerConfirmationProcessor(commandManager);
-
-            Inject.bind(CommandManager.class, commandManager);
-            Inject.bind(AnnotationParser.class, parser);
-            Inject.bind(CommandConfirmationManager.class, commandConfirmationManager);
+            if (plugin instanceof AmethystPlugin amethystPlugin) {
+                Inject.bind(CommandManager.class, commandManager, amethystPlugin.getInjectionContainer());
+                Inject.bind(AnnotationParser.class, parser, amethystPlugin.getInjectionContainer());
+                Inject.bind(ConfirmationManager.class, confirmationManager, amethystPlugin.getInjectionContainer());
+            } else {
+                Inject.bind(CommandManager.class, commandManager);
+                Inject.bind(AnnotationParser.class, parser);
+                Inject.bind(ConfirmationManager.class, confirmationManager);
+            }
         } catch (Exception e) {
             System.out.println("Failed to initialize command manager");
             throw new RuntimeException(e);

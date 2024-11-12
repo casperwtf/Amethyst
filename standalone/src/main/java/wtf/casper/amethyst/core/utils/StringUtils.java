@@ -11,6 +11,10 @@ import java.util.regex.Pattern;
 public class StringUtils {
 
     private final static DecimalFormat formatter = new DecimalFormat("#,###.#");
+    private static final String[] SUFFIXES = {
+            "k", "M", "B", "T", "Q", "Qt", "Sx", "Sp", "Oct", "Non", "Dec",
+            "UDec", "DDec", "TDec", "QDec", "QtDec"
+    };
 
     /**
      * @param input    the string to check
@@ -231,20 +235,7 @@ public class StringUtils {
      * @return The number formatted with K, M, B, T, etc.
      */
     public static String abbreviate(int number) {
-
-        if (number == 0) return "0";
-
-        if (number >= 1000000000) {
-            return String.format("%.2fB", number / 1000000000.0);
-        }
-        if (number >= 1000000) {
-            return String.format("%.2fM", number / 1000000.0);
-        }
-        if (number >= 1000) {
-            return String.format("%.2fK", number / 1000.0);
-        }
-
-        return String.valueOf(number);
+        return abbreviate(number, 0);
     }
 
     /**
@@ -252,20 +243,24 @@ public class StringUtils {
      * @return The number formatted with K, M, B, T, etc.
      */
     public static String abbreviate(double number) {
+        return abbreviate(number, 0);
+    }
 
-        if (number == 0) return "0";
-
-        if (number >= 1000000000) {
-            return String.format("%.2fB", number / 1000000000.0);
-        }
-        if (number >= 1000000) {
-            return String.format("%.2fM", number / 1000000.0);
-        }
-        if (number >= 1000) {
-            return String.format("%.2fK", number / 1000.0);
+    private static String abbreviate(double number, int iteration) {
+        if (number < 1000) {
+            return String.valueOf(number);
         }
 
-        return String.valueOf(number);
+        double formattedNumber = (number / 1000);
+        boolean isRounded = (formattedNumber * 10) % 10 == 0;
+
+        if (formattedNumber < 1000) {
+            if (isRounded) return (int) formattedNumber + SUFFIXES[iteration];
+
+            return String.format("%.2f", formattedNumber) + SUFFIXES[iteration];
+        }
+
+        return abbreviate(formattedNumber, iteration + 1);
     }
 
     /**
@@ -274,7 +269,7 @@ public class StringUtils {
      * @return The time in the specified time unit
      * Example: "1w 2d 3h 4m 5s", TimeUnit.SECONDS -> 788645
      */
-    public long timeFromString(String input, TimeUnit timeUnit) {
+    public static long timeFromString(String input, TimeUnit timeUnit) {
         int seconds = 0;
         int minutes = 0;
         int hours = 0;

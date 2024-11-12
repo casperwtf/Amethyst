@@ -12,11 +12,24 @@
         <finalName>${project.artifactId}-amethyst-${project.version}</finalName>
     </build>
 
+    <distributionManagement>
+        <repository>
+            <id>casperwtf respository-releases</id>
+            <name>casperwtf Repository</name>
+            <url>https://maven.casper.wtf/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>casperwtf respository-snapshots</id>
+            <name>casperwtf Repository</name>
+            <url>https://maven.casper.wtf/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <amethyst.version>2.0.0</amethyst.version>
+        <amethyst.version>2.0.0-SNAPSHOT</amethyst.version>
     </properties>
 
     <dependencies>

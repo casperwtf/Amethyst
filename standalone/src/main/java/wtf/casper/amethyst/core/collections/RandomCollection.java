@@ -37,4 +37,9 @@ public class RandomCollection<E> {
     public Map<Double, E> getMap() {
         return map;
     }
+
+    public void clear() {
+        map.clear();
+        total = 0;
+    }
 }

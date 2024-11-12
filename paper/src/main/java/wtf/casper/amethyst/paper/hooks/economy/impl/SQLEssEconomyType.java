@@ -5,15 +5,15 @@ import net.craftersland.essentials.mysql.EMS;
 import net.craftersland.essentials.mysql.storage.MysqlSetup;
 import net.craftersland.essentials.mysql.storage.StorageHandler;
 import org.bukkit.Bukkit;
-import wtf.casper.amethyst.paper.hooks.economy.IEconomy;
+import wtf.casper.amethyst.paper.hooks.economy.IEconomyType;
 import wtf.casper.amethyst.paper.utils.GeyserUtils;
 
 import java.lang.reflect.Field;
 import java.util.Optional;
 import java.util.UUID;
 
-@AutoService(IEconomy.class)
-public class SQLEssEconomy implements IEconomy {
+@AutoService(IEconomyType.class)
+public class SQLEssEconomyType implements IEconomyType {
 
     private StorageHandler ems;
     private MysqlSetup mysqlSetup;
@@ -64,7 +64,7 @@ public class SQLEssEconomy implements IEconomy {
     }
 
     @Override
-    public void deposit(String player, double amount) {
+    public void deposit(String player, double amount, String currency) {
         if (amount < 0) {
             withdraw(player, -amount);
             return;
@@ -76,7 +76,7 @@ public class SQLEssEconomy implements IEconomy {
     }
 
     @Override
-    public void withdraw(String player, double amount) {
+    public void withdraw(String player, double amount, String currency) {
         if (amount < 0) {
             deposit(player, -amount);
             return;
@@ -88,12 +88,12 @@ public class SQLEssEconomy implements IEconomy {
     }
 
     @Override
-    public void set(String player, double amount) {
+    public void set(String player, double amount, String currency) {
         ems.setOfflineMoney(player, amount);
     }
 
     @Override
-    public double get(String player) {
+    public double get(String player, String currency) {
         Optional<UUID> optional = GeyserUtils.getUUID(player);
 
         if (optional.isPresent()) {
@@ -104,12 +104,12 @@ public class SQLEssEconomy implements IEconomy {
     }
 
     @Override
-    public boolean has(String player, double amount) {
+    public boolean has(String player, double amount, String currency) {
         return get(player) >= amount;
     }
 
     @Override
-    public void deposit(UUID player, double amount) {
+    public void deposit(UUID player, double amount, String currency) {
         if (amount < 0) {
             withdraw(player, -amount);
             return;
@@ -119,7 +119,7 @@ public class SQLEssEconomy implements IEconomy {
     }
 
     @Override
-    public void withdraw(UUID player, double amount) {
+    public void withdraw(UUID player, double amount, String currency) {
         if (amount < 0) {
             deposit(player, -amount);
             return;
@@ -128,17 +128,17 @@ public class SQLEssEconomy implements IEconomy {
     }
 
     @Override
-    public void set(UUID player, double amount) {
+    public void set(UUID player, double amount, String currency) {
         ems.setOfflineMoney(player, amount);
     }
 
     @Override
-    public double get(UUID player) {
+    public double get(UUID player, String currency) {
         return ems.getOfflineMoney(player);
     }
 
     @Override
-    public boolean has(UUID player, double amount) {
+    public boolean has(UUID player, double amount, String currency) {
         return get(player) >= amount;
     }
 

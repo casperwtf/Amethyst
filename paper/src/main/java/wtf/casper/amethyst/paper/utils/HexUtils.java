@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,7 +55,7 @@ public class HexUtils {
     );
 
     private HexUtils() {
-
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -95,6 +96,21 @@ public class HexUtils {
         parsed = parseHex(parsed);
         parsed = parseLegacy(parsed);
         return parsed;
+    }
+
+    /**
+     * Parses gradients, hex colors, and legacy color codes
+     *
+     * @param messages The messages
+     * @return A color-replaced message
+     */
+    public static Collection<String> colorify(Iterable<String> messages) {
+        List<String> list = new ArrayList<>();
+        for (String message : messages) {
+            String colorify = colorify(message);
+            list.add(colorify);
+        }
+        return list;
     }
 
     public static String parseRainbow(String message) {

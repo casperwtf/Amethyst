@@ -9,7 +9,7 @@ import wtf.casper.amethyst.paper.hooks.IHookController;
 import java.util.Set;
 
 @AutoService(IHookController.class)
-public class VanishController implements IHookController {
+public class VanishManager implements IHookController {
 
     @Getter private static IVanish hook = null;
 
@@ -20,26 +20,26 @@ public class VanishController implements IHookController {
                 return;
             }
 
-            VanishController.hook = (IVanish) hook;
+            VanishManager.hook = (IVanish) hook;
         }
     }
 
     @Override
     public void unregisterHook(IHook hook) {
         if (hook instanceof IVanish) {
-            if (VanishController.hook == null) {
+            if (VanishManager.hook == null) {
                 return;
             }
 
-            if (VanishController.hook == hook) {
-                VanishController.hook = null;
+            if (VanishManager.hook == hook) {
+                VanishManager.hook = null;
             }
         }
     }
 
     @Override
     public void unregisterAllHooks() {
-        VanishController.hook = null;
+        VanishManager.hook = null;
     }
 
     @Override

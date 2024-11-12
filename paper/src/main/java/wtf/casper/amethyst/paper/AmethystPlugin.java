@@ -6,11 +6,13 @@ import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import io.papermc.paper.plugin.configuration.PluginMeta;
+import lombok.Getter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import wtf.casper.amethyst.core.inject.InjectionContainer;
 import wtf.casper.amethyst.core.utils.AmethystLogger;
 import wtf.casper.amethyst.core.utils.ReflectionUtil;
 import wtf.casper.amethyst.core.utils.ServiceUtil;
@@ -19,12 +21,14 @@ import wtf.casper.amethyst.paper.providers.CloudCommandProvider;
 import wtf.casper.amethyst.paper.providers.ConfigProvider;
 
 import java.io.IOException;
+import java.util.List;
 
 public abstract class AmethystPlugin extends JavaPlugin {
 
     private YamlDocument config;
     private ConfigProvider configProvider;
     private CloudCommandProvider cloudCommandHandler;
+    @Getter private InjectionContainer injectionContainer = new InjectionContainer();
 
     public void setName(String name) {
         try {
@@ -61,8 +65,6 @@ public abstract class AmethystPlugin extends JavaPlugin {
             return;
         }
         ReflectionUtil.setPrivateField(descriptionFile, "name", name);
-
-
     }
 
     @NotNull
@@ -82,7 +84,9 @@ public abstract class AmethystPlugin extends JavaPlugin {
     }
 
     public void registerCommands(ClassLoader classLoader) {
-        ServiceUtil.getServices(CloudCommand.class, classLoader).forEach(CloudCommand::registerCommands);
+        List<CloudCommand> services = ServiceUtil.getServices(CloudCommand.class, classLoader);
+        services.forEach(cloudCommand -> cloudCommand.registerCommands(this));
+        getLogger().info("Registered " + services.size() + " commands");
     }
 
     public void registerListeners() {
@@ -90,7 +94,9 @@ public abstract class AmethystPlugin extends JavaPlugin {
     }
 
     public void registerListeners(ClassLoader classLoader) {
-        ServiceUtil.getServices(Listener.class, classLoader).forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
+        List<Listener> services = ServiceUtil.getServices(Listener.class, classLoader);
+        services.forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
+        getLogger().info("Registered " + services.size() + " listeners");
     }
 
     public void setupCommands() {
