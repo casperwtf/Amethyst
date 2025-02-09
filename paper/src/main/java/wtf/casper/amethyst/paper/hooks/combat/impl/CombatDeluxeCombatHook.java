@@ -9,7 +9,7 @@ import wtf.casper.amethyst.paper.hooks.combat.ICombat;
 import java.util.Optional;
 
 @AutoService(ICombat.class)
-public class ICombatDeluxeCombat implements ICombat {
+public class CombatDeluxeCombatHook implements ICombat {
 
     @Override
     public Optional<Player> getAttacker(Player player) {
@@ -29,5 +29,10 @@ public class ICombatDeluxeCombat implements ICombat {
     @Override
     public void disable() {
 
+    }
+
+    @Override
+    public int priority() {
+        return 1;
     }
 }

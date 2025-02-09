@@ -14,10 +14,7 @@ package wtf.casper.amethyst.paper.hologrambridge;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import wtf.casper.amethyst.paper.hologrambridge.connector.impl.CMIImpl;
-import wtf.casper.amethyst.paper.hologrambridge.connector.impl.DecentImpl;
-import wtf.casper.amethyst.paper.hologrambridge.connector.impl.HologramsImpl;
-import wtf.casper.amethyst.paper.hologrambridge.connector.impl.HolographicDisplaysImpl;
+import wtf.casper.amethyst.paper.hologrambridge.connector.impl.*;
 
 /**
  * Construct a new {@link HologramBridge} for your {@link JavaPlugin}
@@ -78,6 +75,13 @@ public final class HologramBridge {
 
             HologramAPI.setConnector(new DecentImpl());
         }
+
+        if (this.isEnabled("FancyHolograms")) {
+            this.log("Found FancyHolograms Connector");
+
+            HologramAPI.setConnector(new FancyHologramsImpl());
+        }
+
     }
 
     /**

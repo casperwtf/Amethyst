@@ -59,4 +59,9 @@ public class CrashClaimProtection implements IProtection {
     public void disable() {
 
     }
+
+    @Override
+    public int priority() {
+        return 1;
+    }
 }

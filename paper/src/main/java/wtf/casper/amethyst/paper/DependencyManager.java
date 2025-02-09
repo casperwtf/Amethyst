@@ -163,7 +163,7 @@ public class DependencyManager {
                         "net{}kyori", amethystPackage + "{}libs{}kyori"
                 ),
                 // StorageAPI
-                this.getLibrary("wtf{}casper{}storageapi", "StorageAPI", "1.0.2",
+                this.getLibrary("wtf{}casper{}storageapi", "StorageAPI", "1.0.5-SNAPSHOT",
                         "wtf{}casper{}storageapi", amethystPackage + "{}libs{}storageapi"
                 )
         );

@@ -58,7 +58,6 @@ public class ConfigProvider {
         }
     }
 
-
     public YamlDocument getYamlDocument(String path, GeneralSettings generalSettings, LoaderSettings loaderSettings, DumperSettings dumperSettings, UpdaterSettings updaterSettings) {
         try {
             return YamlDocument.create(new File(plugin.getDataFolder(), path),

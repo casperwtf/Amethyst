@@ -69,6 +69,21 @@ public class MathUtils {
         return ThreadLocalRandom.current().nextDouble(min, max);
     }
 
+    /*
+     * @param min The minimum value
+     * @param max The maximum value
+     * @return A random float between min and max, inclusive.
+     * */
+    public static float randomFloat(float min, float max) {
+        if (min == max) {
+            return min;
+        }
+        if (min > max) {
+            return ThreadLocalRandom.current().nextFloat(max, min);
+        }
+        return ThreadLocalRandom.current().nextFloat(min, max);
+    }
+
     /**
      * @param mean   The mean of the distribution
      * @param stdDev The standard deviation of the distribution

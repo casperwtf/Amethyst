@@ -38,6 +38,7 @@ import wtf.casper.amethyst.paper.utils.ServerVersion;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Filter;
 
 /**
@@ -51,6 +52,7 @@ public class AmethystPaper {
     @Getter private static Filter filter;
     @Getter private YamlDocument amethystConfig;
     private static JavaPlugin instance;
+    private List<IHookController> services;
 
     /**
      * This constructor is used for loading Amethyst as a plugin
@@ -204,7 +206,8 @@ public class AmethystPaper {
 
         // initialize these
         SchedulerUtil.runLater(scheduler -> {
-            ServiceUtil.getServices(IHookController.class, this.getClass().getClassLoader()).forEach(IHookController::enable);
+            services = ServiceUtil.getServices(IHookController.class, this.getClass().getClassLoader());
+            services.forEach(IHookController::enable);
         }, 2L);
 
         // Handle vault events
@@ -215,7 +218,7 @@ public class AmethystPaper {
     }
 
     public void disableAmethyst() {
-        ServiceUtil.getServices(IHookController.class, this.getClass().getClassLoader()).forEach(IHookController::disable);
+        services.forEach(IHookController::disable);
         PacketEvents.getAPI().terminate();
     }
 

@@ -8,4 +8,8 @@ public interface IHook {
 
     void disable();
 
+    default int priority() {
+        return 0;
+    }
+
 }

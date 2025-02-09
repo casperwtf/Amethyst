@@ -69,4 +69,9 @@ public class GriefPreventionProtection implements IProtection {
     public void disable() {
 
     }
+
+    @Override
+    public int priority() {
+        return 1;
+    }
 }

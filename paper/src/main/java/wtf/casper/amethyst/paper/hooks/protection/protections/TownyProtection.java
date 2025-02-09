@@ -50,4 +50,9 @@ public class TownyProtection implements IProtection {
     public boolean isClaimed(Location location) {
         return !TownyAPI.getInstance().isWilderness(location);
     }
+
+    @Override
+    public int priority() {
+        return 1;
+    }
 }

@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
-public class ItemConfigUtils {
+public class ItemstackUtil {
 
-    private ItemConfigUtils() {
+    private ItemstackUtil() {
         throw new UnsupportedOperationException("This class cannot be instantiated");
     }
 
@@ -277,7 +277,7 @@ public class ItemConfigUtils {
 
         int leftToAdd = toAdd.getAmount();
         for (ItemStack itemStack : inventory) {
-            if (!itemStack.equals(toAdd)) {
+            if (!itemStack.isSimilar(toAdd)) {
                 continue;
             }
             if (leftToAdd - (itemStack.getMaxStackSize() - itemStack.getAmount()) <= 0) {

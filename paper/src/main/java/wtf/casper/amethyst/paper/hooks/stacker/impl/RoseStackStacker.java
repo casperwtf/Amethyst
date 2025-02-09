@@ -138,4 +138,9 @@ public class RoseStackStacker implements IStacker {
 
         spawner.setStackSize((int) amount);
     }
+
+    @Override
+    public int priority() {
+        return 1;
+    }
 }

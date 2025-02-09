@@ -87,6 +87,9 @@ public abstract class AmethystPlugin extends JavaPlugin {
         List<CloudCommand> services = ServiceUtil.getServices(CloudCommand.class, classLoader);
         services.forEach(cloudCommand -> cloudCommand.registerCommands(this));
         getLogger().info("Registered " + services.size() + " commands");
+        for (CloudCommand service : services) {
+            getLogger().info("- " + service.getClass().getSimpleName());
+        }
     }
 
     public void registerListeners() {
@@ -97,6 +100,9 @@ public abstract class AmethystPlugin extends JavaPlugin {
         List<Listener> services = ServiceUtil.getServices(Listener.class, classLoader);
         services.forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
         getLogger().info("Registered " + services.size() + " listeners");
+        for (Listener service : services) {
+            getLogger().info("- " + service.getClass().getSimpleName());
+        }
     }
 
     public void setupCommands() {

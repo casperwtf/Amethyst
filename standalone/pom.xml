@@ -219,7 +219,7 @@
         <dependency>
             <groupId>wtf.casper.storageapi</groupId>
             <artifactId>StorageAPI</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.5-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

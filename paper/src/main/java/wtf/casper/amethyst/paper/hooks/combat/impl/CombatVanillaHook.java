@@ -7,7 +7,7 @@ import wtf.casper.amethyst.paper.hooks.combat.ICombat;
 import java.util.Optional;
 
 @AutoService(ICombat.class)
-public class ICombatDefault implements ICombat {
+public class CombatVanillaHook implements ICombat {
 
     @Override
     public boolean canEnable() {
@@ -22,6 +22,11 @@ public class ICombatDefault implements ICombat {
     @Override
     public void disable() {
 
+    }
+
+    @Override
+    public int priority() {
+        return 0;
     }
 
     @Override

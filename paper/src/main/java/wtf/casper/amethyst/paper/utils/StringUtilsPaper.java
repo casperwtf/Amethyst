@@ -4,6 +4,8 @@ import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
@@ -14,6 +16,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import wtf.casper.amethyst.core.utils.MathUtils;
 import wtf.casper.amethyst.core.utils.StringUtils;
 
 import javax.annotation.Nullable;
@@ -25,6 +28,7 @@ import java.util.List;
 public class StringUtilsPaper extends StringUtils {
 
     private final static LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.builder().hexColors().useUnusualXRepeatedCharacterHexFormat().build();
+    private final static MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 
     private StringUtilsPaper() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
@@ -55,6 +59,7 @@ public class StringUtilsPaper extends StringUtils {
      *    id: <sound string id> (default: minecraft:block.amethyst_block.hit)
      *    volume: <sound volume> (default: 1.0)
      *    pitch: <sound pitch> (default: 1.0)
+     *    offset: <sound offset> (default: 0)
      * }
      * </pre>
      *
@@ -143,6 +148,7 @@ public class StringUtilsPaper extends StringUtils {
      *    id: <sound string id> (default: minecraft:block.amethyst_block.hit)
      *    volume: <sound volume> (default: 1.0)
      *    pitch: <sound pitch> (default: 1.0)
+     *    offset: <sound offset> (default: 0)
      * }
      * </pre>
      *
@@ -187,6 +193,7 @@ public class StringUtilsPaper extends StringUtils {
      *    id: <sound string id> (default: minecraft:block.amethyst_block.hit)
      *    volume: <sound volume> (default: 1.0)
      *    pitch: <sound pitch> (default: 1.0)
+     *    offset: <sound offset> (default: 0)
      * }
      * </pre>
      *
@@ -319,6 +326,7 @@ public class StringUtilsPaper extends StringUtils {
      *    id: <sound string id> (default: minecraft:block.amethyst_block.hit)
      *    volume: <sound volume> (default: 1.0)
      *    pitch: <sound pitch> (default: 1.0)
+     *    offset: <sound offset> (default: 0)
      * }
      * </pre>
      *
@@ -357,6 +365,7 @@ public class StringUtilsPaper extends StringUtils {
      *    id: <sound string id> (default: minecraft:block.amethyst_block.hit)
      *    volume: <sound volume> (default: 1.0)
      *    pitch: <sound pitch> (default: 1.0)
+     *    offset: <sound offset> (default: 0)
      * }
      * </pre>
      *
@@ -366,13 +375,23 @@ public class StringUtilsPaper extends StringUtils {
      */
     public static void sendMessage(Section sec, @NotNull Player player, @Nullable Placeholders placeholderReplacer) {
         sec.getOptionalSection("sound").ifPresent(section ->
-                player.playSound(
-                        player.getLocation(),
-                        section.getString("id", "minecraft:block.amethyst_block.hit"),
-                        SoundCategory.valueOf(section.getString("category", "master").toUpperCase()),
-                        section.getFloat("pitch", 1.0f),
-                        section.getFloat("volume", 1.0f)
-                )
+                {
+                    Float offset = section.getFloat("offset", 0.0f);
+                    Float pitch = section.getFloat("pitch", 1.0f);
+
+                    if (offset != 0) {
+                        offset = offset / 2;
+                        pitch = pitch + MathUtils.randomFloat(-offset, offset);
+                    }
+
+                    player.playSound(
+                            player.getLocation(),
+                            section.getString("id", "minecraft:block.amethyst_block.hit"),
+                            SoundCategory.valueOf(section.getString("category", "master").toUpperCase()),
+                            pitch,
+                            section.getFloat("volume", 1.0f)
+                    );
+                }
         );
 
         sec.getOptionalSection("title").ifPresent(section -> {
@@ -388,8 +407,8 @@ public class StringUtilsPaper extends StringUtils {
             );
 
             Title title = Title.title(
-                    LEGACY_COMPONENT_SERIALIZER.deserialize(parse(section.getString("title"), player, placeholderReplacer)),
-                    LEGACY_COMPONENT_SERIALIZER.deserialize(parse(section.getString("subtitle"), player, placeholderReplacer)),
+                    parse(section.getString("title"), player, placeholderReplacer),
+                    parse(section.getString("subtitle"), player, placeholderReplacer),
                     times
             );
 
@@ -405,8 +424,8 @@ public class StringUtilsPaper extends StringUtils {
                 );
 
                 Title title = Title.title(
-                        LEGACY_COMPONENT_SERIALIZER.deserialize(parse(section.getString("title"), player, placeholderReplacer)),
-                        LEGACY_COMPONENT_SERIALIZER.deserialize(parse(section.getString("subtitle"), player, placeholderReplacer)),
+                        parse(section.getString("title"), player, placeholderReplacer),
+                        parse(section.getString("subtitle"), player, placeholderReplacer),
                         times
                 );
 
@@ -450,16 +469,15 @@ public class StringUtilsPaper extends StringUtils {
         }
     }
 
-    private static String parse(String message, Player player, Placeholders placeholderReplacer) {
+    private static Component parse(String message, Player player, Placeholders placeholderReplacer) {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) { // always parse papi first because when given user input, users can input sensitive placeholders
             message = PlaceholderAPI.setPlaceholders(player, message);
         }
         if (placeholderReplacer != null) {
             message = placeholderReplacer.parse(message);
         }
-        return HexUtils.colorify(message);
+        return MINI_MESSAGE.deserialize(message);
     }
-
 
     /**
      * @param current           The current progress

@@ -13,7 +13,10 @@
 package wtf.casper.amethyst.paper.hologrambridge.connector.impl;
 
 import de.oliver.fancyholograms.FancyHolograms;
-import de.oliver.fancyholograms.api.HologramData;
+import de.oliver.fancyholograms.api.data.HologramData;
+import de.oliver.fancyholograms.api.data.ItemHologramData;
+import de.oliver.fancyholograms.api.data.TextHologramData;
+import de.oliver.fancyholograms.api.hologram.HologramType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -22,21 +25,21 @@ import wtf.casper.amethyst.paper.hologrambridge.hologram.Hologram;
 import wtf.casper.amethyst.paper.hologrambridge.hologram.VisibilityManager;
 import wtf.casper.amethyst.paper.hologrambridge.hologram.impl.AmethystHologram;
 import wtf.casper.amethyst.paper.hologrambridge.lines.Line;
+import wtf.casper.amethyst.paper.hologrambridge.lines.types.ItemLine;
 import wtf.casper.amethyst.paper.hologrambridge.lines.types.TextLine;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public final class FancyHologramImpl implements Connector {
+public final class FancyHologramsImpl implements Connector {
 
     @Override
     public Hologram createHologram(final Location location) {
-        HologramData data = new HologramData("holobridge-" + ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE));
         Location clone = location.clone();
-        data.setLocation(clone);
+        HologramData data = new HologramData("holobridge-" + ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE), HologramType.TEXT, clone);
 
-        de.oliver.fancyholograms.api.Hologram hologram = FancyHolograms.get().getHologramsManager().create(data);
+        de.oliver.fancyholograms.api.hologram.Hologram hologram = FancyHolograms.get().getHologramsManager().create(data);
 
         hologram.createHologram();
         hologram.showHologram(Bukkit.getOnlinePlayers());
@@ -49,27 +52,32 @@ public final class FancyHologramImpl implements Connector {
     public void setLine(final Hologram hologram,
                         final int lineIndex,
                         final Line line) {
-        if (!(line instanceof TextLine)) {
+
+        de.oliver.fancyholograms.api.hologram.Hologram from = from(hologram);
+        if (line instanceof TextLine textLine) {
+            TextHologramData data = (TextHologramData) from.getData();
+            List<String> lines = data.getText();
+            String text = textLine.getText();
+
+            if (lineIndex >= lines.size()) {
+                lines.add(text == null ? " " : text);
+            } else if (text == null) {
+                lines.remove(lineIndex);
+            } else {
+                lines.set(lineIndex, text);
+            }
+
+            data.setText(lines);
+            from.queueUpdate();
             return;
         }
 
-        // this is how the plugin does it, kind of weird
-        // TODO: optimize
-
-        de.oliver.fancyholograms.api.Hologram from = from(hologram);
-        List<String> lines = from.getData().getText();
-        String text = ((TextLine) line).getText();
-
-        if (lineIndex >= lines.size()) {
-            lines.add(text == null ? " " : text);
-        } else if (text == null) {
-            lines.remove(lineIndex);
-        } else {
-            lines.set(lineIndex, text);
+        if (line instanceof ItemLine itemLine) {
+            ItemHologramData data = (ItemHologramData) from.getData();
+            data.setItemStack(itemLine.getItemStack());
+            from.queueUpdate();
+            return;
         }
-
-        from.getData().setText(lines);
-        from.updateHologram();
     }
 
     @Override
@@ -81,58 +89,73 @@ public final class FancyHologramImpl implements Connector {
 
     @Override
     public void appendLine(final Hologram hologram, final Line line) {
-        if (!(line instanceof TextLine)) {
+        de.oliver.fancyholograms.api.hologram.Hologram from = from(hologram);
+        if (line instanceof TextLine textLine) {
+            TextHologramData data = (TextHologramData) from.getData();
+            List<String> lines = data.getText();
+            String text = textLine.getText();
+
+            lines.add(text == null ? " " : text);
+
+            data.setText(lines);
+            from.queueUpdate();
             return;
         }
 
-        de.oliver.fancyholograms.api.Hologram from = from(hologram);
-        List<String> lines = from.getData().getText();
-        String text = ((TextLine) line).getText();
-
-        lines.add(text == null ? " " : text);
-
-        from.getData().setText(lines);
-        from.updateHologram();
+        if (line instanceof ItemLine itemLine) {
+            ItemHologramData data = (ItemHologramData) from.getData();
+            data.setItemStack(itemLine.getItemStack());
+            from.queueUpdate();
+            return;
+        }
     }
 
     @Override
     public void clearLines(final Hologram hologram) {
-        de.oliver.fancyholograms.api.Hologram from = from(hologram);
-        from.getData().setText(Collections.emptyList());
-        from.updateHologram();
+        de.oliver.fancyholograms.api.hologram.Hologram from = from(hologram);
+        if (from.getData() instanceof TextHologramData data) {
+            data.setText(Collections.emptyList());
+            from.queueUpdate();
+            return;
+        }
+
+        if (from.getData() instanceof ItemHologramData data) {
+            data.setItemStack(null);
+            from.queueUpdate();
+        }
     }
 
     @Override
     public void teleport(final Hologram hologram, final Location location) {
-        de.oliver.fancyholograms.api.Hologram from = from(hologram);
+        de.oliver.fancyholograms.api.hologram.Hologram from = from(hologram);
         from.getData().setLocation(location);
-        from.updateHologram();
+        from.queueUpdate();
     }
 
     @Override
     public void delete(final Hologram hologram) {
-        de.oliver.fancyholograms.api.Hologram from = from(hologram);
+        de.oliver.fancyholograms.api.hologram.Hologram from = from(hologram);
         from.deleteHologram();
     }
 
     @Override
     public void setVisibleByDefault(final VisibilityManager visibilityManager, final boolean visibleByDefault) {
-        // no-op? doesnt seem like its supported
+        // Not supported
     }
 
     @Override
     public void showTo(final VisibilityManager visibilityManager, final Player player) {
-        de.oliver.fancyholograms.api.Hologram from = from(visibilityManager.getHologram());
+        de.oliver.fancyholograms.api.hologram.Hologram from = from(visibilityManager.getHologram());
         from.showHologram(player);
     }
 
     @Override
     public void hideTo(final VisibilityManager visibilityManager, final Player player) {
-        de.oliver.fancyholograms.api.Hologram from = from(visibilityManager.getHologram());
+        de.oliver.fancyholograms.api.hologram.Hologram from = from(visibilityManager.getHologram());
         from.hideHologram(player);
     }
 
-    private de.oliver.fancyholograms.api.Hologram from(Hologram hologram) {
-        return (de.oliver.fancyholograms.api.Hologram) hologram.getHologramAsObject();
+    private de.oliver.fancyholograms.api.hologram.Hologram from(Hologram hologram) {
+        return (de.oliver.fancyholograms.api.hologram.Hologram) hologram.getHologramAsObject();
     }
 }

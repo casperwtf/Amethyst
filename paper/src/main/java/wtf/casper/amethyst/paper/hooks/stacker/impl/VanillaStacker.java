@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import wtf.casper.amethyst.paper.hooks.stacker.IStacker;
 
 @AutoService(IStacker.class)
-public class DefaultStacker implements IStacker {
+public class VanillaStacker implements IStacker {
     @Override
     public boolean canEnable() {
         return true;
